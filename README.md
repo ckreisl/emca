@@ -1,15 +1,45 @@
 # EMCA — Explorer of Monte-Carlo based Algorithms
-![EMCA](https://github.com/ckreisl/emca/blob/readme/images/emca.jpg)
+![EMCA](https://github.com/ckreisl/emca/blob/readme/images/emca.png)
+
+<a name="about"></a>
 ## About
-EMCA is a framework for the visualization of Monte Carlo-based algorithms more precisely it is designed to visualize and analyze unidirectional path tracing algorithms. It consists of two parts, a server part, which serves as an interface for the respective rendering system and a client, which takes over the pure visualization. The client is written in Python and offers the possibility to visualize and analyze the path tracing algorithm. EMCA works on a pixel basis, which means that instead of pre-computing and saving all the necessary data of the whole rendered image, everything is calculated at run-time. The data is collected and generated according to the selected pixel by the user.
+EMCA is a framework for the visualization of Monte Carlo-based algorithms. More precisely it is designed to visualize and analyze unidirectional path tracing algorithms. The framework consists of two parts, a server part, which serves as an interface for the respective rendering system and a client, which takes over the pure visualization. The client is written in Python and can be easily extended. EMCA works on a pixel basis, which means that instead of pre-computing and saving all the necessary data of the whole rendered image, everything is calculated at run-time. The data is collected and generated according to the selected pixel by the user.
 
 This framework was developed as Master thesis 03/2019 at the University of Tübingen (Germany). Special thanks goes to Prof. Hendrik Lensch, Sebastian Herholz (supervisor), Tobias Rittig and Lukas Ruppert who made this work possible.
+* Master-Thesis: https://github.com/ckreisl/emca/blob/readme/thesis/ckreisl_thesis.pdf
 
 Currently this framework only runs on **Linux** systems. It was tested and developed on Ubuntu 16.04, 18.04 and 19.10.
 
+If you use this framework for a publication i would appreciate a citation (though not required). You can use the following BibTex template:
+```
+@misc{EMCA@2019,
+   Author = {Christoph Kreisl},
+   Year = {2019},
+   Note = {https://github.com/ckreisl/emca},
+   Title = {EMCA - Explorer of Monte-Carlo based Algorithms}
+}
+```
+
+## Table of contents
+* [About](#about)
+* [Server Interface](#server_interface)
+  * [Setup](#server_setup)
+* [EMCA Client](#emca_client)
+  * [Brushing and Linking](#brushing_linking)
+  * [Render View](#render_view)
+  * [Sample Contribution View](#sample_view)
+  * [Scene View](#scene_view)
+  * [Data View](#data_view)
+  * [Custom Tool Interface](#custom_tool_interface)
+  * [Video Demo](#demo_video)
+
+<a name="server_interface"></a>
 ## Server Interface
 During the development of emca [mitsuba](https://github.com/mitsuba-renderer/mitsuba) was used as render system. For this purpose an interface was implemented to allow data transfer between mitsuba and the emca framework. Code modifications to mitsuba can be found here: https://github.com/ckreisl/mitsuba/tree/emca (branch emca).
 
+In general "any" render system can be used. For this purpose the EMCA server interface must be adapted to the respective render system. In addition, the renderer must be modified so that it can render deterministic images. At the moment there is no offical documentation available to adapt the EMCA server interface to other render systems than mitsuba.
+
+<a name="server_setup"></a>
 ### Setup
 If you never worked with mitsuba before please download and read the documentation about how to configure and compile mitsuba. In the next steps I assume that mitsuba has already been set up.
 
@@ -18,8 +48,64 @@ If you never worked with mitsuba before please download and read the documentati
 1. Compile mitsuba
 1. Start the server with the following command: `mtsutil emca <path_to_scene.xml>`
 
+<a name="emca_client"></a>
 ## EMCA Client
-Clone this repository and use the Python virtual enviroment in the 'env' folder to start EMCA (emca.py).
+Clone this repository and use the pre-configured Python virtual enviroment in the **env** folder to start EMCA (emca.py).
 
-### Documentation
-(TODO)
+<a name="brushing_linking"></a>
+### Brushing and Linking
+The concept of brushing and linking is to connect multiple views within a GUI representing different parts of the same data.
+Selecting a path or vertex in any view will automatically select the same path or vertex in all other views including the (custom) tools presented shortly. This approach allows to provide insight into multiple aspects of the data without cluttering a single view with all the available data. Especially the connection to the scene view provides valuable insight into the otherwise difficult to parse intersection points.
+
+![emca](https://github.com/ckreisl/emca/blob/readme/images/emca_view_01.png)
+<a name="render_view"></a>
+### Render View
+Displaying the rendered image, the render view is the starting point of any visualization task.
+Here, the user can select individual pixels, e.g. ones containing artifacts such as fireflies or general high-variance regions, to inspect their contributing light transport paths and look for potential errors or sources of high variance.
+The image can either be loaded from file or be requested from the server to render anew.
+On selection of a pixel, the server is queried for the corresponding path data, which can be quickly generated by the rendering system.
+Once this data is received, it becomes available for further inspection in the following views.
+A history of previously selected pixels allows to quickly switch between several pixels of interest.
+
+<a name="sample_view"></a>
+### Sample Contribution View
+The sample contribution view provides interactive scatter plots of each path's estimate of incident radiance for the selected pixel per spectrum provided by the renderer.
+In the scatter plots, paths can be quickly classified into non-contributing paths, regularly contributing paths and outliers which might have caused a firefly artifact.
+Here, one or multiple paths can be selected for inspection.
+For efficient selection of a subset of paths, a rectangular selection tool is provided.
+
+![emca](https://github.com/ckreisl/emca/blob/readme/images/emca_view_02.png)
+
+<a name="scene_view"></a>
+### Scene View
+The scene view allows the user to explore the selected traced paths within a semitransparent representation of the scene's geometry.
+The camera is initialized to its location in the rendered image and can be moved around freely.
+To allow for quick selection of paths, a rectangular selection tool can be used to select individual intersections directly in the scene view.
+When selecting path vertices from other views, the camera is automatically moved to the selected vertex.
+To additionally highlight the selected vertex, its preceding path segment is highlighted in green while the vertex point is colored in orange.
+Regular path segments are shown in white unless they terminate in the environment map in which case they are colored in yellow.
+If the rendering algorithm uses next event estimation, shadow rays can be shown in blue for successful connections to the emitter and in red in case the sampled emitter is occluded.
+
+<a name="data_view"></a>
+### Data View
+The render data view shows all the collected data for each selected path and its vertices.
+Paths and their data are presented in a collapsible tree structure to the user to allow for comprehensible inspection and comparison of various paths and individual vertices.
+In combination with the scene view, light transport paths can be quickly analyzed by interactively stepping through the individual intersection points by simply selecting the vertices in the data view.
+
+<a name="custom_tool_interface"></a>
+### Custom Tool Interface
+New path tracing approaches might make use of arbitrary auxiliary data such as spherical radiance caches which might be too complex
+to be suitably displayed in the existing 2D and 3D vertex data plots or the textual render data view.
+To address the individual needs of novel path tracing algorithms,
+a custom tool interface allows for simple construction of additional views with access to all the available path and vertex data for the current pixel.
+Following the brushing and linking concept the tool will be notified of the currently selected path and vertex such that it can update its contents accordingly.
+Should the data collected during path tracing not suffice to satisfy the custom tool's needs,
+a matching custom server module can be created from which the custom tool can easily request arbitrary additional data at any moment.
+
+<a name="demo_video"></a>
+### Video Demo
+[Vimeo](https://vimeo.com/397632936)
+
+(Names might be differe due to renaming)
+
+         
