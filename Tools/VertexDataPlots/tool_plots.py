@@ -47,7 +47,7 @@ class VertexDataPlots(Tool):
             name='Vertex Data Plots',
             flag=27
         )
-        uic.loadUi('Tools/VertexDataPlots/tool_plots.ui', self)
+        uic.loadUi('Tools/VertexDataPlots/ui/tool_plots.ui', self)
 
         self._hist2D_canvas = Plot2DCanvas(self)
         self._hist3D_canvas = Plot3DCanvas(self)

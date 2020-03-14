@@ -13,16 +13,10 @@
 """
 
 from Core.tool import Tool
-import logging
-
-from View.SphericalViewImage.view_spherical_view_image import ViewSphericalViewImage
-from Types.point3 import Point3f
+from Tools.SphericalView.view_spherical_view_image import ViewSphericalViewImage
 from Types.point2 import Point2i
-from Types.vector3 import Vec3f
-from PyQt5.QtCore import pyqtSlot
 from PyQt5 import uic
-
-import numpy as np
+import logging
 import io
 
 
@@ -34,7 +28,7 @@ class SphericalView(Tool):
             "SphericalView",
             66
         )
-        uic.loadUi('Tools/SphericalView/spherical_view.ui', self)
+        uic.loadUi('Tools/SphericalView/ui/spherical_view.ui', self)
 
         self._path = None
         self._render_data = None
@@ -65,7 +59,7 @@ class SphericalView(Tool):
 
     def serialize(self, stream):
         logging.info("Serialize in: {}".format(self.name))
-        if not self._spherical_view.pos is None:
+        if self._spherical_view.pos is not None:
             self._render_size.x = self.sbWidth.value()
             self._render_size.y = self.sbHeight.value()
             self._sample_count = int(self.sbSampleCount.value())
