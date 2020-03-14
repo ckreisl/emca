@@ -50,7 +50,10 @@ If you never worked with mitsuba before please download and read the documentati
 
 <a name="emca_client"></a>
 ## EMCA Client
-Clone this repository and use the pre-configured Python virtual enviroment in the **env** folder to start EMCA (emca.py).
+EMCA is based on **Python 3.6**. To install and load all necessary dependencies use the requirements.txt file.
+```
+pip3 install -r requirements.txt
+```
 
 <a name="brushing_linking"></a>
 ### Brushing and Linking
