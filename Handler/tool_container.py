@@ -104,7 +104,7 @@ class ToolContainer(QWidget):
         """
         self._tool.select_vertex(tpl)
         #automatically request new data for the selected vertex if the tool is visible
-        if (self.isVisible()):
+        if self.isVisible():
             self._controller.request_tool(self._tool.flag)
 
     def serialize(self, stream):

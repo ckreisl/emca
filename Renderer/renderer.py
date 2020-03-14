@@ -1,6 +1,6 @@
 from Renderer.interactor_rubberband import RubberBandInteractor
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from Renderer.mesh import Meshes
+from Renderer.meshes import Meshes
 from Renderer.camera import Camera
 from Renderer.path import Path
 from Renderer.vertex import Vertex
