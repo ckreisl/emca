@@ -12,7 +12,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from Tools.PathDepth.highlighter import Highlighter
+from Plugins.PathDepth.highlighter import Highlighter
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from PyQt5.QtWidgets import QSizePolicy
 import matplotlib.pyplot as plt

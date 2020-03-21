@@ -13,7 +13,7 @@
 """
 
 from Parser.xml_parser import XMLParser
-from Handler.tool_handler import ToolHandler
+from PluginsHandler.plugins_handler import PluginsHandler
 from Model.render_info import RenderInfo
 from Model.camera_data import CameraData
 from Model.mesh_data import MeshData
@@ -44,7 +44,7 @@ class Dataset(QObject):
         QObject.__init__(self, parent=None)
         self._detector = Detector()
         self._filter = Filter()
-        self._tool_handler = ToolHandler()
+        self._plugins_handler = PluginsHandler()
         self._xml_parser = XMLParser()
 
         self._render_info = RenderInfo()
@@ -65,12 +65,12 @@ class Dataset(QObject):
         self._controller = controller
 
     @property
-    def tool_handler(self):
+    def plugins_handler(self):
         """
-        Returns the Tool Handler
+        Returns the Plugins Handler
         :return:
         """
-        return self._tool_handler
+        return self._plugins_handler
 
     @property
     def render_info(self):
@@ -175,11 +175,11 @@ class Dataset(QObject):
 
     def prepare_new_data(self):
         """
-        Calls the Tool Handler prepare_new_data function.
-        Informs Tools about new incoming Render data
+        Calls the Plugins Handler prepare_new_data function.
+        Informs Plugins about new incoming Render data
         :return:
         """
-        self._tool_handler.prepare_new_data()
+        self._plugins_handler.prepare_new_data()
 
     def serialize_render_info(self, stream):
         """

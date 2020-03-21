@@ -150,10 +150,6 @@ class Stream(object):
         data = self.read(SizeOf.CHAR.value)
         return struct.unpack(Format.CHAR.value, data)[0]
 
-    def read_schar(self):
-        data = self.read(SizeOf.UNSIGNED_CHAR.value)
-        return struct.unpack(Format.UNSIGNED_CHAR.value, data)[0]
-
     def read_uchar(self):
         data = self.read(SizeOf.UNSIGNED_CHAR.value)
         return struct.unpack(Format.UNSIGNED_CHAR.value, data)[0]

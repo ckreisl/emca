@@ -12,7 +12,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from View.RenderView.hdr_image import HDRImage
+from Core.hdr_image import HDRImage
 from PyQt5.QtWidgets import QGraphicsPixmapItem
 from PyQt5.QtWidgets import QGraphicsScene
 from PyQt5.QtWidgets import QGraphicsView
@@ -37,7 +37,7 @@ class SphericalGraphicsView(QGraphicsView):
         # important for mouse tracking and later pixel selection
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
 
-        self._hdri = None
+        self._hdri = HDRImage()
 
         self._scene = QGraphicsScene()
         self._parent = parent
@@ -70,10 +70,12 @@ class SphericalGraphicsView(QGraphicsView):
 
     def load_hdr_image(self, filepath, falsecolor=False):
         try:
+            """
             if self._hdri:
                 del self._hdri
                 self._hdri = None
-            self._hdri = HDRImage(filepath, falsecolor)
+            """
+            self._hdri.load_exr_from_bytestream(filepath, falsecolor)
         except Exception as e:
             logging.error(e)
             return False
@@ -138,7 +140,7 @@ class SphericalGraphicsView(QGraphicsView):
             if not self._highlights[name].get('ellipse') is None:
                 self._highlights[name]['ellipse'].hide()
         else:
-            theta = np.arccos(direction[2]);
+            theta = np.arccos(direction[2])
             phi = np.arctan2(direction[1], direction[0])
 
             self._highlights[name]['x'] = (np.pi-phi)/(2.0*np.pi)
@@ -168,7 +170,6 @@ class SphericalGraphicsView(QGraphicsView):
     def clear(self):
         self._scene.clear()
         self._pixmap_item = None
-        self._hdri = None
         for h_name in self._highlights.keys():
             if self._highlights[h_name].get('ellipse'):
                 self._highlights[h_name]['ellipse'] = None

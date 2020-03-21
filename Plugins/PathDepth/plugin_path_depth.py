@@ -12,18 +12,18 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from Tools.PathDepth.plot_2d_canvas import PlotPathDepth
-from Core.tool import Tool
+from Plugins.PathDepth.plot_2d_canvas import PlotPathDepth
+from Core.plugin import Plugin
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolBar
 
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.Qt import Qt
 
 
-class PathDepth(Tool):
+class PathDepth(Plugin):
 
     def __init__(self):
-        Tool.__init__(
+        Plugin.__init__(
             self,
             name='Path Depth',
             flag=28

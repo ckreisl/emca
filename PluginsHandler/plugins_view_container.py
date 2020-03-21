@@ -21,38 +21,38 @@ from PyQt5.QtCore import pyqtSlot
 import logging
 
 
-class ToolContainer(QWidget):
+class PluginsViewContainer(QWidget):
 
     """
-        ToolContainer
-        QtWidget that inserts the tool widget.
-        Represents a container with Request and Close button to request tool data or close the window
-        Besides holds the Tool button which is used to open the tool view.
+        PluginsViewContainer
+        QtWidget that inserts the plugin widget.
+        Represents a container with Request and Close button to request plugin data or close the window
+        Besides holds the Plugin button which is used to open the Plugin view.
     """
 
-    def __init__(self, tool):
+    def __init__(self, plugin):
         QWidget.__init__(self)
 
-        self.setWindowTitle("Tool {}".format(tool.name))
+        self.setWindowTitle("Plugin {}".format(plugin.name))
 
         self._controller = None
-        self._tool = tool
-        self._tool.send_select_path = self.send_select_path
-        self._tool.send_select_vertex = self.send_select_vertex
-        self._tool.send_update_path_indices = self.send_update_path_indices
-        self._btn = QPushButton(tool.name)
+        self._plugin = plugin
+        self._plugin.send_select_path = self.send_select_path
+        self._plugin.send_select_vertex = self.send_select_vertex
+        self._plugin.send_update_path_indices = self.send_update_path_indices
+        self._btn = QPushButton(plugin.name)
         self._btn.setEnabled(False)
-        self._btn.clicked.connect(self.display_tool)
+        self._btn.clicked.connect(self.display_plugin)
 
         self._btn_request = QPushButton("Request")
         self._btn_request.setEnabled(False)
-        self._btn_request.clicked.connect(self.request_tool)
+        self._btn_request.clicked.connect(self.request_plugin)
 
         self._btn_close = QPushButton("Close")
         self._btn_close.clicked.connect(self.close)
 
         layout = QVBoxLayout(self)
-        layout.addWidget(self._tool)
+        layout.addWidget(self._plugin)
 
         hline = QFrame()
         hline.setFrameShape(QFrame.HLine)
@@ -65,12 +65,12 @@ class ToolContainer(QWidget):
         layout.addLayout(btn_layout)
 
     @property
-    def tool(self):
+    def plugin(self):
         """
-        Returns the tool
+        Returns the Plugin
         :return:
         """
-        return self._tool
+        return self._plugin
 
     def send_update_path_indices(self, indices, add_item):
         """
@@ -102,45 +102,45 @@ class ToolContainer(QWidget):
 
     def select_path(self, index):
         """
-        Calls the tool select_path function
-        Informs the tool about the current selected path
+        Calls the Plugin select_path function
+        Informs the Plugin about the current selected path
         :param index: path_index
         :return:
         """
-        self._tool.select_path(index)
+        self._plugin.select_path(index)
 
     def select_vertex(self, tpl):
         """
-        Calls the tool select_vertex function.
-        Informs the tool about the current selected vertex
+        Calls the Plugin select_vertex function.
+        Informs the Plugin about the current selected vertex
         :param tpl: (path_index, vertex_index)
         :return:
         """
-        self._tool.select_vertex(tpl)
+        self._plugin.select_vertex(tpl)
         #automatically request new data for the selected vertex if the tool is visible
         if self.isVisible():
-            self._controller.request_tool(self._tool.flag)
+            self._controller.request_plugin(self._plugin.flag)
 
     def serialize(self, stream):
         """
-        Calls the tool serialize function.
-        Data from the tool will be send to the server.
+        Calls the Plugin serialize function.
+        Data from the Plugin will be send to the server.
         :param stream:
         :return:
         """
-        self._tool.serialize(stream)
+        self._plugin.serialize(stream)
 
-    def get_tool_btn(self):
+    def get_plugin_btn(self):
         """
-        Returns the Tool QButton
-        Used to visualize Tool button with name within view
+        Returns the Plugin QButton
+        Used to visualize Plugin button with name within view
         :return:
         """
         return self._btn
 
-    def enable_tool_btn(self, enable):
+    def enable_plugin_btn(self, enable):
         """
-        Enables or disables the Tool button
+        Enables or disables the Plugin button
         :param enable: true or false
         :return:
         """
@@ -157,50 +157,50 @@ class ToolContainer(QWidget):
 
     def init_render_data(self, render_data):
         """
-        Calls the Tool init_render_data function.
-        Render data will be set within tools,
+        Calls the Plugin init_render_data function.
+        Render data will be set within Plugins,
         to provide them with the current render data set from the selected pixel
         :param render_data:
         :return:
         """
-        self._tool.init_render_data(render_data)
+        self._plugin.init_render_data(render_data)
 
     def prepare_new_data(self):
         """
-        Calls the Tool prepare_new_data function.
+        Calls the Plugin prepare_new_data function.
         Is called if a new pixel is selected in order to gather new pixel information
         :return:
         """
-        self._tool.prepare_new_data()
+        self._plugin.prepare_new_data()
 
     def update_path_indices(self, indices):
         """
-        Calls the Tool update_path_indices function.
-        Informs the tool about all selected paths
+        Calls the Plugin update_path_indices function.
+        Informs the Plugin about all selected paths
         :param indices: np.array[(path_index),...]
         :return:
         """
-        self._tool.update_path_indices(indices)
+        self._plugin.update_path_indices(indices)
 
     def update_vertex_indices(self, tpl_list):
         """
-        Calls the Tool update_vertex_indices function.
-        Informs the tool about all selected vertices
+        Calls the Plugin update_vertex_indices function.
+        Informs the Plugin about all selected vertices
         :param tpl_list: [(path_index, vertex_index),...]
         :return:
         """
-        self._tool.update_vertex_indices(tpl_list)
+        self._plugin.update_vertex_indices(tpl_list)
 
     def update_view(self):
         """
-        Calls the Tool update_view function.
-        This function is called after the deserialize function of the tool is finished
+        Calls the Plugin update_view function.
+        This function is called after the deserialize function of the Plugin is finished
         :return:
         """
-        self._tool.update_view()
+        self._plugin.update_view()
 
-    @pyqtSlot(bool, name='request_tool')
-    def request_tool(self, clicked):
+    @pyqtSlot(bool, name='request_plugin')
+    def request_plugin(self, clicked):
         """
         Calls the controller request_tool function.
         If the Request button within the tool view is clicked,
@@ -208,10 +208,10 @@ class ToolContainer(QWidget):
         :param clicked:
         :return:
         """
-        self._controller.request_tool(self._tool.flag)
+        self._controller.request_plugin(self._plugin.flag)
 
     @pyqtSlot(bool, name='display_tool')
-    def display_tool(self, clicked):
+    def display_plugin(self, clicked):
         """
         Opens and displays the tool window,
         if the view is already opened but in not active in the background,
@@ -223,4 +223,4 @@ class ToolContainer(QWidget):
             self.activateWindow()
         else:
             self.show()
-            self._controller.request_tool(self._tool.flag)
+            self._controller.request_plugin(self._plugin.flag)

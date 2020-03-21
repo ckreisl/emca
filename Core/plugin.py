@@ -16,16 +16,16 @@ from PyQt5.QtWidgets import QWidget
 import abc
 
 
-class Tool(QWidget):
+class Plugin(QWidget):
     """
-    Tool interface, inherites from QWidget
+    Plugin interface, inherites from QWidget
 
-    The tool interface can be used to visualizes own generated data sets.
+    The plugin interface can be used to visualizes own generated data sets.
     It can request own data from the server interface or work on the current render data,
     to visualize other aspects which are not implemented yet.
 
-    New tools are loaded via Tools/__init__.py,
-    therefore import new tools there and add the class name to __all__ list.
+    New plugins are loaded via Plugins/__init__.py,
+    therefore import new plugins there and add the class name to __all__ list.
     """
 
     def __init__(self, name, flag):
@@ -36,7 +36,7 @@ class Tool(QWidget):
     @property
     def flag(self):
         """
-        Returns the unique identifier of the tool
+        Returns the unique identifier of the plugin
         :return: flag (unique identifier)
         """
         return self._flag
@@ -44,14 +44,14 @@ class Tool(QWidget):
     @property
     def name(self):
         """
-        Returns the name of the tool
-        :return: tool name
+        Returns the name of the plugin
+        :return: plugin name
         """
         return self._name
 
     def send_update_path_indices(self, indices, add_item):
         """
-        This function gets overwritten by the tool container,
+        This function gets overwritten by the plugin view container,
         which will connect this function with the controller
         :param indices: numpy array:
         :param add_item: bool, add values or not:
@@ -60,7 +60,7 @@ class Tool(QWidget):
 
     def send_select_path(self, index):
         """
-        This function gets overwritten by the tool container,
+        This function gets overwritten by the plugin view container,
         which will connect this function with the controller
         :param index:
         :return:
@@ -69,7 +69,7 @@ class Tool(QWidget):
 
     def send_select_vertex(self, tpl):
         """
-        This function gets overwritten by the tool container,
+        This function gets overwritten by the plugin view container,
         which will connect this function with the controller
         :param tpl:
         :return:
@@ -79,7 +79,7 @@ class Tool(QWidget):
     @abc.abstractmethod
     def init_render_data(self, render_data):
         """
-        Apply current pixel render data to tools
+        Apply current pixel render data to plugins
         :param render_data:
         :return:
         """

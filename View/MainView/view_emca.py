@@ -290,19 +290,19 @@ class ViewEMCA(QWidget):
             self.btnDetector.setEnabled(enabled)
             self.btnFilter.setEnabled(enabled)
 
-    def add_tools(self, tools):
+    def add_plugins(self, plugins):
         """
-        Adds the tools buttons to the view
-        :param tools: dict{tool_id : toolcontainer, ... }
+        Adds the plugin buttons to the view
+        :param plugins: dict{tool_id : PluginsViewContainer, ... }
         :return:
         """
         row = 0
         col = 0
-        for flag, tool in tools.items():
-            btn_tool = tool.get_tool_btn()
+        for flag, plugin in plugins.items():
+            btn_plugin = plugin.get_plugin_btn()
             if col > 5:
                 row = row + 1
-            self.layoutTools.addWidget(btn_tool, row, col)
+            self.layoutPlugins.addWidget(btn_plugin, row, col)
             col = col + 1
 
     def update_pixel_hist(self, pixel_info):

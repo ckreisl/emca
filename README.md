@@ -30,7 +30,7 @@ If you use this framework for a publication i would appreciate a citation (thoug
   * [Sample Contribution View](#sample_view)
   * [Scene View](#scene_view)
   * [Data View](#data_view)
-  * [Custom Tool Interface](#custom_tool_interface)
+  * [Custom Plugin Interface](#custom_plugin_interface)
   * [Video Demo](#demo_video)
 
 <a name="server_interface"></a>
@@ -92,8 +92,8 @@ The render data view shows all the collected data for each selected path and its
 Paths and their data are presented in a collapsible tree structure to the user to allow for comprehensible inspection and comparison of various paths and individual vertices.
 In combination with the scene view, light transport paths can be quickly analyzed by interactively stepping through the individual intersection points by simply selecting the vertices in the data view.
 
-<a name="custom_tool_interface"></a>
-### Custom Tool Interface
+<a name="custom_plugin_interface"></a>
+### Custom Plugin Interface
 New path tracing approaches might make use of arbitrary auxiliary data such as spherical radiance caches which might be too complex
 to be suitably displayed in the existing 2D and 3D vertex data plots or the textual render data view.
 To address the individual needs of novel path tracing algorithms,

@@ -12,7 +12,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from View.RenderView.hdr_image import HDRImage
+from Core.hdr_image import HDRImage
 from PyQt5.QtWidgets import QGraphicsPixmapItem
 from PyQt5.QtWidgets import QGraphicsScene
 from PyQt5.QtWidgets import QGraphicsView
@@ -39,7 +39,7 @@ class HDRGraphicsView(QGraphicsView):
         # important for mouse tracking and later pixel selection
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
 
-        self._hdri = None
+        self._hdri = HDRImage()
 
         self._scene = QGraphicsScene()
         self._parent = parent
@@ -187,12 +187,12 @@ class HDRGraphicsView(QGraphicsView):
             return b1 and b2
         return False
 
-    def display_image(self):
+    def display_image(self, pixmap):
         """
         Displays the image within the view
         :return:
         """
-        self._pixmap_item = QGraphicsPixmapItem(self._hdri.pixmap)
+        self._pixmap_item = QGraphicsPixmapItem(pixmap)
         self._pixmap_item.setFlag(QGraphicsPixmapItem.ItemIsMovable)
         self._scene.addItem(self._pixmap_item)
         self.fitInView(self._pixmap_item, Qt.KeepAspectRatio)
@@ -214,8 +214,8 @@ class HDRGraphicsView(QGraphicsView):
         """
         try:
             self._scene.clear()
-            self._hdri = HDRImage(filepath)
-            self.display_image()
+            self._hdri.load_exr_from_filepath(filepath)
+            self.display_image(self._hdri.pixmap)
             self._parent.enable_view(True)
             return True
         except Exception as e:

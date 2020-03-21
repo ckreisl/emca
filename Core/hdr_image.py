@@ -20,11 +20,9 @@ from PyQt5.QtGui import QPixmap
 import array
 import logging
 import os
-import time
 import numpy as np
 import matplotlib.pyplot as plt
-import io
-import threading
+
 
 class HDRImage(object):
 
@@ -33,28 +31,39 @@ class HDRImage(object):
         Class representing a HDR (exr) image
     """
 
-    def __init__(self, filepath=None, falsecolor=False):
-
-        if isinstance(filepath, io.BytesIO):
-            logging.info("Loading EXR from bytestream.")
-            self._filepath = filepath
-        else:
-            if filepath:
-                self._path, self._extension = os.path.splitext(filepath)
-
-            if self._path.endswith(".exr"):
-                self._filepath = self._path
-            else:
-                self._filepath = self._path + self._extension
-
-            logging.info("Filepath: {}".format(self._filepath))
-
+    def __init__(self):
+        self._filepath = None
+        self._extension = None
         self._exr = None
         self._pixmap = None
         self._exposure = 0.0
-        self._falsecolor = falsecolor
+        self._falsecolor = False
 
-        self.load_exr(self._filepath)
+    def load_exr_from_bytestream(self, bytestream, falsecolor=False):
+        logging.info("Loading EXR from bytestream.")
+        if self._pixmap:
+            del self._pixmap
+            self._pixmap = None
+        self._filepath = bytestream
+        self._falsecolor = falsecolor
+        self.load_exr(bytestream)
+
+    def load_exr_from_filepath(self, filepath, falsecolor=False):
+        logging.info("Loading EXR from filepath")
+        if self._pixmap:
+            del self._pixmap
+            self._pixmap = None
+        self._filepath = filepath
+        self._falsecolor = falsecolor
+        self.load_exr(filepath)
+
+    def load_exr(self, filepath):
+        """
+        Loads an exr file with OpenEXR
+        :param filepath: string or bytestream
+        :return:
+        """
+        self._exr = OpenEXR.InputFile(filepath)
 
     @property
     def exr_image(self):
@@ -114,17 +123,9 @@ class HDRImage(object):
             self._pixmap = None
         self._falsecolor = falsecolor
 
-    def load_exr(self, filepath):
-        """
-        Loads an exr file with OpenEXR
-        :param filepath: string
-        :return:
-        """
-        self._exr = OpenEXR.InputFile(filepath)
-
     def apply_exposure(self, r, g, b):
         if self._exposure == 0.0:
-            return (r, g, b)
+            return r, g, b
 
         factor = np.power(2.0, self._exposure)
 
@@ -132,7 +133,7 @@ class HDRImage(object):
         g_exp = g*factor
         b_exp = b*factor
 
-        return (r_exp, g_exp, b_exp)
+        return r_exp, g_exp, b_exp
 
     def create_pixmap_srgb(self, r_exp, g_exp, b_exp):
         """

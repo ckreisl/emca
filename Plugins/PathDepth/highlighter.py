@@ -34,7 +34,7 @@ class Highlighter(object):
         self.x = np.array([])
         self.s1 = np.array([])
         self.mask = np.array([], dtype=bool)
-        self._highlights = None
+        self._highlights = []
 
     def init_dataset(self, x, s1):
         self.x = x

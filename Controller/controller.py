@@ -50,12 +50,12 @@ class Controller(QObject):
 
         # set connection between model and controller
         self._model.set_controller(self)
-        self._model.tool_handler.set_controller(self)
+        self._model.plugins_handler.set_controller(self)
         self._model.sendStateMsgSig.connect(self.handle_state_msg)
 
-        # set tool btn
-        tools = self._model.tool_handler.tools
-        self._view.view_emca.add_tools(tools)
+        # set plugin btn
+        plugins = self._model.plugins_handler.plugins
+        self._view.view_emca.add_plugins(plugins)
 
         # controller keeps track of current selected path indices
         self._indices = np.array([], dtype=np.int32)
@@ -92,12 +92,12 @@ class Controller(QObject):
             self._sstream_backend.request_render_info()
             self._view.view_emca.enable_view(True)
             self._view.view_render_scene.enable_view(True)
-            self._model.tool_handler.enable_tools(True)
+            self._model.plugins_handler.enable_plugins(True)
         elif msg is StateMsg.DISCONNECT:
             self._view.view_emca.enable_view(False)
             self._view.view_render_image.enable_view(False)
             self._view.view_render_scene.enable_view(False)
-            self._model.tool_handler.enable_tools(False)
+            self._model.plugins_handler.enable_plugins(False)
             self._stream.disconnect()
             self._sstream_backend = None
             self._stream = None
@@ -112,8 +112,7 @@ class Controller(QObject):
             self._view.view_render_scene.load_mesh(tpl[1])
         elif msg is StateMsg.DATA_IMAGE:
             self._view.view_render_image.load_hdr_image(
-                self._model.render_info.filepath()
-            )
+                self._model.render_info.filepath())
         elif msg is StateMsg.DATA_RENDER:
             if not tpl[1].valid_sample_count():
                 self._view.view_popup.error_no_sample_idx_set("")
@@ -137,7 +136,7 @@ class Controller(QObject):
             self._view.view_render_data.init_data(tpl[1])
             self._view.view_filter.init_data(tpl[1])
             self._view.enable_filter(True)
-            self._model.tool_handler.init_data(tpl[1])
+            self._model.plugins_handler.init_data(tpl[1])
 
             for thread in threads:
                 thread.join()
@@ -177,7 +176,7 @@ class Controller(QObject):
 
             self._view.view_emca.enable_view(True, ViewMode.XML)
             self._view.view_render_scene.enable_view(True, ViewMode.XML)
-            self._model.tool_handler.enable_tools(True)
+            self._model.plugins_handler.enable_plugins(True)
 
             threading.Thread(
                 target=self._view.view_render_scene.load_scene,
@@ -201,7 +200,7 @@ class Controller(QObject):
 
             self._view.view_emca.update_pixel_hist(self._model.pixel_info)
             self._view.view_render_data.init_data(self._model.render_data)
-            self._model.tool_handler.init_data(self._model.render_data)
+            self._model.plugins_handler.init_data(self._model.render_data)
             self._view.view_filter.init_data(self._model.render_data)
 
             for thread in threads:
@@ -214,10 +213,10 @@ class Controller(QObject):
         elif msg is StateMsg.QUIT:
             self._sstream_backend.wait()
             self._stream.disconnect()
-        elif msg is StateMsg.UPDATE_TOOL:
-            tool = self._model.tool_handler.get_tool_by_flag(tpl[1])
-            if tool:
-                tool.update_view()
+        elif msg is StateMsg.UPDATE_PLUGIN:
+            plugin = self._model.plugins_handler.get_plugin_by_flag(tpl[1])
+            if plugin:
+                plugin.update_view()
 
     @pyqtSlot(bool, name='handle_disconnect')
     def handle_disconnect(self, disconnected):
@@ -343,16 +342,16 @@ class Controller(QObject):
         self._view.view_emca.update_pixel_hist(pixel_info)
         self._sstream_backend.request_render_data(pixel, sample_count)
 
-    def request_tool(self, flag):
+    def request_plugin(self, flag):
         """
-        Handles btn (request) interaction from tool window,
-        Gets the corresponding tool and sends tool id request to server
-        :param flag: tool_id
+        Handles btn (request) interaction from plugin window,
+        Gets the corresponding plugin and sends plugin id request to server
+        :param flag: plugin_id
         :return:
         """
         if self._stream:
-            tool_handler = self._model.tool_handler
-            tool_handler.request_tool(flag, self._stream)
+            plugins_handler = self._model.plugins_handler
+            plugins_handler.request_plugin(flag, self._stream)
 
     def send_render_info(self):
         """
@@ -414,8 +413,8 @@ class Controller(QObject):
         # update render data view
         self._view.view_render_data.display_traced_path_data(self._indices)
 
-        # update all tools
-        self._model.tool_handler.update_path_indices(self._indices)
+        # update all plugins
+        self._model.plugins_handler.update_path_indices(self._indices)
 
         # select first path
         if np.size(self._indices) == 1:
@@ -429,17 +428,12 @@ class Controller(QObject):
         """
         # this index must be an element of indices
         self._view.view_render_scene.select_path(index)
-        #threading.Thread(target=self._view.view_render_scene.select_path,
-        #                 args=(index,)).start()
-
         # select path in render data view
         self._view.view_render_data.select_path(index)
-
-        # send path index, update tools
-        self._model.tool_handler.select_path(index)
+        # send path index, update plugins
+        self._model.plugins_handler.select_path(index)
 
     def select_vertex(self, tpl):
-        logging.info("Tuple: {}".format(tpl))
         """
         Send vertex index update to all views
         :param tpl: (path_index, vertex_index)
@@ -449,14 +443,10 @@ class Controller(QObject):
 
         # select vertex in 3D scene
         self._view.view_render_scene.select_vertex(tpl)
-        #threading.Thread(target=self._view.view_render_scene.select_vertex,
-        #                 args=(tpl,)).start()
-
         # select vertex in render data view
         self._view.view_render_data.select_vertex(tpl)
-
-        # send vertex index, update tools
-        self._model.tool_handler.select_vertex(tpl)
+        # send vertex index, update plugins
+        self._model.plugins_handler.select_vertex(tpl)
 
     def display_view(self):
         """
@@ -472,7 +462,7 @@ class Controller(QObject):
         :return:
         """
         # close all views
-        self._model.tool_handler.close()
+        self._model.plugins_handler.close()
         self._view.view_render_info.close()
         self._view.view_detector.close()
         self._view.view_connect.close()

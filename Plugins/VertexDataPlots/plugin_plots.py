@@ -12,7 +12,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from Core.tool import Tool
+from Core.plugin import Plugin
 
 from PyQt5 import uic
 from PyQt5.QtWidgets import QVBoxLayout
@@ -21,10 +21,10 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolBar
 
-from Tools.VertexDataPlots.hist_list_item import HistListItem
-from Tools.VertexDataPlots.plot_2d_canvas import Plot2DCanvas
-from Tools.VertexDataPlots.plot_3d_canvas import Plot3DCanvas
-from Tools.VertexDataPlots.plot_color_canvas import PlotColorCanvas
+from Plugins.VertexDataPlots.hist_list_item import HistListItem
+from Plugins.VertexDataPlots.plot_2d_canvas import Plot2DCanvas
+from Plugins.VertexDataPlots.plot_3d_canvas import Plot3DCanvas
+from Plugins.VertexDataPlots.plot_color_canvas import PlotColorCanvas
 import logging
 
 
@@ -39,15 +39,15 @@ class PathListItem(QListWidgetItem):
         return self._idx
 
 
-class VertexDataPlots(Tool):
+class VertexDataPlots(Plugin):
 
     def __init__(self):
-        Tool.__init__(
+        Plugin.__init__(
             self,
             name='Vertex Data Plots',
             flag=27
         )
-        uic.loadUi('Tools/VertexDataPlots/ui/tool_plots.ui', self)
+        uic.loadUi('Plugins/VertexDataPlots/ui/plugin_plots.ui', self)
 
         self._hist2D_canvas = Plot2DCanvas(self)
         self._hist3D_canvas = Plot3DCanvas(self)

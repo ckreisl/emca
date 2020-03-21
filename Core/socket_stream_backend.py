@@ -32,12 +32,10 @@ class SocketStreamBackend(QThread):
 
     def __init__(self, stream, controller, model, parent=None):
         QThread.__init__(self, parent=parent)
-
         # socket stream reference
         self._stream = stream
         # holds a reference to the model to deserialize incoming data
         self._model = model
-
         # connection to the controller
         self._sendStateMsgSig.connect(controller.handle_state_msg)
 
@@ -130,15 +128,15 @@ class SocketStreamBackend(QThread):
                 logging.error(e)
                 break
 
-            # check if message is a tool
-            tool = self._model.tool_handler.get_tool_by_flag(msg)
+            # check if message is a plugin
+            plugin = self._model.plugins_handler.get_plugin_by_flag(msg)
             state = ServerMsg.get_server_msg(msg)
 
-            logging.info('msg={} is state={} or tool={}'.format(msg, state, tool))
+            logging.info('msg={} is state={} or plugin={}'.format(msg, state, plugin))
 
-            if tool:
-                tool.deserialize(stream=self._stream)
-                self._sendStateMsgSig.emit((StateMsg.UPDATE_TOOL, tool.flag))
+            if plugin:
+                plugin.deserialize(stream=self._stream)
+                self._sendStateMsgSig.emit((StateMsg.UPDATE_PLUGIN, plugin.flag))
             elif state is ServerMsg.EMCA_HEADER_RENDER_INFO:
                 self._model.deserialize_render_info(stream=self._stream)
             elif state is ServerMsg.EMCA_HEADER_CAMERA:

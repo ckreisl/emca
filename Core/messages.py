@@ -35,7 +35,7 @@ class StateMsg(Enum):
     DATA_DETECTOR       = 11
     XML_LOADED          = 12
     QUIT                = 13
-    UPDATE_TOOL         = 14
+    UPDATE_PLUGIN       = 14
 
 
 class ServerMsg(Enum):

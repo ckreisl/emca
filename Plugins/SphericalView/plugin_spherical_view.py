@@ -12,23 +12,23 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from Core.tool import Tool
-from Tools.SphericalView.view_spherical_view_image import ViewSphericalViewImage
+from Core.plugin import Plugin
+from Plugins.SphericalView.view_spherical_view_image import ViewSphericalViewImage
 from Types.point2 import Point2i
 from PyQt5 import uic
 import logging
 import io
 
 
-class SphericalView(Tool):
+class SphericalView(Plugin):
 
     def __init__(self):
-        Tool.__init__(
+        Plugin.__init__(
             self,
             "SphericalView",
             66
         )
-        uic.loadUi('Tools/SphericalView/ui/spherical_view.ui', self)
+        uic.loadUi('Plugins/SphericalView/ui/spherical_view.ui', self)
 
         self._path = None
         self._render_data = None

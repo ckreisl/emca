@@ -12,7 +12,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from Tools.SphericalView.spherical_graphics_view import SphericalGraphicsView
+from Plugins.SphericalView.spherical_graphics_view import SphericalGraphicsView
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSlot
@@ -28,7 +28,7 @@ class ViewSphericalViewImage(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=parent)
-        uic.loadUi('Tools/SphericalView/ui/spherical_view_image.ui', self)
+        uic.loadUi('Plugins/SphericalView/ui/spherical_view_image.ui', self)
 
         self._pos = None
         self._dirW_i = None
