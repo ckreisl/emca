@@ -67,10 +67,8 @@ class ViewSphericalViewImage(QWidget):
     def exposure_slider(self, value):
         self.exposure = float(value)/100.0
 
-    def load_hdr_image(self, filepath, falsecolor=False, bytestream=False):
-        return self._graphics_view.load_hdr_image(filepath,
-                                                  falsecolor=self._falsecolor,
-                                                  bytestream=bytestream)
+    def load_hdr_image(self, filepath, falsecolor=False):
+        return self._graphics_view.load_hdr_image(filepath, falsecolor=self._falsecolor)
 
     def set_highlight(self, name, direction=None, color=None):
         self._graphics_view.set_highlight(name, direction, color)

@@ -17,11 +17,17 @@ import Imath
 from PIL import Image
 from PIL.ImageQt import ImageQt as PilImageQt
 from PyQt5.QtGui import QPixmap
+from enum import Enum
 import array
-import logging
-import os
 import numpy as np
 import matplotlib.pyplot as plt
+import logging
+
+
+class SaveType(Enum):
+    EXR     = 0
+    PNG     = 1
+    JPEG    = 2
 
 
 class HDRImage(object):
@@ -39,31 +45,28 @@ class HDRImage(object):
         self._exposure = 0.0
         self._falsecolor = False
 
-    def load_exr_from_bytestream(self, bytestream, falsecolor=False):
-        logging.info("Loading EXR from bytestream.")
-        if self._pixmap:
-            del self._pixmap
-            self._pixmap = None
-        self._filepath = bytestream
-        self._falsecolor = falsecolor
-        self.load_exr(bytestream)
-
-    def load_exr_from_filepath(self, filepath, falsecolor=False):
-        logging.info("Loading EXR from filepath")
-        if self._pixmap:
-            del self._pixmap
-            self._pixmap = None
-        self._filepath = filepath
-        self._falsecolor = falsecolor
-        self.load_exr(filepath)
-
-    def load_exr(self, filepath):
+    def load_exr(self, filepath_or_bytestream, falsecolor=False):
         """
         Loads an exr file with OpenEXR
-        :param filepath: string or bytestream
+        :param filepath_or_bytestream: string or bytestream
+        :param falsecolor: boolean
         :return:
         """
-        self._exr = OpenEXR.InputFile(filepath)
+        logging.info("Loading EXR ...")
+        try:
+            if self._pixmap:
+                del self._pixmap
+                self._pixmap = None
+            if self._exr:
+                del self._exr
+                self._exr = None
+            self._filepath = filepath_or_bytestream
+            self._falsecolor = falsecolor
+            self._exr = OpenEXR.InputFile(filepath_or_bytestream)
+            return True
+        except Exception as e:
+            logging.error(e)
+            return False
 
     @property
     def exr_image(self):
@@ -176,29 +179,55 @@ class HDRImage(object):
         q_img = PilImageQt(Image.fromarray(srgb, 'RGB'))
         return QPixmap.fromImage(q_img).copy()
 
-    def save(self, filename):
+    def save_as_exr(self, filename):
         """
         Saves the current exr image under the given filename
         (wrong gamma?! currently problems in saving exr images)
         :param filename: string
         :return:
         """
-        dw = self._exr.header()['dataWindow']
-        size = (dw.max.x - dw.min.x + 1, dw.max.y - dw.min.y + 1)
+        try:
+            dw = self._exr.header()['dataWindow']
+            size = (dw.max.x - dw.min.x + 1, dw.max.y - dw.min.y + 1)
 
-        # Read the three color channels as 32-bit floats
-        FLOAT = Imath.PixelType(Imath.PixelType.FLOAT)
-        (R, G, B) = [array.array('f', self._exr.channel(Chan, FLOAT)).tolist() for Chan in ("R", "G", "B")]
+            # Read the three color channels as 32-bit floats
+            FLOAT = Imath.PixelType(Imath.PixelType.FLOAT)
+            (R, G, B) = [array.array('f', self._exr.channel(Chan, FLOAT)).tolist() for Chan in ("R", "G", "B")]
 
-        """
-        # Normalize so that brightest sample is 1
-        brightest = max(R + G + B)
-        R = [i / brightest for i in R]
-        G = [i / brightest for i in G]
-        B = [i / brightest for i in B]
-        """
+            """
+            # Normalize so that brightest sample is 1
+            brightest = max(R + G + B)
+            R = [i / brightest for i in R]
+            G = [i / brightest for i in G]
+            B = [i / brightest for i in B]
+            """
 
-        (Rs, Gs, Bs) = [array.array('f', Chan).tostring() for Chan in (R, G, B)]
+            (Rs, Gs, Bs) = [array.array('f', Chan).tostring() for Chan in (R, G, B)]
 
-        out = OpenEXR.OutputFile(filename, OpenEXR.Header(size[0], size[1]))
-        out.writePixels({'R': Rs, 'G': Gs, 'B': Gs})
+            out = OpenEXR.OutputFile(filename, OpenEXR.Header(size[0], size[1]))
+            out.writePixels({'R': Rs, 'G': Gs, 'B': Gs})
+            return True
+        except Exception as e:
+            logging.error(e)
+            return False
+
+    def save_as_png(self, filename):
+        if self._exr is None:
+            return False
+        return self.pixmap.save(filename, "png")
+
+    def save_as_jpeg(self, filename):
+        if self._exr is None:
+            return False
+        return self.pixmap.save(filename, "jpeg")
+
+    def save(self, filename, save_type=SaveType.EXR):
+        if save_type is SaveType.EXR:
+            return self.save_as_exr(filename)
+        elif save_type is SaveType.PNG:
+            return self.save_as_png(filename)
+        elif save_type is SaveType.JPEG:
+            return self.save_as_jpeg(filename)
+        else:
+            logging.info("Wrong SaveType: {}. Image will be saved as EXR".format(save_type))
+            return self.save_as_exr(filename)

@@ -171,25 +171,17 @@ class HDRGraphicsViewBase(QGraphicsView):
         items_list = self._scene.items()
         items_list[0].setPixmap(pixmap)
 
-    def load_hdr_image(self, filepath, falsecolor=False, bytestream=False):
+    def load_hdr_image(self, filepath, falsecolor=False):
         """
         Loads a hdr (exr) image from a given filepath or bytestream
         Returns true if the image was successfully loaded
         :param filepath: string
         :param falsecolor: boolean
-        :param bytestream: boolean
         :return:
         """
-        try:
-            if bytestream:
-                self._hdri.load_exr_from_bytestream(filepath, falsecolor)
-            else:
-                self._hdri.load_exr_from_filepath(filepath, falsecolor)
-            self.display_image(self._hdri.pixmap)
-            return True
-        except Exception as e:
-            logging.error(e)
-            return False
+        success = self._hdri.load_exr(filepath, falsecolor)
+        self.display_image(self._hdri.pixmap)
+        return success
 
     def update_exposure(self, value):
         """

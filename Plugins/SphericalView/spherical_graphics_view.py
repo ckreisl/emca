@@ -32,7 +32,7 @@ class SphericalGraphicsView(HDRGraphicsViewBase):
         self._highlights = {}
 
     def update_highlights(self):
-        if self._pixmap_item is None:
+        if self.pixmap_item is None:
             return
 
         for h_name in self._highlights.keys():
@@ -81,13 +81,17 @@ class SphericalGraphicsView(HDRGraphicsViewBase):
         logging.info('filepath: {}'.format(filepath))
 
         if filepath and self.pixmap:
-            if filepath.endswith('.jpg'):
-                self.pixmap.save(filepath, "jpg")
-            if filepath.endswith('.png'):
-                self.pixmap.save(filepath, "png")
+            success = False
+            if filepath.endswith('.jpg') or filepath.endswith('.jpeg'):
+                success = self.pixmap.save(filepath, 'jpeg')
+            elif filepath.endswith('.png'):
+                success = self.pixmap.save(filepath, 'png')
             elif filepath.endswith('.exr'):
-                if self._hdri:
-                    self._hdri.save(filepath)
+                success = self.hdr_image.save(filepath)
+            if success:
+                logging.info("Image saved SUCCESSFULLY")
+            else:
+                logging.error("ERROR in saving image")
 
     def clear(self):
         super().clear()
