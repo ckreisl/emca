@@ -87,8 +87,17 @@ class SphericalView(Plugin):
             self._path = None
 
     def update_view(self):
-        if self._spherical_view.load_hdr_image(self._path):
-            self._spherical_view.enable_buttons(True)
+        if self._path is None:
+            logging.error("Path is None")
+            return
+        if isinstance(self._path, io.BytesIO):
+            success = self._spherical_view.load_hdr_image(self._path, bytestream=True)
+        else:
+            success = self._spherical_view.load_hdr_image(self._path, bytestream=False)
+        if success:
+            if not self._spherical_view.is_btn_enabled:
+                self._spherical_view.enable_buttons(True)
+            self._spherical_view.update_hightlights()
 
     def init_render_data(self, render_data):
         self._render_data = render_data

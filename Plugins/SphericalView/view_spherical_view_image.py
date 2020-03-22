@@ -38,6 +38,7 @@ class ViewSphericalViewImage(QWidget):
         self._exposure = 0.0
 
         self._controller = None
+        self._is_btn_enabled = False
         # HDR graphics view handles .exr images
         self._graphics_view = SphericalGraphicsView(self)
 
@@ -66,11 +67,20 @@ class ViewSphericalViewImage(QWidget):
     def exposure_slider(self, value):
         self.exposure = float(value)/100.0
 
-    def load_hdr_image(self, filename_or_bytestream):
-        return self._graphics_view.load_hdr_image(filename_or_bytestream, self._falsecolor)
+    def load_hdr_image(self, filepath, falsecolor=False, bytestream=False):
+        return self._graphics_view.load_hdr_image(filepath,
+                                                  falsecolor=self._falsecolor,
+                                                  bytestream=bytestream)
 
     def set_highlight(self, name, direction=None, color=None):
         self._graphics_view.set_highlight(name, direction, color)
+
+    def update_hightlights(self):
+        self._graphics_view.update_highlights()
+
+    @property
+    def is_btn_enabled(self):
+        return self._is_btn_enabled
 
     @property
     def pos(self):
@@ -151,9 +161,9 @@ class ViewSphericalViewImage(QWidget):
         self.dirW_i = None
         self.dirW_o = None
         self.dirW_o_is_envmap = False
-        self.enable_buttons(False)
 
     def enable_buttons(self, enable):
+        self._is_btn_enabled = enable
         self.btnSave.setEnabled(enable)
         self.btnReset.setEnabled(enable)
 

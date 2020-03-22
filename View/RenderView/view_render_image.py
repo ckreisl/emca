@@ -129,7 +129,7 @@ class ViewRenderImage(QWidget):
         :param filepath: string
         :return:
         """
-        self._graphics_view.load_hdr_image(filepath)
+        return self._graphics_view.load_hdr_image(filepath)
 
     @pyqtSlot(bool, name='reset')
     def reset(self, clicked):

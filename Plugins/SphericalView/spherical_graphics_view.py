@@ -12,10 +12,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from Core.hdr_image import HDRImage
-from PyQt5.QtWidgets import QGraphicsPixmapItem
-from PyQt5.QtWidgets import QGraphicsScene
-from PyQt5.QtWidgets import QGraphicsView
+from Core.hdr_graphics_view_base import HDRGraphicsViewBase
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QBrush
 from PyQt5.QtGui import QColor
@@ -27,89 +24,19 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-class SphericalGraphicsView(QGraphicsView):
+class SphericalGraphicsView(HDRGraphicsViewBase):
 
     def __init__(self, parent):
-        QGraphicsView.__init__(self)
-
-        # keep track of mouse moving within area
-        self.setMouseTracking(True)
-        # important for mouse tracking and later pixel selection
-        self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
-
-        self._hdri = HDRImage()
-
-        self._scene = QGraphicsScene()
+        HDRGraphicsViewBase.__init__(self)
         self._parent = parent
-        self._scale_factor = 1.15
-        # self._pixmap_item = QGraphicsPixmapItem()
-        self._pixmap_item = None
         self._highlights = {}
-
-        self.setScene(self._scene)
-
-    @property
-    def pixmap(self):
-        if self._hdri:
-            return self._hdri.pixmap
-        return None
-
-    def wheelEvent(self, q_wheel_event):
-        angle_delta = q_wheel_event.angleDelta()
-        old_pos = self.mapToScene(q_wheel_event.pos())
-        if angle_delta.y() > 0:
-            self.scale(self._scale_factor,
-                       self._scale_factor)
-        else:
-            self.scale(1 / self._scale_factor,
-                       1 / self._scale_factor)
-        new_pos = self.mapToScene(q_wheel_event.pos())
-        delta = new_pos - old_pos
-        self.translate(delta.x(), delta.y())
-        q_wheel_event.accept()
-
-    def load_hdr_image(self, filepath, falsecolor=False):
-        try:
-            """
-            if self._hdri:
-                del self._hdri
-                self._hdri = None
-            """
-            self._hdri.load_exr_from_bytestream(filepath, falsecolor)
-        except Exception as e:
-            logging.error(e)
-            return False
-
-        self.display_image(self._hdri.pixmap)
-        return True
-
-    def display_image(self, pixmap):
-        if len(self._scene.items()) > 0 and self._pixmap_item:
-            self._pixmap_item.setPixmap(pixmap)
-        else:
-            item = self._scene.addPixmap(pixmap)
-            item.setFlag(QGraphicsPixmapItem.ItemIsMovable)
-            self.fitInView(item, Qt.KeepAspectRatio)
-            self._pixmap_item = item
-
-        self.update_highlights()
-
-    def set_falsecolor(self, falsecolor):
-        if self._hdri:
-            self._hdri.falsecolor = falsecolor
-            self.display_image(self._hdri.pixmap)
-
-    def update_exposure(self, exposure):
-        if self._hdri:
-            self._hdri.exposure = exposure
-            self.display_image(self._hdri.pixmap)
 
     def update_highlights(self):
         if self._pixmap_item is None:
             return
 
         for h_name in self._highlights.keys():
-            #TODO: assign colors deterministically, based on name
+            # TODO: assign colors deterministically, based on name
             if self._highlights[h_name].get('color') is None:
                 cmap = plt.get_cmap('Accent')
                 color = cmap(np.random.rand())
@@ -123,14 +50,13 @@ class SphericalGraphicsView(QGraphicsView):
             if self._highlights[h_name].get('x') and self._highlights[h_name].get('y'):
                 self._highlights[h_name]['ellipse'].setPos(QPoint(self._highlights[h_name]['x']*self.pixmap.width()-2.5, self._highlights[h_name]['y']*self.pixmap.height()-2.5))
                 self._highlights[h_name]['ellipse'].show()
-
             else:
                 self._highlights[h_name]['ellipse'].hide()
 
     def set_highlight(self, name, direction=None, color=None):
         if self._highlights.get(name) is None:
             self._highlights[name] = {}
-        if not color is None:
+        if color is not None:
             self._highlights[name]['color'] = QColor(color[0], color[1], color[2])
             if not self._highlights[name].get('ellipse') is None:
                 self._highlights[name]['ellipse'].setPen(self._highlights[name]['color'])
@@ -163,13 +89,8 @@ class SphericalGraphicsView(QGraphicsView):
                 if self._hdri:
                     self._hdri.save(filepath)
 
-    def reset(self):
-        self.fitInView(self._pixmap_item, Qt.KeepAspectRatio)
-        self._scene.setSceneRect(self._scene.itemsBoundingRect())
-
     def clear(self):
-        self._scene.clear()
-        self._pixmap_item = None
+        super().clear()
         for h_name in self._highlights.keys():
             if self._highlights[h_name].get('ellipse'):
                 self._highlights[h_name]['ellipse'] = None

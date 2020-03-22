@@ -111,8 +111,9 @@ class Controller(QObject):
         elif msg is StateMsg.DATA_MESH:
             self._view.view_render_scene.load_mesh(tpl[1])
         elif msg is StateMsg.DATA_IMAGE:
-            self._view.view_render_image.load_hdr_image(
-                self._model.render_info.filepath())
+            if self._view.view_render_image.load_hdr_image(
+                    self._model.render_info.filepath()):
+                self._view.view_render_image.enable_view(True)
         elif msg is StateMsg.DATA_RENDER:
             if not tpl[1].valid_sample_count():
                 self._view.view_popup.error_no_sample_idx_set("")
@@ -171,7 +172,8 @@ class Controller(QObject):
             filepath = self._model.render_info.output_filepath
             if not filepath.endswith(".exr"):
                 filepath = filepath + ".exr"
-            self._view.view_render_image.load_hdr_image(filepath)
+            if self._view.view_render_image.load_hdr_image(filepath):
+                self._view.view_render_image.enable_view(True)
             self._view.view_render_info.update_render_info(self._model.render_info)
 
             self._view.view_emca.enable_view(True, ViewMode.XML)
@@ -265,8 +267,8 @@ class Controller(QObject):
         dialog.setDefaultSuffix('.exr')
 
         if dialog.exec() == QFileDialog.Accepted:
-            self._view.view_render_image.load_hdr_image(
-                dialog.selectedFiles()[0])
+            if self._view.view_render_image.load_hdr_image(dialog.selectedFiles()[0]):
+                self._view.view_render_image.enable_view(True)
 
     def load_xml(self, clicked):
         """
