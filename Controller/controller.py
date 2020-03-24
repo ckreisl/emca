@@ -137,6 +137,7 @@ class Controller(QObject):
             self._view.view_render_data.init_data(tpl[1])
             self._view.view_filter.init_data(tpl[1])
             self._view.enable_filter(True)
+            self._view.view_render_data.enable_view(True)
             self._model.plugins_handler.init_data(tpl[1])
 
             for thread in threads:
@@ -147,12 +148,8 @@ class Controller(QObject):
         elif msg is StateMsg.DATA_SCATTER_PLOT:
             t1 = threading.Thread(
                 target=self._view.view_plot.plot_final_estimate,
-                args=(tpl[1],)
-            )
-
+                args=(tpl[1],))
             t1.start()
-            t1.join()
-
             # check if detector is enabled and run outlier detection
             detector = self._model.detector
             if detector.is_active:
@@ -162,6 +159,7 @@ class Controller(QObject):
                 render_data = self._model.render_data
                 xs = self._model.filter.apply_filters(render_data)
                 self.update_path(xs, False)
+            t1.join()
         elif msg is StateMsg.XML_LOADED:
             self.prepare_new_data()
             logging.info("xml file loaded")
@@ -248,12 +246,13 @@ class Controller(QObject):
             # server is not running
             self._view.view_popup.server_error(str(e))
             logging.error(e)
-            return None
+            return False
 
         self._sstream_backend = SocketStreamBackend(stream=self._stream,
                                                     model=self._model,
                                                     controller=self)
         self._sstream_backend.start()
+        return True
 
     def load_image_dialog(self, triggered):
         """

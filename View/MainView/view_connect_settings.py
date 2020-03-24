@@ -79,6 +79,6 @@ class ViewConnectSettings(QWidget):
             logging.error(e)
             return None
 
-        self._controller.handle_connect(self._hostname, self._port)
-        self.close()
+        if self._controller.handle_connect(self._hostname, self._port):
+            self.close()
 

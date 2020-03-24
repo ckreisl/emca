@@ -55,6 +55,11 @@ class ViewRenderData(QWidget):
 
         self._handling_selection_signal = False
 
+    def enable_view(self, enabled):
+        self.btnShowAll.setEnabled(enabled)
+        self.btnInspect.setEnabled(enabled)
+        self.cbExpand.setEnabled(enabled)
+
     def add_selected_index(self, index):
         """
         Adss the index to the selected indices list

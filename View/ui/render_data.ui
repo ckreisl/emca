@@ -78,6 +78,9 @@
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="btnShowAll">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Show all</string>
        </property>
@@ -85,6 +88,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnInspect">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="toolTip">
         <string>Inspect current selected path</string>
        </property>
@@ -95,6 +101,9 @@
      </item>
      <item>
       <widget class="QCheckBox" name="cbExpand">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Expand All Items</string>
        </property>
