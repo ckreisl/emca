@@ -143,6 +143,9 @@ class HDRGraphicsViewBase(QGraphicsView):
         :param pixel: QPoint
         :return: boolean
         """
+        if not self._hdri.is_pixmap_set():
+            return False
+
         if self._hdri:
             pixmap = self._hdri.pixmap
             b1 = pixel.x() >= 0 and pixel.y() >= 0

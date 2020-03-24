@@ -68,6 +68,9 @@ class HDRImage(object):
             logging.error(e)
             return False
 
+    def is_pixmap_set(self):
+        return self._pixmap is not None
+
     @property
     def exr_image(self):
         """
