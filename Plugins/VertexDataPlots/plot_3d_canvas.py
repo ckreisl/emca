@@ -30,6 +30,16 @@ class Plot3DCanvas(FigureCanvas):
         FigureCanvas.updateGeometry(self)
 
         self._ax1 = Axes3D(self._fig)
+        # RGBA dark theme
+        self._RGBA = '#31363b'
+        self._fig.patch.set_facecolor(self._RGBA)
+
+        # plot facecolor dark theme
+        plot_facecolor = '#232629'
+        self._ax1.set_facecolor(plot_facecolor)
+
+        self._alpha = 0.7
+
         # self._ax1_highlight, = self._ax1.plot([], [], 'o', color='yellow')
 
         # self._fig.tight_layout()
@@ -63,7 +73,7 @@ class Plot3DCanvas(FigureCanvas):
             y_list.append(tpl[0])
             z_list.append(tpl[1])
 
-        self._ax1.plot(x_list, y_list, z_list, 'o', picker=5)
+        self._ax1.plot(x_list, y_list, z_list, 'wo', picker=5, alpha=self._alpha)
         self._ax1.set_title(name)
         self._ax1.set_xlabel('path depth')
         self._ax1.set_ylabel('x')

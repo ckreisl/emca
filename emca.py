@@ -13,12 +13,14 @@
 """
 
 from PyQt5.QtWidgets import QApplication
+from PyQt5.QtCore import QFile, QTextStream
 from Core.logger import InitLogSystem
 import sys
 
 from Model.dataset import Dataset
 from View.MainView.main_view import MainView
 from Controller.controller import Controller
+import Resources.breeze_resources
 
 
 class EMCAClient(object):
@@ -45,6 +47,14 @@ class EMCAClient(object):
 if __name__ == '__main__':
     InitLogSystem()
     app = QApplication(sys.argv)
+
+    # light_theme_qss = "./Resources/light.qss"
+    dark_theme_qss = "./Resources/dark.qss"
+    file = QFile(dark_theme_qss)
+    file.open(QFile.ReadOnly | QFile.Text)
+    text_stream = QTextStream(file)
+    app.setStyleSheet(text_stream.readAll())
+
     emca_client = EMCAClient()
     emca_client.start()
     sys.exit(app.exec_())

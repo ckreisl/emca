@@ -24,8 +24,17 @@ class Plot2DCanvas(FigureCanvas):
     def __init__(self, parent=None):
         self._parent = parent
         self._fig = Figure((5, 4), dpi=100)
-
         self._ax1 = self._fig.add_subplot(111)
+
+        # RGBA dark theme
+        self._RGBA = '#31363b'
+        self._fig.patch.set_facecolor(self._RGBA)
+
+        # plot facecolor dark theme
+        plot_facecolor = '#232629'
+        self._ax1.set_facecolor(plot_facecolor)
+
+        self._alpha = 0.7
 
         FigureCanvas.__init__(self, self._fig)
         FigureCanvas.setSizePolicy(self, QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -72,7 +81,7 @@ class Plot2DCanvas(FigureCanvas):
         x_list = [x[0] for x in values]
         y_list = [y[1] for y in values]
 
-        self._ax1.plot(x_list, y_list, 'bo', picker=5)
+        self._ax1.plot(x_list, y_list, 'wo', picker=5, alpha=self._alpha)
         self._ax1.set_xlim(xmin, xmax)
         self._ax1.set_xticks(x_list)
         self._ax1.set_title(name)

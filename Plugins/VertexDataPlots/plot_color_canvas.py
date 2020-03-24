@@ -43,6 +43,19 @@ class PlotColorCanvas(FigureCanvas):
         self._ax3_highlight, = self._ax3.plot([], [], 'o', color='yellow')
         #self._ax4_highlight, = self._ax4.plot([], [], 'o', color='yellow')
 
+        # RGBA dark theme
+        self._RGBA = '#31363b'
+        self._fig.patch.set_facecolor(self._RGBA)
+
+        self._alpha = 0.7
+
+        # plot facecolor dark theme
+        plot_facecolor = '#232629'
+        self._ax1.set_facecolor(plot_facecolor)
+        self._ax2.set_facecolor(plot_facecolor)
+        self._ax3.set_facecolor(plot_facecolor)
+        #self._ax4.set_facecolor(plot_facecolor)
+
         self._fig.tight_layout()
         self._cid = self._fig.canvas.mpl_connect('pick_event', self.handle_pick)
 
@@ -103,16 +116,16 @@ class PlotColorCanvas(FigureCanvas):
             blue_list.append(tpl[2])
             #alpha_list.append(tpl[3])
 
-        self._ax1.set_title("Red")
-        self._ax2.set_title("Green")
-        self._ax3.set_title("Blue")
+        self._ax1.set_title("Red", color='w')
+        self._ax2.set_title("Green", color='w')
+        self._ax3.set_title("Blue", color='w')
         #self._ax4.set_title("Alpha")
 
-        self._ax1.plot(x_list, red_list, 'ro', picker=5)
+        self._ax1.plot(x_list, red_list, 'ro', picker=5, alpha=self._alpha)
         self._ax1.set_xlabel('path depth')
-        self._ax2.plot(x_list, green_list, 'go', picker=5)
+        self._ax2.plot(x_list, green_list, 'go', picker=5, alpha=self._alpha)
         self._ax2.set_xlabel('path depth')
-        self._ax3.plot(x_list, blue_list, 'bo', picker=5)
+        self._ax3.plot(x_list, blue_list, 'bo', picker=5, alpha=self._alpha)
         self._ax3.set_xlabel('path depth')
         #self._ax4.plot(x_list, alpha_list, 'o', color='gray', picker=5)
         #self._ax4.set_xlabel('path depth')
