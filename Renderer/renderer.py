@@ -67,7 +67,7 @@ class Renderer(object):
         area_picker.AddObserver(vtk.vtkCommand.EndPickEvent, self.area_picker_event)
         self._iren.SetPicker(area_picker)
 
-        self._camera = None
+        self._camera = Camera()
         self._meshes = Meshes()
 
         self._paths = {}
@@ -155,7 +155,7 @@ class Renderer(object):
         :param camera_data: CameraData Model
         :return:
         """
-        self._camera = Camera(camera_data)
+        self._camera.load_settings(camera_data)
         self._renderer.SetActiveCamera(self._camera)
         self._vtkWidget.update()
 
@@ -184,7 +184,7 @@ class Renderer(object):
         :return:
         """
         self.clear_scene_objects()
-        self._camera = Camera(camera_data)
+        self._camera.load_settings(camera_data)
         self._meshes.load_from_mesh_data(mesh_data)
         self._renderer.SetActiveCamera(self._camera)
         for mesh in self._meshes.meshes:
@@ -230,9 +230,8 @@ class Renderer(object):
         Resets the camera view to its default position and view
         :return:
         """
-        if self._camera:
-            self._camera.reset()
-            self._vtkWidget.update()
+        self._camera.reset()
+        self._vtkWidget.update()
 
     def take_screenshot(self, filename):
         """
@@ -300,9 +299,8 @@ class Renderer(object):
         :param pos: point3f
         :return:
         """
-        if self._camera:
-            self._camera.set_focal_point(pos)
-            self._vtkWidget.update()
+        self._camera.set_focal_point(pos)
+        self._vtkWidget.update()
 
     def display_traced_paths(self, indices):
         """
@@ -400,9 +398,8 @@ class Renderer(object):
         if vert.is_wo_visible:
             vert.draw_wo(self._renderer)
         # check if clipping is enabled
-        if self._camera:
-            if self._camera.auto_clipping:
-                self.set_camera_focus(vert.pos)
+        if self._camera.auto_clipping:
+            self.set_camera_focus(vert.pos)
         vert.set_selected(True)
         self._vtkWidget.update()
 

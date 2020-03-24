@@ -13,6 +13,7 @@
 """
 
 import vtk
+import logging
 
 
 class Camera(vtk.vtkCamera):
@@ -22,12 +23,21 @@ class Camera(vtk.vtkCamera):
         Represents a modified vtkCamera class for the 3D viewer
     """
 
-    def __init__(self, camera_data):
+    def __init__(self):
         vtk.vtkCamera.__init__(self)
-
         # boolean to check if camera should always set the viewing direction to selected vertex
         self._auto_clipping = True
         self._speed = 1.0
+
+        self._origin = None
+        self._focal_point = None
+        self._focus_dist = None
+        self._up = None
+        self._near_clip = None
+        self._far_clip = None
+        self._fov = None
+
+    def load_settings(self, camera_data):
         # save parameters for camera reset
         self._origin = camera_data.origin
         self._focal_point = camera_data.direction
@@ -36,7 +46,6 @@ class Camera(vtk.vtkCamera):
         self._far_clip = camera_data.far_clip
         self._focus_dist = camera_data.focus_dist
         self._fov = camera_data.fov
-
         self.reset()
 
     def reset(self):
@@ -44,19 +53,15 @@ class Camera(vtk.vtkCamera):
         Resets the camera settings to its default values
         :return:
         """
-        self.SetPosition(self._origin.x,
-                         self._origin.y,
-                         self._origin.z)
-        self.SetFocalPoint(self._focal_point.x,
-                           self._focal_point.y,
-                           self._focal_point.z)
-        self.SetViewUp(self._up.x,
-                       self._up.y,
-                       self._up.z)
-        self.SetClippingRange(self._near_clip,
-                              self._far_clip)
-        self.SetDistance(self._focus_dist)
-        self.SetViewAngle(self._fov)
+        if self._origin is None:
+            logging.error("No Camera set")
+        else:
+            self.SetPosition(self._origin.x, self._origin.y, self._origin.z)
+            self.SetFocalPoint(self._focal_point.x, self._focal_point.y, self._focal_point.z)
+            self.SetViewUp(self._up.x, self._up.y, self._up.z)
+            self.SetClippingRange(self._near_clip, self._far_clip)
+            self.SetDistance(self._focus_dist)
+            self.SetViewAngle(self._fov)
 
     @property
     def auto_clipping(self):
@@ -186,10 +191,8 @@ class Camera(vtk.vtkCamera):
         self.SetPosition(
             old_pos[0] - speed * vec[0],
             old_pos[1] - speed * vec[1],
-            old_pos[2] - speed * vec[2]
-        )
+            old_pos[2] - speed * vec[2])
         self.SetFocalPoint(
             focal_point[0] - speed * vec[0],
             focal_point[1] - speed * vec[1],
-            focal_point[2] - speed * vec[2]
-        )
+            focal_point[2] - speed * vec[2])
