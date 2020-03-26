@@ -37,8 +37,9 @@ class ViewRenderInfo(QWidget):
         screen_rect = desktop_widget.availableGeometry(self)
         self.move(screen_rect.center() - self.rect().center())
 
-        self.btnSubmit.clicked.connect(self.btn_submit)
         self.sbSampleCount.valueChanged.connect(self.sb_update_sample_count)
+        self.btnSubmit.clicked.connect(self.btn_submit)
+        self.btnClose.clicked.connect(self.btn_close)
 
     def set_controller(self, controller):
         """
@@ -68,6 +69,15 @@ class ViewRenderInfo(QWidget):
         if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
             self.btn_submit(True)
 
+    @pyqtSlot(int, name='sb_update_sample_count')
+    def sb_update_sample_count(self, value):
+        """
+        Informs the controller to update the sample count of render info
+        :param value: integer
+        :return:
+        """
+        self._controller.update_render_info_sample_count(value)
+
     @pyqtSlot(bool, name='btn_submit')
     def btn_submit(self, clicked):
         """
@@ -77,12 +87,7 @@ class ViewRenderInfo(QWidget):
         """
         self._controller.send_render_info()
 
-    @pyqtSlot(int, name='sb_update_sample_count')
-    def sb_update_sample_count(self, value):
-        """
-        Informs the controller to update the sample count of render info
-        :param value: integer
-        :return:
-        """
-        self._controller.update_render_info_sample_count(value)
+    @pyqtSlot(bool, name='btn_close')
+    def btn_close(self, clicked):
+        self.close()
 
