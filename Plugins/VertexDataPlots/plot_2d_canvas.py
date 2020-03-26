@@ -84,7 +84,7 @@ class Plot2DCanvas(FigureCanvas):
         self._ax1.plot(x_list, y_list, 'wo', picker=5, alpha=self._alpha)
         self._ax1.set_xlim(xmin, xmax)
         self._ax1.set_xticks(x_list)
-        self._ax1.set_title(name)
+        self._ax1.set_title(name, color='w')
         self._ax1.set_ylabel(name)
         self._ax1.set_xlabel('path depth')
 
