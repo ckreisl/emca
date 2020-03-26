@@ -103,7 +103,7 @@ class Controller(QObject):
             self._stream = None
         elif msg is StateMsg.DATA_INFO:
             self._view.view_render_info.update_render_info(tpl[1])
-            #automatically request scene data once render info is available
+            # automatically request scene data once render info is available
             self._view.view_render_scene.remove_scene_objects()
             self._sstream_backend.request_scene_data()
         elif msg is StateMsg.DATA_CAMERA:
@@ -111,9 +111,12 @@ class Controller(QObject):
         elif msg is StateMsg.DATA_MESH:
             self._view.view_render_scene.load_mesh(tpl[1])
         elif msg is StateMsg.DATA_IMAGE:
-            if self._view.view_render_image.load_hdr_image(
-                    self._model.render_info.filepath()):
-                self._view.view_render_image.enable_view(True)
+            try:
+                success = self._view.view_render_image.load_hdr_image(self._model.render_info.filepath())
+                if success:
+                    self._view.view_render_image.enable_view(True)
+            except Exception as e:
+                self._view.view_popup.error_no_output_filepath(str(e))
         elif msg is StateMsg.DATA_RENDER:
             if not tpl[1].valid_sample_count():
                 self._view.view_popup.error_no_sample_idx_set("")

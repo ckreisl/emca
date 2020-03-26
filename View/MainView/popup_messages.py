@@ -106,7 +106,13 @@ class PopupMessages(QObject):
         self._msgBox.setDetailedText(msg)
         self._msgBox.exec_()
 
-
+    def error_no_output_filepath(self, msg):
+        self._msgBox.setIcon(QMessageBox.Information)
+        self._msgBox.setWindowTitle("Error missing output filepath")
+        self._msgBox.setText("No render image output path is set")
+        self._msgBox.setInformativeText("Please set the path to the rendered image in render info settings on the server")
+        self._msgBox.setDetailedText(msg)
+        self._msgBox.exec_()
 
 
 
