@@ -39,6 +39,9 @@ class SphericalView(Plugin):
         self._spherical_view = ViewSphericalViewImage(self)
         self.hdrImage.addWidget(self._spherical_view)
 
+    def apply_theme(self, theme):
+        pass
+
     def prepare_new_data(self):
         self._spherical_view.clear()
         self._spherical_view.enable_buttons(False)

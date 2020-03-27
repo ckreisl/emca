@@ -70,6 +70,7 @@ class HDRGraphicsView(HDRGraphicsViewBase):
         try:
             super().dropEvent(q_drop_event)
             self._parent.enable_view(True)
+            self._parent.save_last_rendered_image_filepath()
         except Exception as e:
             logging.error(e)
 

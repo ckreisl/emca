@@ -31,10 +31,12 @@ class PlotPathDepth(FigureCanvas):
         self._fig.patch.set_facecolor(self._RGBA)
 
         # plot facecolor dark theme
-        plot_facecolor = '#232629'
-        self._axes.set_facecolor(plot_facecolor)
+        self._plot_facecolor = '#232629'
+        self._axes.set_facecolor(self._plot_facecolor)
 
         self._alpha = 0.7
+        self._color = '#eff0f1'
+        self._color_dot = 'wo'
 
         FigureCanvas.__init__(self, self._fig)
         FigureCanvas.setSizePolicy(self, QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -42,6 +44,19 @@ class PlotPathDepth(FigureCanvas):
 
         self._highlighter = Highlighter(self._fig, self._axes, callback)
         self._fig.tight_layout()
+
+    def apply_theme(self, theme):
+        if theme == 'light':
+            self._color = '#000000'
+            self._RGBA = '#EFF0F1'
+            self._plot_facecolor = '#EFF0F1'
+            self._color_dot = 'bo'
+        self._fig.patch.set_facecolor(self._RGBA)
+        self._axes.set_facecolor(self._plot_facecolor)
+        self._axes.tick_params(axis='x', colors=self._color)
+        self._axes.tick_params(axis='y', colors=self._color)
+        for border in ['left', 'right', 'bottom', 'top']:
+            self._axes.spines[border].set_color(self._color)
 
     def resize_plot(self):
         self._fig.tight_layout()
@@ -57,9 +72,9 @@ class PlotPathDepth(FigureCanvas):
         self._axes.clear()
 
     def plot(self, x_list, y_list):
-        self._axes.plot(x_list, y_list, 'wo', picker=5, alpha=self._alpha)
-        self._axes.set_ylabel('path depth')
-        self._axes.set_xlabel('paths')
+        self._axes.plot(x_list, y_list, self._color_dot, picker=5, alpha=self._alpha)
+        self._axes.set_ylabel('path depth', color=self._color)
+        self._axes.set_xlabel('paths', color=self._color)
         self._highlighter.init_dataset(x=np.array(x_list), s1=np.array(y_list))
         self._fig.canvas.draw_idle()
         self._fig.tight_layout()

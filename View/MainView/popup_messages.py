@@ -39,6 +39,7 @@ class PopupMessages(QObject):
         self._msgBox.setText("Server connection broke")
         self._msgBox.setInformativeText("Restart Server and reconnect client")
         self._msgBox.setDetailedText(msg)
+        self._msgBox.setStandardButtons(QMessageBox.Ok)
         self._msgBox.exec_()
 
     def server_error(self, msg):
@@ -52,6 +53,7 @@ class PopupMessages(QObject):
         self._msgBox.setText("Server error")
         self._msgBox.setInformativeText("Can not connect to server. Start server or check for right port and hostname.")
         self._msgBox.setDetailedText(msg)
+        self._msgBox.setStandardButtons(QMessageBox.Ok)
         self._msgBox.exec_()
 
     def error_not_connected(self, msg):
@@ -65,6 +67,7 @@ class PopupMessages(QObject):
         self._msgBox.setText("Diconnected")
         self._msgBox.setInformativeText("You are currently not connected to any server")
         self._msgBox.setDetailedText(msg)
+        self._msgBox.setStandardButtons(QMessageBox.Ok)
         self._msgBox.exec_()
 
     def error_no_sample_idx_set(self, msg):
@@ -78,6 +81,7 @@ class PopupMessages(QObject):
         self._msgBox.setText("Sample index error")
         self._msgBox.setInformativeText("Sample index was not set on server side")
         self._msgBox.setDetailedText(msg)
+        self._msgBox.setStandardButtons(QMessageBox.Ok)
         self._msgBox.exec_()
 
     def error_no_depth_idx_set(self, msg):
@@ -91,6 +95,7 @@ class PopupMessages(QObject):
         self._msgBox.setText("Path depth index error")
         self._msgBox.setInformativeText("Path depth index was not set on server side")
         self._msgBox.setDetailedText(msg)
+        self._msgBox.setStandardButtons(QMessageBox.Ok)
         self._msgBox.exec_()
 
     def error_no_final_estimate_data(self, msg):
@@ -104,6 +109,7 @@ class PopupMessages(QObject):
         self._msgBox.setText("Missing final estimate values")
         self._msgBox.setInformativeText("No final estimate data available to run outlier detection")
         self._msgBox.setDetailedText(msg)
+        self._msgBox.setStandardButtons(QMessageBox.Ok)
         self._msgBox.exec_()
 
     def error_no_output_filepath(self, msg):
@@ -112,7 +118,35 @@ class PopupMessages(QObject):
         self._msgBox.setText("No render image output path is set")
         self._msgBox.setInformativeText("Please set the path to the rendered image in render info settings on the server")
         self._msgBox.setDetailedText(msg)
+        self._msgBox.setStandardButtons(QMessageBox.Ok)
         self._msgBox.exec_()
+
+    def error_saving_options(self, msg):
+        self._msgBox.setIcon(QMessageBox.Warning)
+        self._msgBox.setWindowTitle("Error Saving EMCA Options")
+        self._msgBox.setText("Saving EMCA options was not possible")
+        self._msgBox.setInformativeText("Internal error check error message")
+        self._msgBox.setDetailedText(msg)
+        self._msgBox.setStandardButtons(QMessageBox.Ok)
+        self._msgBox.exec_()
+
+    def error_on_loading_pre_saved_image(self, msg):
+        self._msgBox.setIcon(QMessageBox.Warning)
+        self._msgBox.setWindowTitle("Error Loading Image")
+        self._msgBox.setText("Loading pre saved image was not possible")
+        self._msgBox.setInformativeText("This may happen if the filename or location of the pre-saved image has changed. Or an image was never loaded before")
+        self._msgBox.setDetailedText(msg)
+        self._msgBox.setStandardButtons(QMessageBox.Ok)
+        self._msgBox.exec_()
+
+    def restart_application_info(self, msg):
+        self._msgBox.setIcon(QMessageBox.Information)
+        self._msgBox.setWindowTitle("Theme Change")
+        self._msgBox.setText("Application needs a whole restart for changing the theme")
+        self._msgBox.setInformativeText("All current data will be lost due to this application restart")
+        self._msgBox.setDetailedText(msg)
+        self._msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        return self._msgBox.exec_()
 
 
 

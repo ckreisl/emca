@@ -54,6 +54,18 @@ class ViewConnectSettings(QWidget):
         """
         self._controller = controller
 
+    def set_hostname(self, hostname):
+        self._hostname = hostname
+        self.leHostname.setText(hostname)
+
+    def set_port(self, port):
+        self._port = port
+        self.lePort.setText(str(port))
+
+    def set_hostname_and_port(self, hostname, port):
+        self.set_hostname(hostname)
+        self.set_port(port)
+
     def keyPressEvent(self, event):
         """
         Handles key press event. If the enter button is clicked the connect button is triggered

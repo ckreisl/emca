@@ -14,6 +14,7 @@
 
 from Parser.xml_parser import XMLParser
 from PluginsHandler.plugins_handler import PluginsHandler
+from Model.options_data import OptionsConfig
 from Model.render_info import RenderInfo
 from Model.camera_data import CameraData
 from Model.mesh_data import MeshData
@@ -42,6 +43,7 @@ class Dataset(QObject):
 
     def __init__(self):
         QObject.__init__(self, parent=None)
+        self._options = OptionsConfig()
         self._detector = Detector()
         self._filter = Filter()
         self._plugins_handler = PluginsHandler()
@@ -112,6 +114,14 @@ class Dataset(QObject):
         :return:
         """
         return self._li_plot_data
+
+    @property
+    def options_data(self):
+        """
+        Returns the options loaded from .ini file
+        :return: Options Object
+        """
+        return self._options
 
     @property
     def detector(self):

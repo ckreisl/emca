@@ -43,6 +43,10 @@ class PluginsHandler(object):
         for key, value in self._plugins_view_container.items():
             value.set_controller(controller)
 
+    def apply_theme(self, theme):
+        for key, value in self._plugins_view_container.items():
+            value.plugin.apply_theme(theme)
+
     def enable_plugins(self, enable):
         """
         Calls the tool container enable_tool_btn function.

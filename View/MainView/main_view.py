@@ -18,6 +18,7 @@ from PyQt5.QtWidgets import QAction
 from PyQt5.QtCore import pyqtSlot
 from View.MainView.view_emca import ViewEMCA
 from View.MainView.popup_messages import PopupMessages
+from View.MainView.view_options import ViewOptions
 
 
 class MainView(QMainWindow):
@@ -53,6 +54,12 @@ class MainView(QMainWindow):
         Initialises and adds all menu items to the menu
         :return:
         """
+
+        options = QAction('Options', self)
+        options.setShortcut('Ctrl+S')
+        options.setToolTip('Options')
+        options.triggered.connect(self.open_options)
+
         load_image = QAction('Load image', self)
         load_image.setShortcut('Ctrl+O')
         load_image.setToolTip('Load .exr')
@@ -88,6 +95,7 @@ class MainView(QMainWindow):
         main_menu.setNativeMenuBar(False)
         menu = main_menu.addMenu("&Menu")
         menu.addAction(load_image)
+        menu.addAction(options)
         # Remove buggy and not fully implemented functions
         #menu.addAction(load_xml)
         #menu.addAction(save_xml)
@@ -117,6 +125,15 @@ class MainView(QMainWindow):
         :return:
         """
         self._view_emca.btnFilter.setEnabled(enable)
+
+    @pyqtSlot(bool, name='open_options')
+    def open_options(self, clicked):
+        """
+        Opens the options window
+        :param clicked: boolean
+        :return:
+        """
+        self._controller.open_options(clicked)
 
     @pyqtSlot(bool, name='load_image_dialog')
     def load_image_dialog(self, clicked):
@@ -249,4 +266,12 @@ class MainView(QMainWindow):
         :return: QWidget
         """
         return self._view_emca.view_detector
+
+    @property
+    def view_options(self):
+        """
+        Returns the view handling the options
+        :return: QWidget
+        """
+        return self._view_emca.view_options
 

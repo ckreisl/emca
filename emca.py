@@ -34,27 +34,30 @@ class EMCAClient(object):
         self.view = MainView()
         self.controller = Controller(self.model, self.view)
 
+    def load_theme(self, qt_app):
+        theme = self.model.options_data.get_theme()
+        if theme == 'light':
+            theme_files = "./Resources/light.qss"
+        else:
+            theme_files = "./Resources/dark.qss"
+        file = QFile(theme_files)
+        file.open(QFile.ReadOnly | QFile.Text)
+        text_stream = QTextStream(file)
+        qt_app.setStyleSheet(text_stream.readAll())
+        self.controller.apply_theme(theme)
+
     def start(self):
         """
         Starts and opens the GUI of EMCA
         :return:
         """
         self.controller.display_view()
-        #autoconnect to localhost on startup
-        self.controller.handle_connect("localhost", 50013)
 
 
 if __name__ == '__main__':
     InitLogSystem()
     app = QApplication(sys.argv)
-
-    # light_theme_qss = "./Resources/light.qss"
-    dark_theme_qss = "./Resources/dark.qss"
-    file = QFile(dark_theme_qss)
-    file.open(QFile.ReadOnly | QFile.Text)
-    text_stream = QTextStream(file)
-    app.setStyleSheet(text_stream.readAll())
-
     emca_client = EMCAClient()
+    emca_client.load_theme(app)
     emca_client.start()
     sys.exit(app.exec_())

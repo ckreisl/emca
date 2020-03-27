@@ -77,6 +77,10 @@ class Plugin(QWidget):
         pass
 
     @abc.abstractmethod
+    def apply_theme(self, theme):
+        pass
+
+    @abc.abstractmethod
     def init_render_data(self, render_data):
         """
         Apply current pixel render data to plugins

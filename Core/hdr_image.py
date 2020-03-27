@@ -45,6 +45,10 @@ class HDRImage(object):
         self._exposure = 0.0
         self._falsecolor = False
 
+    @property
+    def filepath(self):
+        return self._filepath
+
     def load_exr(self, filepath_or_bytestream, falsecolor=False):
         """
         Loads an exr file with OpenEXR

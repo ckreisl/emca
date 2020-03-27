@@ -35,15 +35,28 @@ class Plot3DCanvas(FigureCanvas):
         self._fig.patch.set_facecolor(self._RGBA)
 
         # plot facecolor dark theme
-        plot_facecolor = '#232629'
-        self._ax1.set_facecolor(plot_facecolor)
+        self._plot_facecolor = '#232629'
+        self._ax1.set_facecolor(self._plot_facecolor)
 
         self._alpha = 0.7
+        self._color = '#eff0f1'
 
         # self._ax1_highlight, = self._ax1.plot([], [], 'o', color='yellow')
 
         # self._fig.tight_layout()
         self._cid = self._fig.canvas.mpl_connect('pick_event', self.handle_pick)
+
+    def apply_theme(self, theme):
+        if theme == 'light':
+            self._color = '#000000'
+            self._RGBA = '#EFF0F1'
+            self._plot_facecolor = '#EFF0F1'
+        self._fig.patch.set_facecolor(self._RGBA)
+        self._ax1.set_facecolor(self._plot_facecolor)
+        self._ax1.tick_params(axis='x', colors=self._color)
+        self._ax1.tick_params(axis='y', colors=self._color)
+        for border in ['left', 'right', 'bottom', 'top']:
+            self._ax1.spines[border].set_color(self._color)
 
     def resize_plot(self):
         #self._fig.tight_layout()
@@ -76,8 +89,8 @@ class Plot3DCanvas(FigureCanvas):
         self._ax1.plot(x_list, y_list, z_list, 'wo', picker=5, alpha=self._alpha)
         self._ax1.set_title(name)
         self._ax1.set_xlabel('path depth')
-        self._ax1.set_ylabel('x')
-        self._ax1.set_zlabel('y')
+        self._ax1.set_ylabel('x', color=self._color)
+        self._ax1.set_zlabel('y', color=self._color)
         self._ax1.set_xticks(x_list)
         self._ax1.set_xlim(xmin, xmax)
 

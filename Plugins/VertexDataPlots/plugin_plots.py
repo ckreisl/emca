@@ -84,6 +84,11 @@ class VertexDataPlots(Plugin):
         self._hist_color_canvas.resize_plot()
         super().resizeEvent(event)
 
+    def apply_theme(self, theme):
+        self._hist2D_canvas.apply_theme(theme)
+        self._hist3D_canvas.apply_theme(theme)
+        self._hist_color_canvas.apply_theme(theme)
+
     def init_render_data(self, render_data):
         self._render_data = render_data
 

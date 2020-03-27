@@ -40,6 +40,9 @@ class PathDepth(Plugin):
     def send_update_path_indices_callback(self, indices, add_item):
         self.send_update_path_indices(indices, add_item)
 
+    def apply_theme(self, theme):
+        self._plot.apply_theme(theme)
+
     def init_render_data(self, render_data):
         x_list = []
         y_list = []

@@ -131,6 +131,12 @@ class ViewRenderImage(QWidget):
         """
         return self._graphics_view.load_hdr_image(filepath)
 
+    def save_last_rendered_image_filepath(self):
+        hdr_image = self._graphics_view.hdr_image
+        if hdr_image:
+            if isinstance(hdr_image.filepath, str):
+                self._controller.save_options({'rendered_image_filepath': hdr_image.filepath})
+
     @pyqtSlot(bool, name='reset')
     def reset(self, clicked):
         """

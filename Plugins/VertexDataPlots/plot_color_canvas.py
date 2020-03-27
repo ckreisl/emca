@@ -48,16 +48,34 @@ class PlotColorCanvas(FigureCanvas):
         self._fig.patch.set_facecolor(self._RGBA)
 
         self._alpha = 0.7
+        self._color = '#eff0f1'
 
         # plot facecolor dark theme
-        plot_facecolor = '#232629'
-        self._ax1.set_facecolor(plot_facecolor)
-        self._ax2.set_facecolor(plot_facecolor)
-        self._ax3.set_facecolor(plot_facecolor)
+        self._plot_facecolor = '#232629'
+        self._ax1.set_facecolor(self._plot_facecolor)
+        self._ax2.set_facecolor(self._plot_facecolor)
+        self._ax3.set_facecolor(self._plot_facecolor)
         #self._ax4.set_facecolor(plot_facecolor)
 
         self._fig.tight_layout()
         self._cid = self._fig.canvas.mpl_connect('pick_event', self.handle_pick)
+
+    def apply_theme(self, theme):
+        if theme == 'light':
+            self._color = '#000000'
+            self._RGBA = '#EFF0F1'
+            self._plot_facecolor = '#EFF0F1'
+        self._fig.patch.set_facecolor(self._RGBA)
+        self._ax1.set_facecolor(self._plot_facecolor)
+        self._ax2.set_facecolor(self._plot_facecolor)
+        self._ax3.set_facecolor(self._plot_facecolor)
+        for ax in [self._ax1, self._ax2, self._ax3]:
+            ax.tick_params(axis='x', colors=self._color)
+            ax.tick_params(axis='y', colors=self._color)
+        for border in ['left', 'right', 'bottom', 'top']:
+            self._ax1.spines[border].set_color(self._color)
+            self._ax2.spines[border].set_color(self._color)
+            self._ax3.spines[border].set_color(self._color)
 
     def resize_plot(self):
         self._fig.tight_layout()
@@ -116,17 +134,17 @@ class PlotColorCanvas(FigureCanvas):
             blue_list.append(tpl[2])
             #alpha_list.append(tpl[3])
 
-        self._ax1.set_title("Red", color='w')
-        self._ax2.set_title("Green", color='w')
-        self._ax3.set_title("Blue", color='w')
+        self._ax1.set_title("Red", color=self._color)
+        self._ax2.set_title("Green", color=self._color)
+        self._ax3.set_title("Blue", color=self._color)
         #self._ax4.set_title("Alpha")
 
         self._ax1.plot(x_list, red_list, 'ro', picker=5, alpha=self._alpha)
-        self._ax1.set_xlabel('path depth')
+        self._ax1.set_xlabel('path depth', color=self._color)
         self._ax2.plot(x_list, green_list, 'go', picker=5, alpha=self._alpha)
-        self._ax2.set_xlabel('path depth')
+        self._ax2.set_xlabel('path depth', color=self._color)
         self._ax3.plot(x_list, blue_list, 'bo', picker=5, alpha=self._alpha)
-        self._ax3.set_xlabel('path depth')
+        self._ax3.set_xlabel('path depth', color=self._color)
         #self._ax4.plot(x_list, alpha_list, 'o', color='gray', picker=5)
         #self._ax4.set_xlabel('path depth')
 

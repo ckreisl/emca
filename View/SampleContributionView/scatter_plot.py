@@ -17,11 +17,11 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from PyQt5.QtWidgets import QSizePolicy
 
-white = "#eff0f1"
-params = {"ytick.color": white,
-          "xtick.color": white,
-          "axes.labelcolor": white,
-          "axes.edgecolor": white}
+white = 'white'
+params = {'ytick.color': white,
+          'xtick.color': white,
+          'axes.labelcolor': white,
+          'axes.edgecolor': white}
 plt.rcParams.update(params)
 
 
@@ -42,9 +42,9 @@ class RGBScatterPlot(FigureCanvas):
         self._fig.patch.set_facecolor(self._RGBA)
 
         # plot facecolor dark theme
-        plot_facecolor = '#232629'
+        self._plot_facecolor = '#232629'
         for ax in self._axes:
-            ax.set_facecolor(plot_facecolor)
+            ax.set_facecolor(self._plot_facecolor)
             ax.spines['top'].set_visible(False)
             ax.spines['right'].set_visible(False)
 
@@ -53,6 +53,9 @@ class RGBScatterPlot(FigureCanvas):
         FigureCanvas.__init__(self, self._fig)
         FigureCanvas.setSizePolicy(self, QSizePolicy.Expanding, QSizePolicy.Expanding)
         FigureCanvas.updateGeometry(self)
+
+        self._color = '#eff0f1'
+        self._axes_color = 'white'
 
         self._highlighter = Highlighter(self._fig, self._axes, callback)
         self.init_title()
@@ -63,9 +66,24 @@ class RGBScatterPlot(FigureCanvas):
         Init the title of the plots
         :return: 
         """
-        self._axes[0].set_title("Red", color=white)
-        self._axes[1].set_title("Green", color=white)
-        self._axes[2].set_title("Blue", color=white)
+        self._axes[0].set_title("Red", color=self._color)
+        self._axes[1].set_title("Green", color=self._color)
+        self._axes[2].set_title("Blue", color=self._color)
+
+    def apply_theme(self, theme):
+        if theme == 'light':
+            self._color = 'black'
+            self._RGBA = '#EFF0F1'
+            self._plot_facecolor = '#EFF0F1'
+        self._fig.patch.set_facecolor(self._RGBA)
+        for ax in self._axes:
+            ax.set_facecolor(self._plot_facecolor)
+            ax.tick_params(axis='x', colors=self._color)
+            ax.tick_params(axis='y', colors=self._color)
+            ax.spines['left'].set_color(self._color)
+            ax.spines['bottom'].set_color(self._color)
+        self.init_title()
+        self._fig.tight_layout()
 
     def clear_plots(self):
         """

@@ -31,10 +31,12 @@ class Plot2DCanvas(FigureCanvas):
         self._fig.patch.set_facecolor(self._RGBA)
 
         # plot facecolor dark theme
-        plot_facecolor = '#232629'
-        self._ax1.set_facecolor(plot_facecolor)
+        self._plot_facecolor = '#232629'
+        self._ax1.set_facecolor(self._plot_facecolor)
 
         self._alpha = 0.7
+        self._color = '#eff0f1'
+        self._color_dot = 'wo'
 
         FigureCanvas.__init__(self, self._fig)
         FigureCanvas.setSizePolicy(self, QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -44,6 +46,19 @@ class Plot2DCanvas(FigureCanvas):
 
         self._fig.tight_layout()
         self._cid = self._fig.canvas.mpl_connect('pick_event', self.handle_pick)
+
+    def apply_theme(self, theme):
+        if theme == 'light':
+            self._color = '#000000'
+            self._RGBA = '#EFF0F1'
+            self._plot_facecolor = '#EFF0F1'
+            self._color_dot = 'bo'
+        self._fig.patch.set_facecolor(self._RGBA)
+        self._ax1.set_facecolor(self._plot_facecolor)
+        self._ax1.tick_params(axis='x', colors=self._color)
+        self._ax1.tick_params(axis='y', colors=self._color)
+        for border in ['left', 'right', 'bottom', 'top']:
+            self._ax1.spines[border].set_color(self._color)
 
     def resize_plot(self):
         self._fig.tight_layout()
@@ -81,10 +96,10 @@ class Plot2DCanvas(FigureCanvas):
         x_list = [x[0] for x in values]
         y_list = [y[1] for y in values]
 
-        self._ax1.plot(x_list, y_list, 'wo', picker=5, alpha=self._alpha)
+        self._ax1.plot(x_list, y_list, self._color_dot, picker=5, alpha=self._alpha)
         self._ax1.set_xlim(xmin, xmax)
         self._ax1.set_xticks(x_list)
-        self._ax1.set_title(name, color='w')
+        self._ax1.set_title(name, color=self._color)
         self._ax1.set_ylabel(name)
         self._ax1.set_xlabel('path depth')
 

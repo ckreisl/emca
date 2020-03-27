@@ -51,6 +51,9 @@ class ViewScatterPlot(QWidget):
         """
         self._controller = controller
 
+    def apply_theme(self, theme):
+        self._static_canvas.apply_theme(theme)
+
     def plot_final_estimate(self, final_estimate):
         """
         VertexDataPlots the final estimate data from the model

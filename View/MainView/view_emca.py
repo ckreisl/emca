@@ -20,6 +20,7 @@ from PyQt5.QtCore import QPoint
 from PyQt5.QtGui import QPixmap
 from PyQt5 import uic
 
+from View.MainView.view_options import ViewOptions
 from View.MainView.view_connect_settings import ViewConnectSettings
 from View.MainView.view_filter import ViewFilter
 from View.MainView.view_detector_settings import ViewDetectorSettings
@@ -50,6 +51,7 @@ class ViewEMCA(QWidget):
         # init views
         self._controller = None
         self._view_main = parent
+        self._view_options = ViewOptions(parent=parent)
         self._view_connect = ViewConnectSettings(parent=parent)
         self._view_detector = ViewDetectorSettings(parent=parent)
         self._view_filter = ViewFilter(parent=parent)
@@ -260,6 +262,14 @@ class ViewEMCA(QWidget):
         :return: QWidget
         """
         return self._view_render_scene
+
+    @property
+    def view_options(self):
+        """
+        Returns the options widget
+        :return: QWidget
+        """
+        return self._view_options
 
     def enable_view(self, enabled, mode=ViewMode.CONNECTED):
         """
