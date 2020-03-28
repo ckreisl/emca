@@ -623,7 +623,7 @@ class Controller(QObject):
             theme_changed = False
             options = self._model.options_data
             if 'theme' in options_dict:
-                if options.get_theme != options_dict['theme']:
+                if options.get_theme() != options_dict['theme']:
                     theme_changed = True
             if 'auto_connect' in options_dict:
                 options.set_options_auto_connect(options_dict['auto_connect'])
