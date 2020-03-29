@@ -39,19 +39,19 @@ class HighlighterBase(object):
         self._rs = []
         self._active = False
         self._hold_shift = False
-        self._send_update_path = callback
+        self.callback_send_update_path = callback
 
         self.x = np.array([])
         self.mask = np.array([], dtype=bool)
-        self._highlights = None
+        self.highlighters = None
         self._highlights_color = 'yellow'
 
     def update_highlighters(self):
         self.delete_highlighter()
         if isinstance(self.axes, np.ndarray):
-            self._highlights = [ax.scatter([], [], color=self._highlights_color, zorder=10) for ax in self.axes]
+            self.highlighters = [ax.scatter([], [], color=self._highlights_color, zorder=10) for ax in self.axes]
         else:
-            self._highlights = self.axes.scatter([], [], color=self._highlights_color, zorder=10)
+            self.highlighters = self.axes.scatter([], [], color=self._highlights_color, zorder=10)
 
     def add_rectangle_selector(self, axes, select_func):
         rs = RectangleSelector(axes, select_func, useblit=True, rectprops=rectprops)
@@ -61,15 +61,17 @@ class HighlighterBase(object):
         self._rs.clear()
 
     def delete_highlighter(self):
-        del self._highlights
-        self._highlights = None
+        del self.highlighters
+        self.highlighters = None
 
     def pick_event(self, event):
+        if self.callback_send_update_path is None:
+            return
         ind = event.ind
         if self._hold_shift:
-            self._send_update_path(np.array([ind[0]]), True)
+            self.callback_send_update_path(np.array([ind[0]]), True)
         else:
-            self._send_update_path(np.array([ind[0]]), False)
+            self.callback_send_update_path(np.array([ind[0]]), False)
 
     def key_press_event(self, event):
         if event.key in ['R', 'r']:
@@ -97,6 +99,17 @@ class HighlighterBase(object):
         else:
             logging.info("disconnect pick event")
             self.fig.canvas.mpl_disconnect(self._cid_pick)
+
+    def enable_multi_selection(self, enabled):
+        if enabled:
+            self._cid_toggle = self.fig.canvas.mpl_connect('key_press_event', self.key_press_event)
+            self._cid_release = self.fig.canvas.mpl_connect('key_release_event', self.key_release_event)
+        else:
+            self.fig.canvas.mpl_disconnect(self._cid_toggle)
+            self.fig.canvas.mpl_disconnect(self._cid_release)
+
+    def overwrite_pick_event(self, func_callback):
+        self._cid_pick = self.fig.canvas.mpl_connect('pick_event', func_callback)
 
     def inside(self, event1, event2, x, y):
         x0, x1 = sorted([event1.xdata, event2.xdata])

@@ -12,11 +12,10 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from View.SampleContributionView.scatter_plot import RGBScatterPlot
+from View.SampleContributionView.sample_contribution_plot import SampleContributionPlot
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtCore import Qt
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolBar
 import logging
 
 
@@ -33,15 +32,12 @@ class ViewScatterPlot(QWidget):
 
         self._controller = None
         # matplotlib plot embedded within a QWidget
-        self._static_canvas = RGBScatterPlot(callback=self.send_update_path)
-        # need the following two lines to allow 'key_press_event' for matplotlib VertexDataPlots
-        self._static_canvas.setFocusPolicy(Qt.ClickFocus)
-        self._static_canvas.setFocus()
+        self._sample_contribution_plot = SampleContributionPlot(callback=self.send_update_path)
 
         # add matplotlib navigation toolbar
         layout = QVBoxLayout(self)
-        layout.addWidget(self._static_canvas)
-        layout.addWidget(NavigationToolBar(self._static_canvas, self))
+        layout.addWidget(self._sample_contribution_plot, alignment=Qt.AlignHCenter)
+        layout.addWidget(self._sample_contribution_plot.create_navigation_toolbar(self), alignment=Qt.AlignLeft)
 
     def set_controller(self, controller):
         """
@@ -52,7 +48,7 @@ class ViewScatterPlot(QWidget):
         self._controller = controller
 
     def apply_theme(self, theme):
-        self._static_canvas.apply_theme(theme)
+        self._sample_contribution_plot.apply_theme(theme)
 
     def plot_final_estimate(self, final_estimate):
         """
@@ -60,9 +56,9 @@ class ViewScatterPlot(QWidget):
         :param final_estimate: Final estimate data from model
         :return:
         """
-        self._static_canvas.clear_plots()
+        self._sample_contribution_plot.clear()
         if final_estimate.is_valid():
-            self._static_canvas.plot_estimates(final_estimate)
+            self._sample_contribution_plot.plot_estimates(final_estimate)
 
     def update_path_indices(self, indices):
         """
@@ -70,11 +66,11 @@ class ViewScatterPlot(QWidget):
         :param indices: numpy array of path indices
         :return:
         """
-        self._static_canvas.update_path_indices(indices)
+        self._sample_contribution_plot.update_path_indices(indices)
 
     def send_update_path(self, indices, add_index):
         """
-        Inform the controller about selected points from the plot,
+        Inform the controller about selected points from the plot highlighter,
         depending on add_index the indices are added to the current selected ones
         :param indices: numpy array of path indices
         :param add_index: boolean

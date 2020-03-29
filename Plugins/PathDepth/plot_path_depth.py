@@ -12,26 +12,23 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from Core.highlighter_base import HighlighterBase
+from Core.plot_2d_base import ScatterPlot2DBase
 import numpy as np
-import logging
 
 
-class Highlighter(HighlighterBase):
+class PlotPathDepth(ScatterPlot2DBase):
 
-    def __init__(self, fig, axes, callback):
-        HighlighterBase.__init__(self, fig, axes, callback)
-        self.s1 = np.array([])
+    def __init__(self, callback=None):
+        ScatterPlot2DBase.__init__(self, callback)
 
-    def init_data(self, **kwargs):
-        self.x = kwargs['x']
-        self.s1 = kwargs['s1']
-        self.add_rectangle_selector(self.axes, self.select_xs1)
+    def select_path(self, index):
+        self.highlighter.update(np.array([index]))
 
-    def select_xs1(self, event1, event2):
-        mask = self.inside(event1, event2, self.x, self.s1)
-        self._send_update_path(self.x[mask], False)
+    def mark_values(self, indices):
+        self.highlighter.update(indices)
 
-    def update_all(self, mask):
-        xs1 = np.column_stack([self.x[mask], self.s1[mask]])
-        self._highlights.set_offsets(xs1)
+    def plot(self, x_list, y_list):
+        self.plot_2d(x_list, y_list)
+        self.axes.set_ylabel('path depth', color=self.color_title)
+        self.axes.set_xlabel('paths', color=self.color_title)
+        self.figure.tight_layout()

@@ -22,9 +22,9 @@ from PyQt5.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolBar
 
 from Plugins.VertexDataPlots.hist_list_item import HistListItem
-from Plugins.VertexDataPlots.plot_2d_canvas import Plot2DCanvas
-from Plugins.VertexDataPlots.plot_3d_canvas import Plot3DCanvas
-from Plugins.VertexDataPlots.plot_color_canvas import PlotColorCanvas
+from Plugins.VertexDataPlots.vertex_data_plot_2d import VertexDataPlot2D
+from Plugins.VertexDataPlots.vertex_data_plot_3d import VertexDataPlot3D
+from Plugins.VertexDataPlots.vertex_data_plot_rgb import VertexDataPlotRGB
 import logging
 
 
@@ -45,28 +45,30 @@ class VertexDataPlots(Plugin):
         Plugin.__init__(
             self,
             name='Vertex Data Plots',
-            flag=27
-        )
+            flag=27)
         uic.loadUi('Plugins/VertexDataPlots/ui/plugin_plots.ui', self)
 
-        self._hist2D_canvas = Plot2DCanvas(self)
-        self._hist3D_canvas = Plot3DCanvas(self)
-        self._hist_color_canvas = PlotColorCanvas(self)
+        self._vertex_data_plot_2d = VertexDataPlot2D(self)
+        self._vertex_data_plot_3d = VertexDataPlot3D(self)
+        self._vertex_data_plot_rgb = VertexDataPlotRGB(self)
+        self._plots = [self._vertex_data_plot_2d,
+                       self._vertex_data_plot_3d,
+                       self._vertex_data_plot_rgb]
         self._render_data = None
         self._cur_path_tpl = None
         self._last_hist_item = ""
 
         layout_2d = QVBoxLayout(self.hist2D)
-        layout_2d.addWidget(self._hist2D_canvas)
-        layout_2d.addWidget(NavigationToolBar(self._hist2D_canvas, self.hist2D))
+        layout_2d.addWidget(self._vertex_data_plot_2d)
+        layout_2d.addWidget(self._vertex_data_plot_2d.create_navigation_toolbar(self.hist2D))
 
         layout_3d = QVBoxLayout(self.hist3D)
-        layout_3d.addWidget(self._hist3D_canvas)
-        layout_3d.addWidget(NavigationToolBar(self._hist3D_canvas, self.hist3D))
+        layout_3d.addWidget(self._vertex_data_plot_3d)
+        layout_3d.addWidget(NavigationToolBar(self._vertex_data_plot_3d, self.hist3D))
 
         layout_color = QVBoxLayout(self.histColor)
-        layout_color.addWidget(self._hist_color_canvas)
-        layout_color.addWidget(NavigationToolBar(self._hist_color_canvas, self.histColor))
+        layout_color.addWidget(self._vertex_data_plot_rgb)
+        layout_color.addWidget(self._vertex_data_plot_rgb.create_navigation_toolbar(self.histColor))
 
         self.listPaths.itemClicked.connect(self.apply_path_index_update)
         self.listPaths.currentItemChanged.connect(self.update_hist_path)
@@ -79,15 +81,13 @@ class VertexDataPlots(Plugin):
         return -1
 
     def resizeEvent(self, event):
-        self._hist2D_canvas.resize_plot()
-        self._hist3D_canvas.resize_plot()
-        self._hist_color_canvas.resize_plot()
+        for plot in self._plots:
+            plot.resize_plot()
         super().resizeEvent(event)
 
     def apply_theme(self, theme):
-        self._hist2D_canvas.apply_theme(theme)
-        self._hist3D_canvas.apply_theme(theme)
-        self._hist_color_canvas.apply_theme(theme)
+        for plot in self._plots:
+            plot.apply_theme(theme)
 
     def init_render_data(self, render_data):
         self._render_data = render_data
@@ -95,9 +95,7 @@ class VertexDataPlots(Plugin):
     def prepare_new_data(self):
         self._cur_path_tpl = None
         self._last_hist_item = ""
-        self._hist2D_canvas.clear_plot()
-        self._hist3D_canvas.clear_plot()
-        self._hist_color_canvas.clear_plot()
+        self.clear_plots()
         self.listPaths.clear()
         self.listHistNames.clear()
 
@@ -119,11 +117,11 @@ class VertexDataPlots(Plugin):
             self._cur_path_tpl = tpl
             stacked_idx = self.stackedHists.currentIndex()
             if stacked_idx == 0:
-                self._hist2D_canvas.select_vertex(tpl)
+                self._vertex_data_plot_2d.select_vertex(tpl)
             elif stacked_idx == 1:
-                self._hist3D_canvas.select_vertex(tpl)
+                self._vertex_data_plot_3d.select_vertex(tpl)
             elif stacked_idx == 2:
-                self._hist_color_canvas.select_vertex(tpl)
+                self._vertex_data_plot_rgb.select_vertex(tpl)
 
     @pyqtSlot(QListWidgetItem, name='apply_path_index_update')
     def apply_path_index_update(self, item):
@@ -152,13 +150,13 @@ class VertexDataPlots(Plugin):
                 self.insert_plot_data(vertex.dict_color3f, plot_color_dict, vertex_idx)
 
             for name in plot_2d_dict:
-                HistListItem(name, self.listHistNames, plot_2d_dict, 0.75, path_data.path_depth+0.25, self._hist2D_canvas, 0)
+                HistListItem(name, self.listHistNames, plot_2d_dict, 0.75, path_data.path_depth+0.25, self._vertex_data_plot_2d, 0)
 
             for name in plot_3d_dict:
-                HistListItem(name, self.listHistNames, plot_3d_dict, 0.75, path_data.path_depth+0.25, self._hist3D_canvas, 1)
+                HistListItem(name, self.listHistNames, plot_3d_dict, 0.75, path_data.path_depth+0.25, self._vertex_data_plot_3d, 1)
 
             for name in plot_color_dict:
-                HistListItem(name, self.listHistNames, plot_color_dict, 0.75, path_data.path_depth+0.25, self._hist_color_canvas, 2)
+                HistListItem(name, self.listHistNames, plot_color_dict, 0.75, path_data.path_depth+0.25, self._vertex_data_plot_rgb, 2)
 
             if self._last_hist_item == "":
                 self.listHistNames.setCurrentRow(0)
@@ -193,9 +191,8 @@ class VertexDataPlots(Plugin):
             item.plot_canvas.select_vertex(self._cur_path_tpl)
 
     def clear_plots(self):
-        self._hist2D_canvas.clear_plot()
-        self._hist3D_canvas.clear_plot()
-        self._hist_color_canvas.clear_plot()
+        for plot in self._plots:
+            plot.clear()
 
     @staticmethod
     def insert_plot_data(source_dict, target_dict, vertex_idx):
@@ -216,5 +213,3 @@ class VertexDataPlots(Plugin):
     def update_view(self):
         # nothing to-do here since we work directly on render data
         pass
-
-

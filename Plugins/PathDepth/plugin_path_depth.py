@@ -12,12 +12,9 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
-from Plugins.PathDepth.plot_2d_canvas import PlotPathDepth
 from Core.plugin import Plugin
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolBar
-
+from Plugins.PathDepth.plot_path_depth import PlotPathDepth
 from PyQt5.QtWidgets import QVBoxLayout
-from PyQt5.Qt import Qt
 
 
 class PathDepth(Plugin):
@@ -26,22 +23,19 @@ class PathDepth(Plugin):
         Plugin.__init__(
             self,
             name='Path Depth',
-            flag=28
-        )
+            flag=28)
 
-        self._plot = PlotPathDepth(self.send_update_path_indices_callback)
-        self._plot.setFocusPolicy(Qt.ClickFocus)
-        self._plot.setFocus()
+        self.plot_path_depth = PlotPathDepth(self.send_update_path_indices_callback)
 
         layout = QVBoxLayout(self)
-        layout.addWidget(self._plot)
-        layout.addWidget(NavigationToolBar(self._plot, self))
+        layout.addWidget(self.plot_path_depth)
+        layout.addWidget(self.plot_path_depth.create_navigation_toolbar(self))
 
     def send_update_path_indices_callback(self, indices, add_item):
         self.send_update_path_indices(indices, add_item)
 
     def apply_theme(self, theme):
-        self._plot.apply_theme(theme)
+        self.plot_path_depth.apply_theme(theme)
 
     def init_render_data(self, render_data):
         x_list = []
@@ -50,16 +44,16 @@ class PathDepth(Plugin):
             x_list.append(path_key)
             y_list.append(path.path_depth)
 
-        self._plot.plot(x_list, y_list)
+        self.plot_path_depth.plot(x_list, y_list)
 
     def prepare_new_data(self):
-        self._plot.clear_plot()
+        self.plot_path_depth.clear()
 
     def update_path_indices(self, indices):
-        self._plot.mark_values(indices)
+        self.plot_path_depth.mark_values(indices)
 
     def select_path(self, index):
-        self._plot.select_path(index)
+        self.plot_path_depth.select_path(index)
 
     def update_vertex_indices(self, tpl_list):
         # nothing to-do here

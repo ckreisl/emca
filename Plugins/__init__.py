@@ -1,4 +1,4 @@
-from Plugins.VertexDataPlots.plugin_plots import VertexDataPlots
+from Plugins.VertexDataPlots.plugin_vertex_data_plots import VertexDataPlots
 from Plugins.PathDepth.plugin_path_depth import PathDepth
 from Plugins.SphericalView.plugin_spherical_view import SphericalView
 

@@ -17,7 +17,7 @@ import numpy as np
 import logging
 
 
-class Highlighter(HighlighterBase):
+class RGBHighlighter(HighlighterBase):
 
     """
         Highlighter
@@ -49,7 +49,7 @@ class Highlighter(HighlighterBase):
         :return:
         """
         mask = self.inside(event1, event2, self.x, self.s1)
-        self._send_update_path(self.x[mask], False)
+        self.callback_send_update_path(self.x[mask], False)
 
     def select_xs2(self, event1, event2):
         """
@@ -59,7 +59,7 @@ class Highlighter(HighlighterBase):
         :return:
         """
         mask = self.inside(event1, event2, self.x, self.s2)
-        self._send_update_path(self.x[mask], False)
+        self.callback_send_update_path(self.x[mask], False)
 
     def select_xs3(self, event1, event2):
         """
@@ -69,7 +69,7 @@ class Highlighter(HighlighterBase):
         :return:
         """
         mask = self.inside(event1, event2, self.x, self.s3)
-        self._send_update_path(self.x[mask], False)
+        self.callback_send_update_path(self.x[mask], False)
 
     def update_all(self, mask):
         """
@@ -78,8 +78,8 @@ class Highlighter(HighlighterBase):
         :return:
         """
         xs1 = np.column_stack([self.x[mask], self.s1[mask]])
-        self._highlights[0].set_offsets(xs1)
         xs2 = np.column_stack([self.x[mask], self.s2[mask]])
-        self._highlights[1].set_offsets(xs2)
         xs3 = np.column_stack([self.x[mask], self.s3[mask]])
-        self._highlights[2].set_offsets(xs3)
+        self.highlighters[0].set_offsets(xs1)
+        self.highlighters[1].set_offsets(xs2)
+        self.highlighters[2].set_offsets(xs3)

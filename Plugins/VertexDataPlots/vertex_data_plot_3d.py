@@ -15,17 +15,21 @@
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from PyQt5.QtWidgets import QSizePolicy
 from matplotlib.figure import Figure
-import numpy as np
+from mpl_toolkits.mplot3d import Axes3D
 import logging
 
 
-class Plot2DCanvas(FigureCanvas):
+class VertexDataPlot3D(FigureCanvas):
 
     def __init__(self, parent=None):
         self._parent = parent
         self._fig = Figure((5, 4), dpi=100)
-        self._ax1 = self._fig.add_subplot(111)
 
+        FigureCanvas.__init__(self, self._fig)
+        FigureCanvas.setSizePolicy(self, QSizePolicy.Expanding, QSizePolicy.Expanding)
+        FigureCanvas.updateGeometry(self)
+
+        self._ax1 = Axes3D(self._fig)
         # RGBA dark theme
         self._RGBA = '#31363b'
         self._fig.patch.set_facecolor(self._RGBA)
@@ -36,15 +40,10 @@ class Plot2DCanvas(FigureCanvas):
 
         self._alpha = 0.7
         self._color = '#eff0f1'
-        self._color_dot = 'wo'
 
-        FigureCanvas.__init__(self, self._fig)
-        FigureCanvas.setSizePolicy(self, QSizePolicy.Expanding, QSizePolicy.Expanding)
-        FigureCanvas.updateGeometry(self)
+        # self._ax1_highlight, = self._ax1.plot([], [], 'o', color='yellow')
 
-        self._ax1_highlight, = self._ax1.plot([], [], 'o', color='yellow')
-
-        self._fig.tight_layout()
+        # self._fig.tight_layout()
         self._cid = self._fig.canvas.mpl_connect('pick_event', self.handle_pick)
 
     def apply_theme(self, theme):
@@ -52,7 +51,6 @@ class Plot2DCanvas(FigureCanvas):
             self._color = '#000000'
             self._RGBA = '#EFF0F1'
             self._plot_facecolor = '#EFF0F1'
-            self._color_dot = 'bo'
         self._fig.patch.set_facecolor(self._RGBA)
         self._ax1.set_facecolor(self._plot_facecolor)
         self._ax1.tick_params(axis='x', colors=self._color)
@@ -61,49 +59,40 @@ class Plot2DCanvas(FigureCanvas):
             self._ax1.spines[border].set_color(self._color)
 
     def resize_plot(self):
-        self._fig.tight_layout()
+        #self._fig.tight_layout()
         self._fig.canvas.draw_idle()
 
     def handle_pick(self, event):
-        ind = event.ind
-        line_ax1 = self._ax1.lines[0]
+        # todo check if picking and highlighting with idx is possible in 3d plot
+        pass
 
-        path_idx = self._parent.current_path_index()
-        x_data_ax1 = line_ax1.get_xdata()
-
-        tpl = (path_idx, x_data_ax1[ind[0]])
-        self._parent.send_select_vertex(tpl)
-
-    def clear_plot(self):
+    def clear(self):
         self._ax1.clear()
 
     def select_vertex(self, tpl):
-        try:
-            line_ax1 = self._ax1.lines[0]
-        except IndexError as e:
-            logging.error("No data available: {}".format(e))
-            return None
-        x_data_ax1 = line_ax1.get_xdata()
-        y_data_ax1 = line_ax1.get_ydata()
-
-        idx = np.where(x_data_ax1 == tpl[1])[0]
-
-        self._ax1_highlight.set_data(x_data_ax1[idx], y_data_ax1[idx])
-        self._fig.canvas.draw_idle()
+        # todo check if picking and highlighting with idx is possible in 3d plot
+        pass
 
     def plot(self, name, values, xmin=None, xmax=None):
 
         x_list = [x[0] for x in values]
-        y_list = [y[1] for y in values]
+        points = [p[1] for p in values]
 
-        self._ax1.plot(x_list, y_list, self._color_dot, picker=5, alpha=self._alpha)
-        self._ax1.set_xlim(xmin, xmax)
-        self._ax1.set_xticks(x_list)
-        self._ax1.set_title(name, color=self._color)
-        self._ax1.set_ylabel(name)
+        y_list = []
+        z_list = []
+
+        for p in points:
+            tpl = p[0]
+            y_list.append(tpl[0])
+            z_list.append(tpl[1])
+
+        self._ax1.plot(x_list, y_list, z_list, 'wo', picker=5, alpha=self._alpha)
+        self._ax1.set_title(name)
         self._ax1.set_xlabel('path depth')
+        self._ax1.set_ylabel('x', color=self._color)
+        self._ax1.set_zlabel('y', color=self._color)
+        self._ax1.set_xticks(x_list)
+        self._ax1.set_xlim(xmin, xmax)
 
-        self._ax1_highlight, = self._ax1.plot([], [], 'o', color='yellow')
-
-        self._fig.tight_layout()
+        #self._fig.tight_layout()
         self._fig.canvas.draw_idle()

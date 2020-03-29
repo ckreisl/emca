@@ -29,7 +29,7 @@ from View.MainView.view_render_info import ViewRenderInfo
 from View.DataView.view_render_data import ViewRenderData
 from View.SceneView.view_render_scene import ViewRenderScene
 from View.RenderView.view_render_image import ViewRenderImage
-from View.SampleContributionView.view_scatter_plot import ViewScatterPlot
+from View.SampleContributionView.view_sample_contribution_plot import ViewScatterPlot
 
 import logging
 
