@@ -66,10 +66,10 @@ class VertexDataPlot3D(ScatterPlot3DBase):
         self.plot_3d(x, y, z, init_highlighter=False)
         if xmin is not None and xmax is not None:
             self.axes.set_xlim(xmin, xmax)
-        self.axes.set_title(name, color=self.color_dots)
+        self.axes.set_title(name, color=self.color_title)
         self.axes.set_xlabel('path depth', color=self.color_title)
-        self.axes.set_ylabel('x', color=self.color_dots)
-        self.axes.set_zlabel('y', color=self.color_dots)
+        self.axes.set_ylabel('x', color=self.color_title)
+        self.axes.set_zlabel('y', color=self.color_title)
         self.axes.set_xticks(x)
         self.highlighter, = self.axes.plot([], [], [], 'o', color='yellow')
         self.figure.canvas.draw_idle()
