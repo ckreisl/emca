@@ -46,13 +46,18 @@ class FigureBase(FigureCanvas):
         self.figure.canvas.draw_idle()
 
     def apply_theme(self, theme):
-        if theme != 'light':
-            return
-        self.RGBA = '#EFF0F1'
-        self.plot_facecolor = '#EFF0F1'
-        self.color_axes = 'black'
-        self.color_title = 'black'
-        self.color_dots = 'blue'
+        if theme == 'light':
+            self.RGBA = '#EFF0F1'
+            self.plot_facecolor = '#EFF0F1'
+            self.color_axes = 'black'
+            self.color_title = 'black'
+            self.color_dots = 'blue'
+        else:
+            self.RGBA = '#31363b'
+            self.plot_facecolor = '#232629'
+            self.color_axes = 'white'
+            self.color_title = 'white'
+            self.color_dots = '#eff0f1'
         self.figure.patch.set_facecolor(self.RGBA)
         if isinstance(self.axes, np.ndarray):
             for ax in self.axes:
@@ -67,7 +72,7 @@ class FigureBase(FigureCanvas):
             self.axes.tick_params(axis='y', colors=self.color_axes)
             for spine in ['left', 'right', 'bottom', 'top']:
                 self.axes.spines[spine].set_color(self.color_axes)
-        self.figure.tight_layout()
+        self.figure.canvas.draw_idle()
 
     def clear(self):
         if isinstance(self.axes, np.ndarray):
