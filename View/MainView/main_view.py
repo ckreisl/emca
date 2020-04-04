@@ -109,6 +109,7 @@ class MainView(QMainWindow):
         :return:
         """
         self._controller = controller
+        self._view_emca.set_controller(controller)
 
     def closeEvent(self, q_close_event):
         """

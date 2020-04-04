@@ -91,6 +91,15 @@ class ViewEMCA(QWidget):
         :return:
         """
         self._controller = controller
+        self._view_options.set_controller(controller)
+        self._view_plot.set_controller(controller)
+        self._view_render_scene.set_controller(controller)
+        self._view_render_data.set_controller(controller)
+        self._view_render_image.set_controller(controller)
+        self._view_render_info.set_controller(controller)
+        self._view_connect.set_controller(controller)
+        self._view_detector.set_controller(controller)
+        self._view_filter.set_controller(controller)
 
     @pyqtSlot(bool, name='open_connect_view')
     def open_connect_view(self, clicked):

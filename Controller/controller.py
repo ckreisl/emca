@@ -38,25 +38,10 @@ class Controller(QObject):
 
         # set connection between views and controller
         self._view.set_controller(self)
-        self._view.view_emca.set_controller(self)
-        self._view.view_options.set_controller(self)
-        self._view.view_plot.set_controller(self)
-        self._view.view_render_scene.set_controller(self)
-        self._view.view_render_data.set_controller(self)
-        self._view.view_render_image.set_controller(self)
-        self._view.view_render_info.set_controller(self)
-        self._view.view_connect.set_controller(self)
-        self._view.view_detector.set_controller(self)
-        self._view.view_filter.set_controller(self)
 
         # set connection between model and controller
         self._model.set_controller(self)
-        self._model.plugins_handler.set_controller(self)
         self._model.sendStateMsgSig.connect(self.handle_state_msg)
-
-        # set plugin btn
-        plugins = self._model.plugins_handler.plugins
-        self._view.view_emca.add_plugins(plugins)
 
         # controller keeps track of current selected path indices
         self._indices = np.array([], dtype=np.int32)
@@ -71,6 +56,9 @@ class Controller(QObject):
         Init all views with parameters from the model (dataset)
         :return:
         """
+        # set plugin btn
+        plugins = self._model.plugins_handler.plugins
+        self._view.view_emca.add_plugins(plugins)
         # init detector view with values from detector class
         detector = self._model.detector
         self._view.view_detector.init_values(detector)

@@ -65,6 +65,7 @@ class Dataset(QObject):
         :return:
         """
         self._controller = controller
+        self._plugins_handler.set_controller(controller)
 
     @property
     def plugins_handler(self):
