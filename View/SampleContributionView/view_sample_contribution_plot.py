@@ -36,8 +36,8 @@ class ViewScatterPlot(QWidget):
 
         # add matplotlib navigation toolbar
         layout = QVBoxLayout(self)
-        layout.addWidget(self._sample_contribution_plot, alignment=Qt.AlignHCenter)
-        layout.addWidget(self._sample_contribution_plot.create_navigation_toolbar(self), alignment=Qt.AlignLeft)
+        layout.addWidget(self._sample_contribution_plot)
+        layout.addWidget(self._sample_contribution_plot.create_navigation_toolbar(self))
 
     def set_controller(self, controller):
         """
