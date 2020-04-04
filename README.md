@@ -8,7 +8,7 @@
 EMCA is a framework for the visualization of Monte Carlo-based algorithms. More precisely it is designed to visualize and analyze unidirectional path tracing algorithms. The framework consists of two parts, a server part which serves as an interface for the respective rendering system and a client which takes over the pure visualization. The client is written in Python and can be easily extended. EMCA works on a pixel basis which means that instead of pre-computing and saving all the necessary data of the whole rendered image during the rendering process everything is calculated at run-time. The data is collected and generated according to the selected pixel by the user.
 
 This framework was developed as Master thesis 03/2019 at the University of Tuebingen (Germany). Special thanks goes to Prof. Hendrik Lensch, Sebastian Herholz (supervisor), Tobias Rittig and Lukas Ruppert who made this work possible.
-* Master-Thesis: TODO_ADD_LINK
+* Master-Thesis: https://github.com/ckreisl/emca/blob/readme/images/ckreisl_thesis.pdf
 
 Since the release of my master thesis some changes have been applied so that it can now be published as a more or less **alpha** version. The primary goal of this framework is to support other developers and especially Universities researching on rendering algorithms based on Monte-Carlo. Furthermore it should give the impulse to implement further ideas and improvements to provide an ongoing delopment of EMCA.
 
