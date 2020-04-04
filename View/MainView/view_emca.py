@@ -327,8 +327,6 @@ class ViewEMCA(QWidget):
         idx = self.cbPixelHistory.findText(text)
         if idx == -1:
             # item not found, insert new item
-            if self.cbPixelHistory.count() > 6:
-                self.cbPixelHistory.removeItem(0)
             self.cbPixelHistory.addItem(pixel_info.icon, text)
             idx = self.cbPixelHistory.count()-1
             self.cbPixelHistory.setCurrentIndex(idx)
