@@ -1,16 +1,20 @@
 # EMCA — Explorer of Monte-Carlo based Algorithms
-![EMCA](https://github.com/ckreisl/emca/blob/readme/images/emca.png)
+
+![EMCA Teaser](https://github.com/ckreisl/emca/blob/readme/images/emca_teaser.png)
 
 <a name="about"></a>
-## About
-EMCA is a framework for the visualization of Monte Carlo-based algorithms. More precisely it is designed to visualize and analyze unidirectional path tracing algorithms. The framework consists of two parts, a server part, which serves as an interface for the respective rendering system and a client, which takes over the pure visualization. The client is written in Python and can be easily extended. EMCA works on a pixel basis, which means that instead of pre-computing and saving all the necessary data of the whole rendered image, everything is calculated at run-time. The data is collected and generated according to the selected pixel by the user.
 
-This framework was developed as Master thesis 03/2019 at the University of Tübingen (Germany). Special thanks goes to Prof. Hendrik Lensch, Sebastian Herholz (supervisor), Tobias Rittig and Lukas Ruppert who made this work possible.
-* Master-Thesis: https://github.com/ckreisl/emca/blob/readme/thesis/ckreisl_thesis.pdf
+## About
+EMCA is a framework for the visualization of Monte Carlo-based algorithms. More precisely it is designed to visualize and analyze unidirectional path tracing algorithms. The framework consists of two parts, a server part which serves as an interface for the respective rendering system and a client which takes over the pure visualization. The client is written in Python and can be easily extended. EMCA works on a pixel basis which means that instead of pre-computing and saving all the necessary data of the whole rendered image during the rendering process everything is calculated at run-time. The data is collected and generated according to the selected pixel by the user.
+
+This framework was developed as Master thesis 03/2019 at the University of Tuebingen (Germany). Special thanks goes to Prof. Hendrik Lensch, Sebastian Herholz (supervisor), Tobias Rittig and Lukas Ruppert who made this work possible.
+* Master-Thesis: TODO_ADD_LINK
+
+Since the release of my master thesis some changes have been applied so that it can now be published as a more or less **alpha** version. The primary goal of this framework is to support other developers and especially Universities researching on rendering algorithms based on Monte-Carlo. Furthermore it should give the impulse to implement further ideas and improvements to provide an ongoing delopment of EMCA.
 
 Currently this framework only runs on **Linux** systems. It was tested and developed on Ubuntu 16.04, 18.04 and 19.10.
 
-If you use this framework for a publication i would appreciate a citation (though not required). You can use the following BibTex template:
+If you are using this framework for a publication I would appreciate a citation (though not required). In any case you can use the following BibTex template:
 ```
 @misc{EMCA@2019,
    Author = {Christoph Kreisl},
@@ -28,27 +32,42 @@ If you use this framework for a publication i would appreciate a citation (thoug
   * [Brushing and Linking](#brushing_linking)
   * [Render View](#render_view)
   * [Sample Contribution View](#sample_view)
-  * [Scene View](#scene_view)
-  * [Data View](#data_view)
+  * [3D Scene View](#scene_view)
+  * [Render Data View](#data_view)
   * [Custom Plugin Interface](#custom_plugin_interface)
-  * [Video Demo](#demo_video)
+  * [Features](#features)
+  * [Demo Video](#demo_video)
 
 <a name="server_interface"></a>
+
 ## Server Interface
 During the development of emca [mitsuba](https://github.com/mitsuba-renderer/mitsuba) was used as render system. For this purpose an interface was implemented to allow data transfer between mitsuba and the emca framework. Code modifications to mitsuba can be found here: https://github.com/ckreisl/mitsuba/tree/emca (branch emca).
 
 In general "any" render system can be used. For this purpose the EMCA server interface must be adapted to the respective render system. In addition, the renderer must be modified so that it can render deterministic images. At the moment there is no offical documentation available to adapt the EMCA server interface to other render systems than mitsuba.
 
 <a name="server_setup"></a>
+
 ### Setup
-If you never worked with mitsuba before please download and read the documentation about how to configure and compile mitsuba. In the next steps I assume that mitsuba has already been set up.
+If you never worked with [mitsuba](https://github.com/mitsuba-renderer/mitsuba) before please download and read the [documentation](https://www.mitsuba-renderer.org/releases/current/documentation.pdf) first. With the following steps I assume that the setup of mitsuba is already done. I'm already aware of mitsuba2 which was not tested yet.
 
 1. Clone or pull the changes from the mitsuba emca branch.
 1. In your *config.py* add `-DDETERMINISTIC` as compile flag for CXX. This will allow for determinisitic renderings in order to analyze and debug path tracing algorithms with emca.
 1. Compile mitsuba
-1. Start the server with the following command: `mtsutil emca <path_to_scene.xml>`
+1. Modify your scene.xml file. Set the sampler type to `deterministic`. For further information on how to add data check the `pathemca.cpp` file.
+``` 
+<!-- Modified Multiple Importance Sampling Path Tracing Algorithm -->
+<integrator type="pathemca"/>
+
+<!-- Deterministic Sampler -->
+<sampler type="deterministic">
+  <integer name="seed" value="42"/>
+  <integer name="sampleCount" value="32"/>
+</sampler>
+```
+5. Start the server with the following command: `mtsutil emca <path_to_scene.xml>`
 
 <a name="emca_client"></a>
+
 ## EMCA Client
 EMCA is based on **Python 3.6**. To install and load all necessary dependencies use the requirements.txt file.
 ```
@@ -56,30 +75,38 @@ pip3 install -r requirements.txt
 ```
 
 <a name="brushing_linking"></a>
+
 ### Brushing and Linking
 The concept of brushing and linking is to connect multiple views within a GUI representing different parts of the same data.
 Selecting a path or vertex in any view will automatically select the same path or vertex in all other views including the (custom) tools presented shortly. This approach allows to provide insight into multiple aspects of the data without cluttering a single view with all the available data. Especially the connection to the scene view provides valuable insight into the otherwise difficult to parse intersection points.
 
-![emca](https://github.com/ckreisl/emca/blob/readme/images/emca_view_01.png)
+![View One](https://github.com/ckreisl/emca/blob/readme/images/emca_render_sample_view.png)
+
 <a name="render_view"></a>
+
 ### Render View
 Displaying the rendered image, the render view is the starting point of any visualization task.
 Here, the user can select individual pixels, e.g. ones containing artifacts such as fireflies or general high-variance regions, to inspect their contributing light transport paths and look for potential errors or sources of high variance.
-The image can either be loaded from file or be requested from the server to render anew.
+The image can either be loaded from file, via drag'n drop or be requested from the server to render anew.
 On selection of a pixel, the server is queried for the corresponding path data, which can be quickly generated by the rendering system.
 Once this data is received, it becomes available for further inspection in the following views.
 A history of previously selected pixels allows to quickly switch between several pixels of interest.
 
 <a name="sample_view"></a>
+
 ### Sample Contribution View
 The sample contribution view provides interactive scatter plots of each path's estimate of incident radiance for the selected pixel per spectrum provided by the renderer.
 In the scatter plots, paths can be quickly classified into non-contributing paths, regularly contributing paths and outliers which might have caused a firefly artifact.
 Here, one or multiple paths can be selected for inspection.
 For efficient selection of a subset of paths, a rectangular selection tool is provided.
 
-![emca](https://github.com/ckreisl/emca/blob/readme/images/emca_view_02.png)
+* Rectangle selection tool can be (de-)activated by pressing the 'R' key.
+* Single paths can be added by holding down the 'Shift' key while selecting elements.
+
+![View Two](https://github.com/ckreisl/emca/blob/readme/images/emca_scene_data_view.png)
 
 <a name="scene_view"></a>
+
 ### Scene View
 The scene view allows the user to explore the selected traced paths within a semitransparent representation of the scene's geometry.
 The camera is initialized to its location in the rendered image and can be moved around freely.
@@ -89,13 +116,17 @@ To additionally highlight the selected vertex, its preceding path segment is hig
 Regular path segments are shown in white unless they terminate in the environment map in which case they are colored in yellow.
 If the rendering algorithm uses next event estimation, shadow rays can be shown in blue for successful connections to the emitter and in red in case the sampled emitter is occluded.
 
+* Rectangle selection tool can be (de-)activated by pressing the 'R' key.
+
 <a name="data_view"></a>
+
 ### Data View
 The render data view shows all the collected data for each selected path and its vertices.
 Paths and their data are presented in a collapsible tree structure to the user to allow for comprehensible inspection and comparison of various paths and individual vertices.
 In combination with the scene view, light transport paths can be quickly analyzed by interactively stepping through the individual intersection points by simply selecting the vertices in the data view.
 
 <a name="custom_plugin_interface"></a>
+
 ### Custom Plugin Interface
 New path tracing approaches might make use of arbitrary auxiliary data such as spherical radiance caches which might be too complex
 to be suitably displayed in the existing 2D and 3D vertex data plots or the textual render data view.
@@ -105,10 +136,56 @@ Following the brushing and linking concept the tool will be notified of the curr
 Should the data collected during path tracing not suffice to satisfy the custom tool's needs,
 a matching custom server module can be created from which the custom tool can easily request arbitrary additional data at any moment.
 
+#### Vertex Data Plots Plugin (Core Plugin)
+The vertex data plots provide an aggregated view of all user-supplied data for a single traced path. The view allows for exploring fundamental quantities and their changes during ray traversal like the Russian roulette probability or PDF. Supporting multiple data types with 2D and 3D plots for one or two dimensional data at various path depths as well as spectral plots for radiance data enables visualizing the most commonly gathered data. All plots are automatically created on-the-fly after receiving the render data from the server side.
+
+#### Path Depth Plugin (Core Plugin)
+The path depth view allows for analyzing traced paths according to their reached depth. Detecting paths that end too early can be essential in order to determine convergence problems of a rendered image.
+Terminating paths based only on their throughput may undersample important contributions of hard to reach light sources.
+Therefore, in combination with the per-path estimate view, one can analyze various Russian roulette criteria like ADRR and their relations between path contribution and the reached depth.
+
+#### Spherical View Plugin (Custom Plugin - mitsuba)
+The spherical view tool is an example of a custom tool requiring more data than initially collected during path tracing. It displays the incident radiance from all directions at the active vertex position.
+Computing an estimate of the incident radiance can take a considerable amount of time, depending on the selected resolution, sample count and the used integrator. Therefore, it does not make sense to precompute it during the path tracing step. Instead, the incident radiance is requested and rendered on-the-fly as each vertex is selected while the tool is active. 
+
+#### How-To: Add a new Plugin
+All individial created plugins should be placed within the **Plugins** folder. To load your plugin add it in the `__init__.py` file as shown below:
+
+```
+from Plugins.VertexDataPlots.plugin_vertex_data_plots import VertexDataPlots
+from Plugins.PathDepth.plugin_path_depth import PathDepth
+from Plugins.SphericalView.plugin_spherical_view import SphericalView
+
+# In order to initialize your plugin, import your plugin here and add it to __all__ list.
+
+__all__ = [
+    'VertexDataPlots',
+    'PathDepth',
+    'SphericalView',
+]
+```
+
+Afterwards EMCA will automatically load and initialize your plugin. A button with the name of your plugin will become visible in the bottom of the EMCA main view.
+
+New Plugins must inherit from the `Plugin` base class. For code examples check the already implemented plugins within the 'Plugins' folder.
+
+<a name="features"></a>
+
+### Features
+
+#### High Variance Sample Detector
+In Monte Carlo integration, paths should be sampled proportional to their unknown eventual contribution. To reduce the variance in the rendered image, importance sampling schemes such as the throughput-oriented BSDF-sampling are applied. However, low-probability paths encountering strong emitters will result in extreme contribution estimates manifesting in firefly artifacts. Investigating these paths provides crucial insights into remaining sources of high variance that developers of efficient path tracers aim to eliminate. Clamping and denoising can be used to remove remaining fireflies. However, such methods are unsatisfactory as they require an additional post-processing step and bias the outcome.
+
+Often, only a single path out of hundreds of paths is responsible for producing a firefly. To ease the debugging of fireflies, a firefly detector is provided which automatically selects paths with extreme contributions on pixel selection. Paths whose contribution differs from the mean by more than two times the standard deviation are classified as outliers. As a more sophisticated approach, we also provide a second outlier detector based on the Generalized ESD for Outliers by Rosner which is more robust.
+
+#### Filter
+The ability to filter data by specific criteria offers more flexibility regarding the analysis of traced paths and their collected path data.
+Therefore, we provide a filter algorithm which allows for applying multiple filters with various filter criteria based on the path data. Users can apply one or more filter constraints which are applied in combination.
+
 <a name="demo_video"></a>
 ### Video Demo
-[Vimeo](https://vimeo.com/397632936)
+[Demo](https://vimeo.com/397632936)
 
-(Names might be differe due to renaming)
+(The look and name might be differ due to renaming)
 
          
