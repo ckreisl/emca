@@ -41,14 +41,15 @@ If you are using this framework for a publication I would appreciate a citation 
 <a name="server_interface"></a>
 
 ## Server Interface
-During the development of emca [mitsuba](https://github.com/mitsuba-renderer/mitsuba) was used as render system. For this purpose an interface was implemented to allow data transfer between mitsuba and the emca framework. Code modifications to mitsuba can be found here: https://github.com/ckreisl/mitsuba/tree/emca (branch emca).
+During the development of emca [mitsuba](https://github.com/mitsuba-renderer/mitsuba) was used as render system. For this purpose an interface was implemented to allow data transfer between mitsuba and the emca framework. Code modifications to mitsuba can be found here: 
+* https://github.com/ckreisl/mitsuba/tree/emca (branch emca)
 
 In general "any" render system can be used. For this purpose the EMCA server interface must be adapted to the respective render system. In addition, the renderer must be modified so that it can render deterministic images. At the moment there is no offical documentation available to adapt the EMCA server interface to other render systems than mitsuba.
 
 <a name="server_setup"></a>
 
 ### Setup
-If you never worked with [mitsuba](https://github.com/mitsuba-renderer/mitsuba) before please download and read the [documentation](https://www.mitsuba-renderer.org/releases/current/documentation.pdf) first. With the following steps I assume that the setup of mitsuba is already done. I'm already aware of mitsuba2 which was not tested yet.
+If you never worked with [mitsuba](https://github.com/mitsuba-renderer/mitsuba) before please download and read the [documentation](https://www.mitsuba-renderer.org/releases/current/documentation.pdf) first. With the following steps I assume that the setup of mitsuba is already done.
 
 1. Clone or pull the changes from the mitsuba emca branch.
 1. In your *config.py* add `-DDETERMINISTIC` as compile flag for CXX. This will allow for determinisitic renderings in order to analyze and debug path tracing algorithms with emca.
@@ -65,6 +66,19 @@ If you never worked with [mitsuba](https://github.com/mitsuba-renderer/mitsuba) 
 </sampler>
 ```
 5. Start the server with the following command: `mtsutil emca <path_to_scene.xml>`
+
+Since [mitsuba2](https://github.com/mitsuba-renderer/mitsuba2) has just been released there is no adaption for emca yet.
+
+### Code Modification
+The following is based on the modifications made to mitsuba. The changes which need to be made inside the path tracing code of the rendering algorithm to be able to communicate with the server to provide the necessary data are minimally invasive.
+An example for a simple uni-directional path tracer is shown exemplary in the `pathemca.cpp` file.
+
+In `utils/emca.cpp` you can explorer the interface connection which servers as the server part.
+
+### DataApi
+The required data for visualization primarily includes the path's vertices from its origin at the camera until its last intersection, which might be the scene's bounding sphere in case the path terminates in an environment map. This data is collected using the `setPathOrigin`, `setIntersectionPos` and `setIntersectionPosEnvmap` functions.
+To keep track of the current path and vertex, each gets assigned an unique identifier where each path is identified by its per-pixel sample count and each vertex is identified by its depth within the path.
+These indices are set using the `setPathIndex` and `setDepthIndex` functions. To allow for the selection of paths by their incident radiance estimate, the `setFinalEstimate` function can be used to set the necessary data for the sample contribution view. Additionally, arbitrary data can be added to annotate each path and vertex using potentially fully custom data using the `addPathInfo` and `addVertexInfo` functions.
 
 <a name="emca_client"></a>
 
