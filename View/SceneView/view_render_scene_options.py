@@ -57,11 +57,11 @@ class ViewRenderSceneOptions(QWidget):
         Informs the render interface about view changes
     """
 
-    def __init__(self, renderer):
+    def __init__(self):
         QWidget.__init__(self, parent=None)
         uic.loadUi('View/ui/render_scene_options.ui', self)
 
-        self._renderer = renderer
+        self._renderer = None
 
         # center widget depending on screen size
         desktop_widget = QApplication.desktop()
@@ -103,6 +103,9 @@ class ViewRenderSceneOptions(QWidget):
         self.cbShowAllOtherVertices.toggled.connect(self.show_other_verts)
 
         self._settings = SceneRenderSettings(self)
+
+    def set_renderer(self, renderer):
+        self._renderer = renderer
 
     def prepare_new_data(self):
         """

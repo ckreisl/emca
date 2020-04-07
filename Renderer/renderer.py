@@ -12,6 +12,7 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 """
 
+from Core.render_interface import RenderInterface
 from Renderer.interactor_rubberband import RubberBandInteractor
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from Renderer.meshes import Meshes
@@ -26,16 +27,16 @@ import numpy as np
 import threading
 
 
-class Renderer(object):
+class Renderer(RenderInterface):
 
     """
         SceneView
         Represents the render which visualizes all 3D objects within the 3D viewer
-        Therefore, a vtkRenderer is used.
-        Handles all interactions and visualizations.
+        A vtkRenderer is used. Handles all interactions and visualizations.
     """
 
     def __init__(self):
+        RenderInterface.__init__(self)
         # widget
         self._frame = QFrame()
         self._vtkWidget = QVTKRenderWindowInteractor(self._frame)
@@ -94,31 +95,6 @@ class Renderer(object):
         :return: vtkWidget
         """
         return self._vtkWidget
-
-    def send_update_path(self, indices, add_item):
-        """
-        Gets overwritten by view render scene
-        :param indices:
-        :param add_item:
-        :return:
-        """
-        pass
-
-    def send_select_path(self, index):
-        """
-        Gets overwritten by view render scene
-        :param index:
-        :return:
-        """
-        pass
-
-    def send_select_vertex(self, tpl):
-        """
-        Gets overwritten by view render scene
-        :param tpl:
-        :return:
-        """
-        pass
 
     def area_picker_event(self, picker, event):
         """

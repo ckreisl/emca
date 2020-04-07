@@ -27,9 +27,6 @@ class ViewRenderScene(QWidget):
     """
         ViewRenderScene
         Handles the three-dimensional visualization.
-        Since the renderer is independent to encapsulate it,
-        this view just sends inform messages to the renderer,
-        which will handle the visualization.
     """
 
     def __init__(self, parent=None):
@@ -38,17 +35,19 @@ class ViewRenderScene(QWidget):
 
         self._controller = None
 
-        # init renderer and overwrite functions
+        # init renderer
         self._renderer = Renderer()
-        self._renderer.send_update_path = self.send_update_path
-        self._renderer.send_select_path = self.select_path
-        self._renderer.send_select_vertex = self.send_select_vertex
+
+        # init scene options with renderer
+        self._view_render_options = ViewRenderSceneOptions()
+        self._view_render_options.set_renderer(self._renderer)
+
+        # connect renderer to views
+        self._renderer.set_view_render_scene(self)
+        self._renderer.set_view_render_scene_options(self._view_render_options)
 
         # add render widget to view
         self.sceneLayout.addWidget(self._renderer.widget)
-
-        # init scene options with renderer
-        self._view_render_options = ViewRenderSceneOptions(self._renderer)
 
         self.btnSceneOptions.clicked.connect(self.open_view_render_options)
         self.btnLoadScene.clicked.connect(self.request_scene)
@@ -56,6 +55,9 @@ class ViewRenderScene(QWidget):
         # Currently buggy, returns sometimes a black image of the scene view.
         #self.btnScreenshot.clicked.connect(self.screenshot)
         self.btnScreenshot.deleteLater()
+
+    def set_renderer(self, renderer):
+        self._renderer = renderer
 
     def set_controller(self, controller):
         """
