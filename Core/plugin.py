@@ -18,7 +18,7 @@ import abc
 
 class Plugin(QWidget):
     """
-    Plugin interface, inherites from QWidget
+    Plugin interface, inherits from QWidget
 
     The plugin interface can be used to visualizes own generated data sets.
     It can request own data from the server interface or work on the current render data,

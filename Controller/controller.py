@@ -117,13 +117,11 @@ class Controller(QObject):
             threads = list()
             threads.append(threading.Thread(
                 target=self._view.view_render_scene.load_traced_paths,
-                args=(tpl[1],)
-            ))
+                args=(tpl[1],)))
 
             threads.append(threading.Thread(
                 target=self._model.create_scatter_plot,
-                args=()
-            ))
+                args=()))
 
             for thread in threads:
                 thread.setDaemon(True)

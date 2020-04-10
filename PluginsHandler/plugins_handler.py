@@ -31,8 +31,8 @@ class PluginsHandler(object):
         self._plugins_view_container = {}
 
         # loads and initialises all tools
-        for tool in [(name, cls()) for name, cls in Plugins.__dict__.items() if isinstance(cls, type)]:
-            self._plugins_view_container[tool[1].flag] = PluginsViewContainer(tool[1])
+        for plugin in [(name, cls()) for name, cls in Plugins.__dict__.items() if isinstance(cls, type)]:
+            self._plugins_view_container[plugin[1].flag] = PluginsViewContainer(plugin[1])
 
     def set_controller(self, controller):
         """
@@ -40,11 +40,11 @@ class PluginsHandler(object):
         :param controller:
         :return:
         """
-        for key, value in self._plugins_view_container.items():
+        for _, value in self._plugins_view_container.items():
             value.set_controller(controller)
 
     def apply_theme(self, theme):
-        for key, value in self._plugins_view_container.items():
+        for _, value in self._plugins_view_container.items():
             value.plugin.apply_theme(theme)
 
     def enable_plugins(self, enable):
@@ -54,7 +54,7 @@ class PluginsHandler(object):
         :param enable:
         :return:
         """
-        for key, value in self._plugins_view_container.items():
+        for _, value in self._plugins_view_container.items():
             value.enable_plugin_btn(enable)
 
     def request_plugin(self, flag, stream):
@@ -75,7 +75,7 @@ class PluginsHandler(object):
         :param render_data:
         :return:
         """
-        for key, value in self._plugins_view_container.items():
+        for _, value in self._plugins_view_container.items():
             value.init_render_data(render_data)
 
     def prepare_new_data(self):
@@ -84,7 +84,7 @@ class PluginsHandler(object):
         Informs all plugins that a new render data package is requested
         :return:
         """
-        for key, value in self._plugins_view_container.items():
+        for _, value in self._plugins_view_container.items():
             value.prepare_new_data()
 
     def update_path_indices(self, indices):
@@ -94,7 +94,7 @@ class PluginsHandler(object):
         :param indices: np.array[path_index,...]
         :return:
         """
-        for key, value in self._plugins_view_container.items():
+        for _, value in self._plugins_view_container.items():
             value.update_path_indices(indices)
 
     def update_vertex_indices(self, tpl_list):
@@ -104,7 +104,7 @@ class PluginsHandler(object):
         :param tpl_list: [(path_index, vertex_index),...]
         :return:
         """
-        for key, value in self._plugins_view_container.items():
+        for _, value in self._plugins_view_container.items():
             value.update_vertex_indices(tpl_list)
 
     def select_path(self, index):
@@ -114,7 +114,7 @@ class PluginsHandler(object):
         :param index: path_index
         :return:
         """
-        for key, value in self._plugins_view_container.items():
+        for _, value in self._plugins_view_container.items():
             value.select_path(index)
 
     def select_vertex(self, tpl):
@@ -124,7 +124,7 @@ class PluginsHandler(object):
         :param tpl: (path_index, vertex_index)
         :return:
         """
-        for key, value in self._plugins_view_container.items():
+        for _, value in self._plugins_view_container.items():
             value.select_vertex(tpl)
 
     def get_plugin_by_flag(self, flag):
@@ -144,7 +144,7 @@ class PluginsHandler(object):
         Closes all Tool windows
         :return:
         """
-        for key, plugin in self._plugins_view_container.items():
+        for _, plugin in self._plugins_view_container.items():
             plugin.close()
 
     @property

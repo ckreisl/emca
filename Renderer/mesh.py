@@ -33,16 +33,16 @@ class Mesh(vtk.vtkActor):
         start = time.time()
 
         vertices = vtk.vtkPoints()
-        vertexFloatArray = vtk.vtkFloatArray()
-        vertexFloatArray.SetArray(mesh.vertices, mesh.vertex_count*3, True)
-        vertexFloatArray.SetNumberOfComponents(3)
-        vertexFloatArray.SetNumberOfTuples(mesh.vertex_count)
-        vertices.SetData(vertexFloatArray)
+        vertex_float_array = vtk.vtkFloatArray()
+        vertex_float_array.SetArray(mesh.vertices, mesh.vertex_count*3, True)
+        vertex_float_array.SetNumberOfComponents(3)
+        vertex_float_array.SetNumberOfTuples(mesh.vertex_count)
+        vertices.SetData(vertex_float_array)
 
         triangles = vtk.vtkCellArray()
-        triangleIdArray = vtk.vtkIdTypeArray()
-        triangleIdArray.SetArray(mesh.triangles, mesh.triangle_count*4, True)
-        triangles.SetCells(mesh.triangle_count, triangleIdArray)
+        triangle_id_array = vtk.vtkIdTypeArray()
+        triangle_id_array.SetArray(mesh.triangles, mesh.triangle_count*4, True)
+        triangles.SetCells(mesh.triangle_count, triangle_id_array)
 
         # remember we got the alpha channel!
         specular_color = mesh.specular_color
@@ -53,8 +53,8 @@ class Mesh(vtk.vtkActor):
 
         self._default_color = self.GetProperty().GetColor()
 
-        logging.info('processed mesh containing {} vertices and {} triangles in: {:.3}s' \
-            .format(mesh.vertex_count, mesh.triangle_count, time.time() - start))
+        logging.info('processed mesh containing {} vertices and {} triangles in: {:.3}s'
+                     .format(mesh.vertex_count, mesh.triangle_count, time.time() - start))
 
     @property
     def is_selected(self):

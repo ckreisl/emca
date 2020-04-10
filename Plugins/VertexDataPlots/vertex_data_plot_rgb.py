@@ -23,6 +23,9 @@ class VertexDataPlotRGB(RGBScatterPlotBase):
         self.figure.tight_layout()
         self.highlighter.enable_multi_selection(False)
         self.highlighter.overwrite_pick_event(self.handle_pick)
+        self._ax1_highlight = None
+        self._ax2_highlight = None
+        self._ax3_highlight = None
 
     def handle_pick(self, event):
         ind = event.ind

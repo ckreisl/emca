@@ -36,14 +36,14 @@ class Vertex(vtk.vtkActor):
         vertex = vtk.vtkVertex()
         vertex.GetPointIds().SetId(0, 0)
         verts.InsertNextCell(vertex)
-        polyData = vtk.vtkPolyData()
-        polyData.SetPoints(pts)
-        polyData.SetVerts(verts)
+        poly_data = vtk.vtkPolyData()
+        poly_data.SetPoints(pts)
+        poly_data.SetVerts(verts)
         mapper = vtk.vtkPolyDataMapper()
         if vtk.VTK_MAJOR_VERSION <= 5:
-            mapper.SetInput(polyData)
+            mapper.SetInput(poly_data)
         else:
-            mapper.SetInputData(polyData)
+            mapper.SetInputData(poly_data)
         self.SetMapper(mapper)
 
         self._color_selected = [1, 0.6, 0]

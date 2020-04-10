@@ -117,7 +117,7 @@ class PluginsViewContainer(QWidget):
         :return:
         """
         self._plugin.select_vertex(tpl)
-        #automatically request new data for the selected vertex if the tool is visible
+        # automatically request new data for the selected vertex if the tool is visible
         if self.isVisible():
             self._controller.request_plugin(self._plugin.flag)
 

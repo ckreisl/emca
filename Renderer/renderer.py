@@ -58,7 +58,6 @@ class Renderer(RenderInterface):
         self._vtkWidget.GetRenderWindow().AddRenderer(self._renderer)
         self._iren = self._vtkWidget.GetRenderWindow().GetInteractor()
 
-        #style = MouseInteractor(parent=self)
         style = RubberBandInteractor(parent=self)
         style.SetDefaultRenderer(self._renderer)
         self._iren.SetInteractorStyle(style)
@@ -81,10 +80,12 @@ class Renderer(RenderInterface):
         self._all_paths_visible = False
         self._all_verts_visible = False
 
+        self._vtk_update_timer = threading.Timer(0.1, self.vtk_widget_update_from_timer)
+
         self._iren.Initialize()
         self._iren.Start()
 
-    def vtkWidget_update_from_timer(self):
+    def vtk_widget_update_from_timer(self):
         self._vtkWidget.update()
         self._vtk_update_timer_running = False
 
@@ -144,12 +145,10 @@ class Renderer(RenderInterface):
         """
         self._meshes.add_mesh(mesh_data)
         self._renderer.AddActor(self._meshes.meshes[-1])
-        #updating the QT widget is expensive, delay the update using a timer
-        #self._vtkWidget.update()
+        # updating the QT widget is expensive, delay the update using a timer
         if not self._vtk_update_timer_running:
             self._vtk_update_timer_running = True
-            self._vtkUpdateTimer = threading.Timer(0.1, self.vtkWidget_update_from_timer)
-            self._vtkUpdateTimer.start()
+            self._vtk_update_timer.start()
 
     def load_scene(self, camera_data, mesh_data):
         """
