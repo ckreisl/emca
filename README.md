@@ -5,20 +5,20 @@
 <a name="about"></a>
 
 ## About
-EMCA is a framework for the visualization of Monte Carlo-based algorithms. More precisely it is designed to visualize and analyze unidirectional path tracing algorithms. The framework consists of two parts, a server part which serves as an interface for the respective rendering system and a client which takes over the pure visualization. The client is written in Python and can be easily extended. EMCA works on a pixel basis which means that instead of pre-computing and saving all the necessary data of the whole rendered image during the rendering process everything is calculated at run-time. The data is collected and generated according to the selected pixel by the user.
+EMCA is a framework for the visualization of Monte Carlo-based algorithms. More precisely it is designed to visualize and analyze unidirectional path tracing algorithms. The framework consists of two parts, a server part which serves as an interface for the respective rendering system and a client which takes over the pure visualization. The client is written in Python and can be easily extended. EMCA works on a pixel basis which means that instead of pre-computing and saving all the necessary data of the whole rendered image during the render process everything is calculated directly at run-time. The data is collected and generated according to the selected pixel by the user.
 
 This framework was developed as Master thesis 03/2019 at the University of Tuebingen (Germany). Special thanks goes to Prof. Hendrik Lensch, Sebastian Herholz (supervisor), Tobias Rittig and Lukas Ruppert who made this work possible.
 * Master-Thesis: https://github.com/ckreisl/emca/blob/readme/images/ckreisl_thesis.pdf
 
-Since the release of my master thesis some changes have been applied so that it can now be published as a more or less **alpha** version. The primary goal of this framework is to support other developers and especially Universities researching on rendering algorithms based on Monte-Carlo. Furthermore it should give the impulse to implement further ideas and improvements to provide an ongoing delopment of EMCA.
+Since the release of this master thesis some changes have been applied so that it can now be published as a more or less **alpha** version and in a quite stable state. The primary goal of this framework is to support other developers and especially Universities researching on rendering algorithms based on Monte-Carlo. Furthermore it should give the impulse to implement further ideas and improvements to provide an ongoing development of EMCA.
 
 Currently this framework only runs on **Linux** systems. It was tested and developed on Ubuntu 16.04, 18.04 and 19.10.
 
 If you are using this framework for a publication I would appreciate a citation (though not required). In any case you can use the following BibTex template:
 ```
-@misc{EMCA@2019,
+@misc{EMCA@2020,
    Author = {Christoph Kreisl},
-   Year = {2019},
+   Year = {2020},
    Note = {https://github.com/ckreisl/emca},
    Title = {EMCA - Explorer of Monte-Carlo based Algorithms}
 }
@@ -41,10 +41,10 @@ If you are using this framework for a publication I would appreciate a citation 
 <a name="server_interface"></a>
 
 ## Server Interface
-During the development of emca [mitsuba](https://github.com/mitsuba-renderer/mitsuba) was used as render system. For this purpose an interface was implemented to allow data transfer between mitsuba and the emca framework. Code modifications to mitsuba can be found here: 
+During the development of emca [mitsuba](https://github.com/mitsuba-renderer/mitsuba) was used as render system. For this purpose an interface was implemented to allow data transfer between mitsuba and the emca framework. The server interface code and modifications which have been applied to mitsuba can be found here: 
 * https://github.com/ckreisl/mitsuba/tree/emca (branch emca)
 
-In general "any" render system can be used. For this purpose the EMCA server interface must be adapted to the respective render system. In addition, the renderer must be modified so that it can render deterministic images. At the moment there is no offical documentation available to adapt the EMCA server interface to other render systems than mitsuba.
+In general 'any' render system can be used. For this purpose the EMCA server interface must be adapted to the respective render system. In addition, the renderer must be modified so that it can render deterministic images. At the moment there is no offical documentation available to adapt the EMCA server interface to other render systems than mitsuba.
 
 <a name="server_setup"></a>
 
@@ -74,6 +74,8 @@ The following is based on the modifications made to mitsuba. The changes which n
 An example for a simple uni-directional path tracer is shown exemplary in the `pathemca.cpp` file.
 
 In `utils/emca.cpp` you can explorer the interface connection which servers as the server part.
+
+In order to allow for loading the rendered (.exr) image the filepath has to be set within the `RenderInfo` object on the server side.
 
 ### DataApi
 The required data for visualization primarily includes the path's vertices from its origin at the camera until its last intersection, which might be the scene's bounding sphere in case the path terminates in an environment map. This data is collected using the `setPathOrigin`, `setIntersectionPos` and `setIntersectionPosEnvmap` functions.
