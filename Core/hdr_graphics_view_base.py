@@ -192,11 +192,13 @@ class HDRGraphicsViewBase(QGraphicsView):
 
     def update_image(self, pixmap):
         """
-        Upates the render image in the view
+        Updates the render image in the view
         :return:
         """
         items_list = self._scene.items()
-        items_list[0].setPixmap(pixmap)
+        for item in items_list:
+            if isinstance(item, QGraphicsPixmapItem):
+                item.setPixmap(pixmap)
 
     def load_hdr_image(self, filepath, falsecolor=False):
         """
