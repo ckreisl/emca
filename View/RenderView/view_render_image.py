@@ -27,6 +27,7 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import pyqtSlot
 from PyQt5 import uic
 import math
+import os
 import logging
 
 
@@ -41,7 +42,8 @@ class ViewRenderImage(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=parent)
-        uic.loadUi('View/ui/render_image.ui', self)
+        ui_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ui', 'render_image.ui'))
+        uic.loadUi(ui_filepath, self)
 
         # accept drops for drag n drop feature
         self.setAcceptDrops(True)

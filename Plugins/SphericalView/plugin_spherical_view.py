@@ -26,8 +26,9 @@ from Core.plugin import Plugin
 from Plugins.SphericalView.view_spherical_view_image import ViewSphericalViewImage
 from Types.point2 import Point2i
 from PyQt5 import uic
-import logging
 import io
+import os
+import logging
 
 
 class SphericalView(Plugin):
@@ -36,9 +37,9 @@ class SphericalView(Plugin):
         Plugin.__init__(
             self,
             "SphericalView",
-            66
-        )
-        uic.loadUi('Plugins/SphericalView/ui/spherical_view.ui', self)
+            66)
+        ui_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), 'ui', 'spherical_view.ui'))
+        uic.loadUi(ui_filepath, self)
 
         self._path = None
         self._render_data = None

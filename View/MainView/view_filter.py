@@ -38,6 +38,7 @@ from Types.point3 import Point3i
 from Types.color3 import Color3f
 from enum import Enum
 import re
+import os
 import logging
 
 
@@ -252,7 +253,8 @@ class ViewFilter(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=None)
-        uic.loadUi('View/ui/filter.ui', self)
+        ui_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ui', 'filter.ui'))
+        uic.loadUi(ui_filepath, self)
 
         self._controller = None
 

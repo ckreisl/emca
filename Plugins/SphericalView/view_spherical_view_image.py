@@ -27,6 +27,7 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSlot
 from PyQt5 import uic
+import os
 import logging
 
 
@@ -38,7 +39,8 @@ class ViewSphericalViewImage(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=parent)
-        uic.loadUi('Plugins/SphericalView/ui/spherical_view_image.ui', self)
+        ui_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), 'ui', 'spherical_view_image.ui'))
+        uic.loadUi(ui_filepath, self)
 
         self._pos = None
         self._dirW_i = None

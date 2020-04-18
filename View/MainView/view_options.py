@@ -27,6 +27,7 @@ from PyQt5.Qt import Qt
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QApplication
+import os
 import logging
 
 
@@ -39,7 +40,8 @@ class ViewOptions(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=None)
-        uic.loadUi('View/ui/options.ui', self)
+        ui_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ui', 'options.ui'))
+        uic.loadUi(ui_filepath, self)
 
         self._controller = None
 

@@ -40,6 +40,7 @@ from View.DataView.view_render_data import ViewRenderData
 from View.SceneView.view_render_scene import ViewRenderScene
 from View.RenderView.view_render_image import ViewRenderImage
 from View.SampleContributionView.view_sample_contribution_plot import ViewScatterPlot
+import os
 
 import logging
 
@@ -54,7 +55,8 @@ class ViewEMCA(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=parent)
-        uic.loadUi('View/ui/emca.ui', self)
+        ui_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ui', 'emca.ui'))
+        uic.loadUi(ui_filepath, self)
 
         self.setAcceptDrops(True)
 

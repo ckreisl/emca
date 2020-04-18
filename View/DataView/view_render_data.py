@@ -32,6 +32,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QAbstractItemView
 import numpy as np
+import os
 import logging
 
 
@@ -45,7 +46,8 @@ class ViewRenderData(QWidget):
 
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=parent)
-        uic.loadUi('View/ui/render_data.ui', self)
+        ui_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ui', 'render_data.ui'))
+        uic.loadUi(ui_filepath, self)
 
         self.tree.setHeaderLabels(["Item", "Value"])
         self.tree.setColumnWidth(0, 200)
