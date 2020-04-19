@@ -36,6 +36,7 @@ If you are using this framework for a publication I would appreciate a citation 
   * [Render Data View](#data_view)
   * [Custom Plugin Interface](#custom_plugin_interface)
   * [Features](#features)
+  * [Socket Package Flow](#socket_package_flow)
   * [Demo Video](#demo_video)
 
 <a name="server_interface"></a>
@@ -197,6 +198,14 @@ Often, only a single path out of hundreds of paths is responsible for producing 
 #### Filter
 The ability to filter data by specific criteria offers more flexibility regarding the analysis of traced paths and their collected path data.
 Therefore, we provide a filter algorithm which allows for applying multiple filters with various filter criteria based on the path data. Users can apply one or more filter constraints which are applied in combination.
+
+<a name="socket_package_flow"></a>
+### Socket Package Flow Diagram
+<object data="https://github.com/ckreisl/emca/blob/readme/images/emca_tcp_flow.pdf" type="application/pdf" width="700px" height="700px">
+    <embed src="https://github.com/ckreisl/emca/blob/readme/images/emca_tcp_flow.pdf">
+        <p>This browser does not support PDFs. Please download the PDF to view it: <a href="https://github.com/ckreisl/emca/blob/readme/images/emca_tcp_flow.pdf">Download PDF</a>.</p>
+    </embed>
+</object>
 
 <a name="demo_video"></a>
 ### Video Demo
