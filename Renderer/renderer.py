@@ -158,6 +158,7 @@ class Renderer(RenderInterface):
         # updating the QT widget is expensive, delay the update using a timer
         if not self._vtk_update_timer_running:
             self._vtk_update_timer_running = True
+            self._vtk_update_timer = threading.Timer(0.1, self.vtk_widget_update_from_timer)
             self._vtk_update_timer.start()
 
     def load_scene(self, camera_data, mesh_data):
