@@ -22,11 +22,11 @@
     SOFTWARE.
 """
 
-from PyQt5 import uic
-from PyQt5.Qt import Qt
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtWidgets import QApplication
+from Core.pyside2_uic import loadUi
+from PySide2.QtCore import Qt
+from PySide2.QtCore import Slot
+from PySide2.QtWidgets import QWidget
+from PySide2.QtWidgets import QApplication
 import os
 import logging
 
@@ -41,7 +41,7 @@ class ViewConnectSettings(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=None)
         ui_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ui', 'connect.ui'))
-        uic.loadUi(ui_filepath, self)
+        loadUi(ui_filepath, self)
 
         self._controller = None
 
@@ -87,7 +87,7 @@ class ViewConnectSettings(QWidget):
         if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
             self.btn_connect(True)
 
-    @pyqtSlot(bool, name='connect')
+    @Slot(bool, name='connect')
     def btn_connect(self, clicked):
         """
         Informs the controller to connect to the given hostname and port.

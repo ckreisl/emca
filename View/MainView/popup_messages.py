@@ -22,8 +22,8 @@
     SOFTWARE.
 """
 
-from PyQt5.QtCore import QObject
-from PyQt5.QtWidgets import QMessageBox
+from PySide2.QtCore import QObject
+from PySide2.QtWidgets import QMessageBox
 
 
 class PopupMessages(QObject):

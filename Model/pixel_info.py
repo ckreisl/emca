@@ -25,11 +25,11 @@
 from Types.factory import TypeFactory
 from Types.point2 import Point2i
 from Types.color3 import Color3f
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtGui import QImage
-from PyQt5.QtGui import QColor
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QPoint
+from PySide2.QtGui import QPixmap
+from PySide2.QtGui import QImage
+from PySide2.QtGui import QColor
+from PySide2.QtGui import QIcon
+from PySide2.QtCore import QPoint
 import logging
 
 
@@ -103,7 +103,8 @@ class PixelInfo(object):
         :return:
         """
         self._pixel_pos = pixel
-        self._color = QColor(QImage(pixmap).pixel(pixel.x(), pixel.y()))
+        q_image = pixmap.toImage()
+        self._color = q_image.pixelColor(pixel)
         self._pixmap.fill(self._color)
         self._pixel_icon.addPixmap(self._pixmap)
 

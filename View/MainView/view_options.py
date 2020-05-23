@@ -22,11 +22,11 @@
     SOFTWARE.
 """
 
-from PyQt5 import uic
-from PyQt5.Qt import Qt
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtWidgets import QApplication
+from Core.pyside2_uic import loadUi
+from PySide2.QtCore import Qt
+from PySide2.QtCore import Slot
+from PySide2.QtWidgets import QWidget
+from PySide2.QtWidgets import QApplication
 import os
 import logging
 
@@ -41,7 +41,7 @@ class ViewOptions(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=None)
         ui_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ui', 'options.ui'))
-        uic.loadUi(ui_filepath, self)
+        loadUi(ui_filepath, self)
 
         self._controller = None
 
@@ -95,7 +95,7 @@ class ViewOptions(QWidget):
     def set_auto_image_load(self, enabled):
         self.cbAutoLoadImage.setChecked(enabled)
 
-    @pyqtSlot(int, name='handle_dark_theme_change')
+    @Slot(int, name='handle_dark_theme_change')
     def handle_dark_theme_change(self, state):
         self.cbDarkTheme.blockSignals(True)
         if state == Qt.Checked:
@@ -110,7 +110,7 @@ class ViewOptions(QWidget):
             self.cbLightTheme.blockSignals(False)
         self.cbDarkTheme.blockSignals(False)
 
-    @pyqtSlot(int, name='handle_light_theme_change')
+    @Slot(int, name='handle_light_theme_change')
     def handle_light_theme_change(self, state):
         self.cbLightTheme.blockSignals(True)
         if state == Qt.Checked:
@@ -125,7 +125,7 @@ class ViewOptions(QWidget):
             self.cbDarkTheme.blockSignals(False)
         self.cbLightTheme.blockSignals(False)
 
-    @pyqtSlot(bool, name='btn_save')
+    @Slot(bool, name='btn_save')
     def btn_save(self, clicked):
         options_dict = {'theme': self.get_theme(),
                         'auto_connect': self.get_auto_connect(),
@@ -133,7 +133,7 @@ class ViewOptions(QWidget):
                         'auto_rendered_image_load': self.get_auto_image_load()}
         self._controller.save_options(options_dict)
 
-    @pyqtSlot(bool, name='btn_close')
+    @Slot(bool, name='btn_close')
     def btn_close(self, clicked):
         self.close()
 

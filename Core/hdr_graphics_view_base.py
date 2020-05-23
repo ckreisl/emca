@@ -23,11 +23,11 @@
 """
 
 from Core.hdr_image import HDRImage
-from PyQt5.QtWidgets import QGraphicsPixmapItem
-from PyQt5.QtWidgets import QGraphicsScene
-from PyQt5.QtWidgets import QGraphicsView
-from PyQt5.QtCore import QPoint
-from PyQt5.QtCore import Qt
+from PySide2.QtWidgets import QGraphicsPixmapItem
+from PySide2.QtWidgets import QGraphicsScene
+from PySide2.QtWidgets import QGraphicsView
+from PySide2.QtCore import QPoint
+from PySide2.QtCore import Qt
 import math
 import logging
 

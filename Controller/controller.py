@@ -22,9 +22,9 @@
     SOFTWARE.
 """
 
-from PyQt5.QtCore import QObject
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QFileDialog
+from PySide2.QtCore import QObject
+from PySide2.QtCore import Slot
+from PySide2.QtWidgets import QFileDialog
 from Core.messages import StateMsg
 from Core.messages import ViewMode
 from Core.socket_stream import SocketStream
@@ -77,7 +77,7 @@ class Controller(QObject):
     def indices(self):
         return self._indices
 
-    @pyqtSlot(tuple, name='handle_state_msg')
+    @Slot(tuple, name='handle_state_msg')
     def handle_state_msg(self, tpl):
         """
         Handle current state, messages mostly received from thread,
@@ -198,7 +198,7 @@ class Controller(QObject):
             if plugin:
                 plugin.update_view()
 
-    @pyqtSlot(bool, name='handle_disconnect')
+    @Slot(bool, name='handle_disconnect')
     def handle_disconnect(self, disconnected):
         """
         Disconnects the client from the server
@@ -601,7 +601,7 @@ class Controller(QObject):
                 options.set_option_auto_image_load(options_dict['auto_rendered_image_load'])
             # restart application if user user presses ok
             if theme_changed:
-                from PyQt5.QtWidgets import QMessageBox
+                from PySide2.QtWidgets import QMessageBox
                 retval = self._view.view_popup.restart_application_info("Theme change in progress ...")
                 if retval == QMessageBox.Ok:
                     options.set_theme(options_dict['theme'])

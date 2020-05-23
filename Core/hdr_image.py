@@ -26,7 +26,7 @@ import OpenEXR
 import Imath
 from PIL import Image
 from PIL.ImageQt import ImageQt as PilImageQt
-from PyQt5.QtGui import QPixmap
+from PySide2.QtGui import QPixmap
 from enum import Enum
 import array
 import numpy as np

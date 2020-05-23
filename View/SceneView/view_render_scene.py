@@ -25,10 +25,10 @@
 from Core.messages import ViewMode
 from View.SceneView.view_render_scene_options import ViewRenderSceneOptions
 from Renderer.renderer import Renderer
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtWidgets import QFileDialog
-from PyQt5 import uic
+from PySide2.QtCore import Slot
+from PySide2.QtWidgets import QWidget
+from PySide2.QtWidgets import QFileDialog
+from Core.pyside2_uic import loadUi
 import os
 import logging
 
@@ -43,7 +43,7 @@ class ViewRenderScene(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=parent)
         ui_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ui', 'render_scene.ui'))
-        uic.loadUi(ui_filepath, self)
+        loadUi(ui_filepath, self)
 
         self._controller = None
 
@@ -79,7 +79,7 @@ class ViewRenderScene(QWidget):
         """
         self._controller = controller
 
-    @pyqtSlot(bool, name='open_view_render_options')
+    @Slot(bool, name='open_view_render_options')
     def open_view_render_options(self, clicked):
         """
         Opens the view render options
@@ -91,7 +91,7 @@ class ViewRenderScene(QWidget):
         else:
             self._view_render_options.show()
 
-    @pyqtSlot(bool, name='load_scene')
+    @Slot(bool, name='load_scene')
     def request_scene(self, clicked):
         """
         Informs the controller to request the 3D scene data from the server
@@ -101,7 +101,7 @@ class ViewRenderScene(QWidget):
         self._renderer.clear_scene_objects()
         self._controller.request_scene_data()
 
-    @pyqtSlot(bool, name='reset')
+    @Slot(bool, name='reset')
     def reset(self, clicked):
         """
         Informs the renderer to reset the scenes camera view
@@ -110,7 +110,7 @@ class ViewRenderScene(QWidget):
         """
         self._renderer.reset_scene()
 
-    @pyqtSlot(bool, name='screenshot')
+    @Slot(bool, name='screenshot')
     def screenshot(self, clicked):
         """
         Informs the renderer to take a screenshot of the view and save it under the given filename

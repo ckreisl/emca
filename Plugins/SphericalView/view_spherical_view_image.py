@@ -23,10 +23,10 @@
 """
 
 from Plugins.SphericalView.spherical_graphics_view import SphericalGraphicsView
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import pyqtSlot
-from PyQt5 import uic
+from PySide2.QtWidgets import QWidget
+from PySide2.QtCore import Qt
+from PySide2.QtCore import Slot
+from Core.pyside2_uic import loadUi
 import os
 import logging
 
@@ -40,7 +40,7 @@ class ViewSphericalViewImage(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=parent)
         ui_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), 'ui', 'spherical_view_image.ui'))
-        uic.loadUi(ui_filepath, self)
+        loadUi(ui_filepath, self)
 
         self._pos = None
         self._dirW_i = None
@@ -63,19 +63,19 @@ class ViewSphericalViewImage(QWidget):
         self.falsecolorCb.toggled.connect(self.falsecolor_cb)
         self.exposureSlider.valueChanged.connect(self.exposure_slider)
 
-    @pyqtSlot(bool, name='save_image')
+    @Slot(bool, name='save_image')
     def save_image(self, clicked):
         self._graphics_view.save_image()
 
-    @pyqtSlot(bool, name='fit_view')
+    @Slot(bool, name='fit_view')
     def fit_view(self, clicked):
         self._graphics_view.reset()
 
-    @pyqtSlot(bool, name='falsecolor_cb')
+    @Slot(bool, name='falsecolor_cb')
     def falsecolor_cb(self, checked):
         self.falsecolor = checked
 
-    @pyqtSlot(int, name='exposure_slider')
+    @Slot(int, name='exposure_slider')
     def exposure_slider(self, value):
         self.exposure = float(value)/100.0
 

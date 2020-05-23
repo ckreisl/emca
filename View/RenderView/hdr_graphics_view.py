@@ -23,7 +23,7 @@
 """
 
 from Core.hdr_graphics_view_base import HDRGraphicsViewBase
-from PyQt5.QtCore import QPoint
+from PySide2.QtCore import QPoint
 import logging
 
 

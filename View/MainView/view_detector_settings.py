@@ -22,10 +22,10 @@
     SOFTWARE.
 """
 
-from PyQt5 import uic
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtWidgets import QApplication
+from Core.pyside2_uic import loadUi
+from PySide2.QtCore import Slot
+from PySide2.QtWidgets import QWidget
+from PySide2.QtWidgets import QApplication
 import os
 import logging
 
@@ -41,7 +41,7 @@ class ViewDetectorSettings(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=None)
         ui_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ui', 'detector.ui'))
-        uic.loadUi(ui_filepath, self)
+        loadUi(ui_filepath, self)
 
         self._controller = None
 
@@ -75,7 +75,7 @@ class ViewDetectorSettings(QWidget):
         self.dsb_pre_filter.setValue(detector.pre_filter)
         self.cb_default.setChecked(detector.is_default_active())
 
-    @pyqtSlot(bool, name='toggle_esd')
+    @Slot(bool, name='toggle_esd')
     def toggle_esd(self, clicked):
         """
         Toggles the checkbox of the ESD detector, only one detector can be active
@@ -87,7 +87,7 @@ class ViewDetectorSettings(QWidget):
         if not self.cb_default.isChecked() and not self.cb_esd.isChecked():
             self.cb_esd.setChecked(True)
 
-    @pyqtSlot(bool, name='toggle_default')
+    @Slot(bool, name='toggle_default')
     def toggle_default(self, clicked):
         """
         Toggles the checkbox of the default detector, only one detector can be active
@@ -99,7 +99,7 @@ class ViewDetectorSettings(QWidget):
         if not self.cb_esd.isChecked() and not self.cb_default.isChecked():
             self.cb_default.setChecked(True)
 
-    @pyqtSlot(bool, name='apply')
+    @Slot(bool, name='apply')
     def apply(self, clicked):
         """
         Informs the controller to apply the current detector settings
@@ -115,7 +115,7 @@ class ViewDetectorSettings(QWidget):
             self.cb_is_active.isChecked()
         )
 
-    @pyqtSlot(bool, name='apply_close')
+    @Slot(bool, name='apply_close')
     def apply_close(self, clicked):
         """
         Applies the current detector by informing the controller and closes the view.

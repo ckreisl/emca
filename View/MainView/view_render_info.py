@@ -22,11 +22,11 @@
     SOFTWARE.
 """
 
-from PyQt5 import uic
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.Qt import Qt
+from Core.pyside2_uic import loadUi
+from PySide2.QtWidgets import QWidget
+from PySide2.QtWidgets import QApplication
+from PySide2.QtCore import Slot
+from PySide2.QtCore import Qt
 import os
 
 
@@ -40,7 +40,7 @@ class ViewRenderInfo(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=None)
         ui_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ui', 'render_info.ui'))
-        uic.loadUi(ui_filepath, self)
+        loadUi(ui_filepath, self)
 
         self._controller = None
 
@@ -81,7 +81,7 @@ class ViewRenderInfo(QWidget):
         if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
             self.btn_submit(True)
 
-    @pyqtSlot(int, name='sb_update_sample_count')
+    @Slot(int, name='sb_update_sample_count')
     def sb_update_sample_count(self, value):
         """
         Informs the controller to update the sample count of render info
@@ -90,7 +90,7 @@ class ViewRenderInfo(QWidget):
         """
         self._controller.update_render_info_sample_count(value)
 
-    @pyqtSlot(bool, name='btn_submit')
+    @Slot(bool, name='btn_submit')
     def btn_submit(self, clicked):
         """
         Informs the controller to submit render info and inform the server
@@ -99,7 +99,7 @@ class ViewRenderInfo(QWidget):
         """
         self._controller.send_render_info()
 
-    @pyqtSlot(bool, name='btn_close')
+    @Slot(bool, name='btn_close')
     def btn_close(self, clicked):
         self.close()
 

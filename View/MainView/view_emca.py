@@ -23,12 +23,12 @@
 """
 
 from Core.messages import ViewMode
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtWidgets import QStackedWidget
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtCore import QPoint
-from PyQt5.QtGui import QPixmap
-from PyQt5 import uic
+from PySide2.QtWidgets import QWidget
+from PySide2.QtWidgets import QStackedWidget
+from PySide2.QtCore import Slot
+from PySide2.QtCore import QPoint
+from PySide2.QtGui import QPixmap
+from Core.pyside2_uic import loadUi
 
 from View.MainView.view_options import ViewOptions
 from View.MainView.view_connect_settings import ViewConnectSettings
@@ -56,7 +56,7 @@ class ViewEMCA(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=parent)
         ui_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ui', 'emca.ui'))
-        uic.loadUi(ui_filepath, self)
+        loadUi(ui_filepath, self)
 
         self.setAcceptDrops(True)
 
@@ -113,7 +113,7 @@ class ViewEMCA(QWidget):
         self._view_detector.set_controller(controller)
         self._view_filter.set_controller(controller)
 
-    @pyqtSlot(bool, name='open_connect_view')
+    @Slot(bool, name='open_connect_view')
     def open_connect_view(self, clicked):
         """
         Opens the connect view, if the view is already open the window is set back to active
@@ -125,7 +125,7 @@ class ViewEMCA(QWidget):
         else:
             self._view_connect.show()
 
-    @pyqtSlot(bool, name='open_detector_view')
+    @Slot(bool, name='open_detector_view')
     def open_detector_view(self, clicked):
         """
         Opens the detector view, if the view is already open the window is set back to active
@@ -137,7 +137,7 @@ class ViewEMCA(QWidget):
         else:
             self._view_detector.show()
 
-    @pyqtSlot(bool, name='open_filter_view')
+    @Slot(bool, name='open_filter_view')
     def open_filter_view(self, clicked):
         """
         Opens the filter view, if the view is already open the window is set back to active
@@ -149,7 +149,7 @@ class ViewEMCA(QWidget):
         else:
             self._view_filter.show()
 
-    @pyqtSlot(bool, name='open_render_info_view')
+    @Slot(bool, name='open_render_info_view')
     def open_render_info_view(self, clicked):
         """
         Opens the render info view, if the view is already open the window is set back to active
@@ -161,7 +161,7 @@ class ViewEMCA(QWidget):
         else:
             self._view_render_info.show()
 
-    @pyqtSlot(bool, name='request_render_image')
+    @Slot(bool, name='request_render_image')
     def request_render_image(self, clicked):
         """
         Informs the controller to request the render image from the server
@@ -170,7 +170,7 @@ class ViewEMCA(QWidget):
         """
         self._controller.request_render_image()
 
-    @pyqtSlot(bool, name='toggle_view_left')
+    @Slot(bool, name='toggle_view_left')
     def toggle_view_left(self, clicked):
         """
         Toggles the two views on the left side 2D and 3D view via a stacked widget
@@ -187,7 +187,7 @@ class ViewEMCA(QWidget):
             self.btn2D3DView.setText('Scene View')
             self._stacked_widget_left.setCurrentIndex(0)
 
-    @pyqtSlot(bool, name='toggle_view_right')
+    @Slot(bool, name='toggle_view_right')
     def toggle_view_right(self, clicked):
         """
         Toggles the two views on the right side final estimate plot and render data via a stacked widget
@@ -356,7 +356,7 @@ class ViewEMCA(QWidget):
             self.cbPixelHistory.setCurrentIndex(idx)
         self.cbPixelHistory.blockSignals(False)
 
-    @pyqtSlot(int, name='request_history_pixel')
+    @Slot(int, name='request_history_pixel')
     def request_history_pixel(self, index):
         """
         Informs the controller to request an old data set from the pixel history

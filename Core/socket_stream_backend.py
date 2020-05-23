@@ -22,10 +22,10 @@
     SOFTWARE.
 """
 
-from PyQt5.QtCore import QThread
+from PySide2.QtCore import QThread
 from Core.messages import ServerMsg
 from Core.messages import StateMsg
-from PyQt5.QtCore import pyqtSignal
+from PySide2.QtCore import Signal
 import logging
 
 
@@ -38,7 +38,7 @@ class SocketStreamBackend(QThread):
     Incoming data is deserialized within this thread.
     """
 
-    _sendStateMsgSig = pyqtSignal(tuple)
+    _sendStateMsgSig = Signal(tuple)
 
     def __init__(self, stream, controller, model, parent=None):
         QThread.__init__(self, parent=parent)

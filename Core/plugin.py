@@ -22,7 +22,7 @@
     SOFTWARE.
 """
 
-from PyQt5.QtWidgets import QWidget
+from PySide2.QtWidgets import QWidget
 import abc
 
 

@@ -22,12 +22,12 @@
     SOFTWARE.
 """
 
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtWidgets import QPushButton
-from PyQt5.QtWidgets import QVBoxLayout
-from PyQt5.QtWidgets import QHBoxLayout
-from PyQt5.QtWidgets import QFrame
-from PyQt5.QtCore import pyqtSlot
+from PySide2.QtWidgets import QWidget
+from PySide2.QtWidgets import QPushButton
+from PySide2.QtWidgets import QVBoxLayout
+from PySide2.QtWidgets import QHBoxLayout
+from PySide2.QtWidgets import QFrame
+from PySide2.QtCore import Slot
 import logging
 
 
@@ -209,7 +209,7 @@ class PluginsViewContainer(QWidget):
         """
         self._plugin.update_view()
 
-    @pyqtSlot(bool, name='request_plugin')
+    @Slot(bool, name='request_plugin')
     def request_plugin(self, clicked):
         """
         Calls the controller request_tool function.
@@ -220,7 +220,7 @@ class PluginsViewContainer(QWidget):
         """
         self._controller.request_plugin(self._plugin.flag)
 
-    @pyqtSlot(bool, name='display_tool')
+    @Slot(bool, name='display_tool')
     def display_plugin(self, clicked):
         """
         Opens and displays the tool window,

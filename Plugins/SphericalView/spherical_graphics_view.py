@@ -23,11 +23,11 @@
 """
 
 from Core.hdr_graphics_view_base import HDRGraphicsViewBase
-from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtGui import QBrush
-from PyQt5.QtGui import QColor
-from PyQt5.QtCore import Qt
-from PyQt5.QtCore import QPoint
+from PySide2.QtWidgets import QFileDialog
+from PySide2.QtGui import QBrush
+from PySide2.QtGui import QColor
+from PySide2.QtCore import Qt
+from PySide2.QtCore import QPoint
 import logging
 
 import matplotlib.pyplot as plt
