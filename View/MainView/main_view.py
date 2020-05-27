@@ -22,10 +22,10 @@
     SOFTWARE.
 """
 
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtWidgets import QAction
-from PyQt5.QtCore import pyqtSlot
+from PySide2.QtWidgets import QApplication
+from PySide2.QtWidgets import QMainWindow
+from PySide2.QtWidgets import QAction
+from PySide2.QtCore import Slot
 from View.MainView.view_emca import ViewEMCA
 from View.MainView.popup_messages import PopupMessages
 from View.MainView.view_options import ViewOptions
@@ -137,7 +137,7 @@ class MainView(QMainWindow):
         """
         self._view_emca.btnFilter.setEnabled(enable)
 
-    @pyqtSlot(bool, name='open_options')
+    @Slot(bool, name='open_options')
     def open_options(self, clicked):
         """
         Opens the options window
@@ -146,7 +146,7 @@ class MainView(QMainWindow):
         """
         self._controller.open_options(clicked)
 
-    @pyqtSlot(bool, name='load_image_dialog')
+    @Slot(bool, name='load_image_dialog')
     def load_image_dialog(self, clicked):
         """
         Opens the dialog to load a file
@@ -155,7 +155,7 @@ class MainView(QMainWindow):
         """
         self._controller.load_image_dialog(clicked)
 
-    @pyqtSlot(bool, name='save_xml')
+    @Slot(bool, name='save_xml')
     def save_xml(self, clicked):
         """
         Opens the dialog to save the render data within a xml file
@@ -164,7 +164,7 @@ class MainView(QMainWindow):
         """
         self._controller.save_xml(clicked)
 
-    @pyqtSlot(bool, name='load_xml')
+    @Slot(bool, name='load_xml')
     def load_xml(self, clicked):
         """
         Opens the dialog to load a xml file with a stored render state
@@ -173,7 +173,7 @@ class MainView(QMainWindow):
         """
         self._controller.load_xml(clicked)
 
-    @pyqtSlot(bool, name='take_screenshot')
+    @Slot(bool, name='take_screenshot')
     def take_screenshot(self, clicked):
         """
         Takes a screenshow of the whole EMCA widget

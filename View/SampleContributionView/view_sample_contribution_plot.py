@@ -23,9 +23,8 @@
 """
 
 from View.SampleContributionView.sample_contribution_plot import SampleContributionPlot
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtWidgets import QVBoxLayout
-from PyQt5.QtCore import Qt
+from PySide2.QtWidgets import QWidget
+from PySide2.QtWidgets import QVBoxLayout
 import logging
 
 

@@ -22,8 +22,8 @@
     SOFTWARE.
 """
 
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import QFile, QTextStream
+from PySide2.QtWidgets import QApplication
+from PySide2.QtCore import QFile, QTextStream
 from Core.logger import InitLogSystem
 import sys
 

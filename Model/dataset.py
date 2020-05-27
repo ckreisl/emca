@@ -33,8 +33,8 @@ from Model.plot_data import FinalEstimate
 from Model.detector import Detector
 from Model.pixel_info import PixelInfo
 from Model.filter import Filter
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtCore import QObject
+from PySide2.QtCore import Signal
+from PySide2.QtCore import QObject
 from Core.messages import StateMsg
 import time
 import logging
@@ -49,7 +49,7 @@ class Dataset(QObject):
         Therefore deserializes the data from the socket stream or xml file.
     """
 
-    sendStateMsgSig = pyqtSignal(tuple)
+    sendStateMsgSig = Signal(tuple)
 
     def __init__(self):
         QObject.__init__(self, parent=None)

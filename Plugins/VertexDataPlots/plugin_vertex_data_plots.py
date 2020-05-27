@@ -24,11 +24,11 @@
 
 from Core.plugin import Plugin
 
-from PyQt5 import uic
-from PyQt5.QtWidgets import QVBoxLayout
-from PyQt5.QtWidgets import QListWidgetItem
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtCore import Qt
+from Core.pyside2_uic import loadUi
+from PySide2.QtWidgets import QVBoxLayout
+from PySide2.QtWidgets import QListWidgetItem
+from PySide2.QtCore import Slot
+from PySide2.QtCore import Qt
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolBar
 
 from Plugins.VertexDataPlots.hist_list_item import HistListItem
@@ -56,7 +56,7 @@ class VertexDataPlots(Plugin):
             self,
             name='Vertex Data Plots',
             flag=27)
-        uic.loadUi('Plugins/VertexDataPlots/ui/plugin_plots.ui', self)
+        loadUi('Plugins/VertexDataPlots/ui/plugin_plots.ui', self)
 
         self._vertex_data_plot_2d = VertexDataPlot2D(self)
         self._vertex_data_plot_3d = VertexDataPlot3D(self)
@@ -133,11 +133,11 @@ class VertexDataPlots(Plugin):
             elif stacked_idx == 2:
                 self._vertex_data_plot_rgb.select_vertex(tpl)
 
-    @pyqtSlot(QListWidgetItem, name='apply_path_index_update')
+    @Slot(QListWidgetItem, name='apply_path_index_update')
     def apply_path_index_update(self, item):
         self.send_select_path(item.idx)
 
-    @pyqtSlot(QListWidgetItem, name='update_hist_path')
+    @Slot(QListWidgetItem, name='update_hist_path')
     def update_hist_path(self, item):
         self.listHistNames.clear()
         if not item:

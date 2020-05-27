@@ -23,9 +23,9 @@
 """
 
 from View.RenderView.hdr_graphics_view import HDRGraphicsView
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtCore import pyqtSlot
-from PyQt5 import uic
+from PySide2.QtWidgets import QWidget
+from PySide2.QtCore import Slot
+from Core.pyside2_uic import loadUi
 import math
 import os
 import logging
@@ -43,7 +43,7 @@ class ViewRenderImage(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=parent)
         ui_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ui', 'render_image.ui'))
-        uic.loadUi(ui_filepath, self)
+        loadUi(ui_filepath, self)
 
         # accept drops for drag n drop feature
         self.setAcceptDrops(True)
@@ -70,7 +70,7 @@ class ViewRenderImage(QWidget):
         """
         return self._graphics_view.pixmap
 
-    @pyqtSlot(float, name='set_slider_value')
+    @Slot(float, name='set_slider_value')
     def set_slider_value(self, value):
         """
         Sets the slider value of the exposure
@@ -85,7 +85,7 @@ class ViewRenderImage(QWidget):
         self.hsExposure.setValue(new_value)
         self.update_exposure(float(value))
 
-    @pyqtSlot(int, name='set_spin_value')
+    @Slot(int, name='set_spin_value')
     def set_spin_value(self, value):
         """
         Sets the spin value of the exposure
@@ -149,7 +149,7 @@ class ViewRenderImage(QWidget):
             if isinstance(hdr_image.filepath, str):
                 self._controller.save_options({'rendered_image_filepath': hdr_image.filepath})
 
-    @pyqtSlot(bool, name='reset')
+    @Slot(bool, name='reset')
     def reset(self, clicked):
         """
         Resets the exposure settings, and fits the render image within the view
@@ -159,7 +159,7 @@ class ViewRenderImage(QWidget):
         self._graphics_view.reset()
         self.hsExposure.setValue(0)
 
-    @pyqtSlot(bool, name='load_image_dialog')
+    @Slot(bool, name='load_image_dialog')
     def load_image_dialog(self, clicked):
         """
         Informs the controller to open a dialog to load an image from a given filepath

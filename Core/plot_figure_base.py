@@ -25,8 +25,8 @@
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolBar
-from PyQt5.QtWidgets import QSizePolicy
-from PyQt5.QtCore import Qt
+from PySide2.QtWidgets import QSizePolicy
+from PySide2.QtCore import Qt
 import numpy as np
 import logging
 

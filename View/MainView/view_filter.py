@@ -22,14 +22,14 @@
     SOFTWARE.
 """
 
-from PyQt5 import uic
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtWidgets import QFormLayout
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QListWidgetItem
-from PyQt5.QtWidgets import QLabel
-from PyQt5.QtCore import Qt
+from Core.pyside2_uic import loadUi
+from PySide2.QtCore import Slot
+from PySide2.QtWidgets import QWidget
+from PySide2.QtWidgets import QFormLayout
+from PySide2.QtWidgets import QApplication
+from PySide2.QtWidgets import QListWidgetItem
+from PySide2.QtWidgets import QLabel
+from PySide2.QtCore import Qt
 
 from Types.point2 import Point2f
 from Types.point2 import Point2i
@@ -254,7 +254,7 @@ class ViewFilter(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=None)
         ui_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ui', 'filter.ui'))
-        uic.loadUi(ui_filepath, self)
+        loadUi(ui_filepath, self)
 
         self._controller = None
 
@@ -376,7 +376,7 @@ class ViewFilter(QWidget):
         if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
             self.add_filter(True)
 
-    @pyqtSlot(str, name='update_stacked_widget')
+    @Slot(str, name='update_stacked_widget')
     def update_stacked_widget(self, text):
         """
         Updates the stacked widget view handling the constraints inputs
@@ -401,21 +401,21 @@ class ViewFilter(QWidget):
             elif isinstance(item, Color3f):
                 self.stackedWidget.setCurrentIndex(3)
 
-    @pyqtSlot(str, name='le_point_2x')
+    @Slot(str, name='le_point_2x')
     def le_point_2x(self, text):
         if self.cbPoint2.isChecked():
             self.leExpY.blockSignals(True)
             self.leExpY.setText(text)
             self.leExpY.blockSignals(False)
 
-    @pyqtSlot(str, name='le_point_2y')
+    @Slot(str, name='le_point_2y')
     def le_point_2y(self, text):
         if self.cbPoint2.isChecked():
             self.leExpX.blockSignals(True)
             self.leExpX.setText(text)
             self.leExpX.blockSignals(False)
 
-    @pyqtSlot(str, name='le_point_3x')
+    @Slot(str, name='le_point_3x')
     def le_point_3x(self, text):
         if self.cbPoint3.isChecked():
             self.leExpY_2.blockSignals(True)
@@ -425,7 +425,7 @@ class ViewFilter(QWidget):
             self.leExpY_2.blockSignals(False)
             self.leExpZ.blockSignals(False)
 
-    @pyqtSlot(str, name='le_point_3y')
+    @Slot(str, name='le_point_3y')
     def le_point_3y(self, text):
         if self.cbPoint3.isChecked():
             self.leExpX_2.blockSignals(True)
@@ -435,7 +435,7 @@ class ViewFilter(QWidget):
             self.leExpX_2.blockSignals(False)
             self.leExpZ.blockSignals(False)
 
-    @pyqtSlot(str, name='le_point_3z')
+    @Slot(str, name='le_point_3z')
     def le_point_3z(self, text):
         if self.cbPoint3.isChecked():
             self.leExpX_2.blockSignals(True)
@@ -445,7 +445,7 @@ class ViewFilter(QWidget):
             self.leExpX_2.blockSignals(False)
             self.leExpY_2.blockSignals(False)
 
-    @pyqtSlot(str, name='le_color_r')
+    @Slot(str, name='le_color_r')
     def le_color_r(self, text):
         if self.cbColor.isChecked():
             self.leExpG.blockSignals(True)
@@ -455,7 +455,7 @@ class ViewFilter(QWidget):
             self.leExpG.blockSignals(False)
             self.leExpB.blockSignals(False)
 
-    @pyqtSlot(str, name='le_color_g')
+    @Slot(str, name='le_color_g')
     def le_color_g(self, text):
         if self.cbColor.isChecked():
             self.leExpR.blockSignals(True)
@@ -465,7 +465,7 @@ class ViewFilter(QWidget):
             self.leExpR.blockSignals(False)
             self.leExpB.blockSignals(False)
 
-    @pyqtSlot(str, name='le_color_b')
+    @Slot(str, name='le_color_b')
     def le_color_b(self, text):
         if self.cbColor.isChecked():
             self.leExpR.blockSignals(True)
@@ -475,7 +475,7 @@ class ViewFilter(QWidget):
             self.leExpR.blockSignals(False)
             self.leExpG.blockSignals(False)
 
-    @pyqtSlot(bool, name='clear_filter')
+    @Slot(bool, name='clear_filter')
     def clear_filter(self, clicked):
         """
         Informs the controller to clear all filters
@@ -484,7 +484,7 @@ class ViewFilter(QWidget):
         """
         self._controller.clear_filter()
 
-    @pyqtSlot(bool, name='delete_filter')
+    @Slot(bool, name='delete_filter')
     def delete_filter(self, clicked):
         """
         Deletes a filter from the view and informs the controller to delete the filter
@@ -496,7 +496,7 @@ class ViewFilter(QWidget):
             if item:
                 self._controller.delete_filter(item)
 
-    @pyqtSlot(int, name='state_changed')
+    @Slot(int, name='state_changed')
     def state_changed(self, state):
         if state != Qt.Checked:
             return
@@ -510,7 +510,7 @@ class ViewFilter(QWidget):
             self.leExpG.setText(self.leExpR.text())
             self.leExpB.setText(self.leExpR.text())
 
-    @pyqtSlot(bool, name='add_filter')
+    @Slot(bool, name='add_filter')
     def add_filter(self, clicked):
         """
         Informs the controller to add a filter to the filter list view
@@ -522,7 +522,7 @@ class ViewFilter(QWidget):
             fs = FilterSettings(self)
             self._controller.add_filter(fs)
 
-    @pyqtSlot(bool, name='apply_filters')
+    @Slot(bool, name='apply_filters')
     def apply_filters(self, clicked):
         """
         Informs the controller to apply the filter

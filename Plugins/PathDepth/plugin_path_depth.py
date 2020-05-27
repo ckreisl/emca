@@ -24,7 +24,7 @@
 
 from Core.plugin import Plugin
 from Plugins.PathDepth.plot_path_depth import PlotPathDepth
-from PyQt5.QtWidgets import QVBoxLayout
+from PySide2.QtWidgets import QVBoxLayout
 
 
 class PathDepth(Plugin):

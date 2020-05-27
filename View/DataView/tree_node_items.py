@@ -22,7 +22,7 @@
     SOFTWARE.
 """
 
-from PyQt5.QtWidgets import QTreeWidgetItem
+from PySide2.QtWidgets import QTreeWidgetItem
 
 
 class PathNodeItem(QTreeWidgetItem):

@@ -25,12 +25,12 @@
 from View.DataView.tree_node_items import PathNodeItem
 from View.DataView.tree_node_items import VertexNodeItem
 
-from PyQt5 import uic
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtWidgets import QTreeWidgetItem
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QAbstractItemView
+from Core.pyside2_uic import loadUi
+from PySide2.QtWidgets import QWidget
+from PySide2.QtWidgets import QTreeWidgetItem
+from PySide2.QtCore import Slot
+from PySide2.QtCore import Qt
+from PySide2.QtWidgets import QAbstractItemView
 import numpy as np
 import os
 import logging
@@ -47,7 +47,7 @@ class ViewRenderData(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=parent)
         ui_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ui', 'render_data.ui'))
-        uic.loadUi(ui_filepath, self)
+        loadUi(ui_filepath, self)
 
         self.tree.setHeaderLabels(["Item", "Value"])
         self.tree.setColumnWidth(0, 200)
@@ -80,7 +80,7 @@ class ViewRenderData(QWidget):
         """
         self._selected_indices = np.append(self._selected_indices, index)
 
-    @pyqtSlot(QTreeWidgetItem, QTreeWidgetItem, name='select_tree_item')
+    @Slot(QTreeWidgetItem, QTreeWidgetItem, name='select_tree_item')
     def select_tree_item(self, item, previous):
         """
         Handles if a path or vertex node is selected. Informs the controller about the selected index
@@ -113,7 +113,7 @@ class ViewRenderData(QWidget):
 
         self._handling_selection_signal = True
 
-    @pyqtSlot(bool, name='show_all_data')
+    @Slot(bool, name='show_all_data')
     def show_all_data(self, clicked):
         """
         Handles the button input of show all data,
@@ -125,7 +125,7 @@ class ViewRenderData(QWidget):
             indices = self._render_data.get_indices()
             self._controller.update_path(indices, False)
 
-    @pyqtSlot(bool, name='inspect_selected_paths')
+    @Slot(bool, name='inspect_selected_paths')
     def inspect_selected_paths(self, clicked):
         """
         Handles the button input of inspect,
@@ -144,7 +144,7 @@ class ViewRenderData(QWidget):
                 elif isinstance(item, VertexNodeItem):
                     self._controller.update_path(np.array([item.parent_index]), False)
 
-    @pyqtSlot(bool, name='expand_items')
+    @Slot(bool, name='expand_items')
     def expand_items(self, state):
         """
         Depending on state, expands the tree view and shows all child items.

@@ -22,10 +22,10 @@
     SOFTWARE.
 """
 
-from PyQt5 import uic
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QWidget
-from PyQt5.QtWidgets import QApplication
+from Core.pyside2_uic import loadUi
+from PySide2.QtCore import Slot
+from PySide2.QtWidgets import QWidget
+from PySide2.QtWidgets import QApplication
 import logging
 
 
@@ -69,7 +69,7 @@ class ViewRenderSceneOptions(QWidget):
 
     def __init__(self):
         QWidget.__init__(self, parent=None)
-        uic.loadUi('View/ui/render_scene_options.ui', self)
+        loadUi('View/ui/render_scene_options.ui', self)
 
         self._renderer = None
 
@@ -257,7 +257,7 @@ class ViewRenderSceneOptions(QWidget):
         self.sliderVertexSize.setValue(size)
         self.sliderVertexSize.blockSignals(False)
 
-    @pyqtSlot(bool, name='show_all_nees')
+    @Slot(bool, name='show_all_nees')
     def show_all_nees(self, state):
         """
         Informs the renderer to show all next event estimations
@@ -269,7 +269,7 @@ class ViewRenderSceneOptions(QWidget):
         self.cbShowNEERays.blockSignals(False)
         self._renderer.show_all_nees(state)
 
-    @pyqtSlot(bool, name='show_all_paths')
+    @Slot(bool, name='show_all_paths')
     def show_all_paths(self, state):
         """
         Informs the renderer to show all traced paths
@@ -282,7 +282,7 @@ class ViewRenderSceneOptions(QWidget):
             self.cbShowPathRays.blockSignals(False)
         self._renderer.show_all_paths(state)
 
-    @pyqtSlot(bool, name='show_all_verts')
+    @Slot(bool, name='show_all_verts')
     def show_all_verts(self, state):
         """
         Informs the renderer to show all vertices
@@ -291,7 +291,7 @@ class ViewRenderSceneOptions(QWidget):
         """
         self._renderer.show_all_verts(state)
 
-    @pyqtSlot(int, name='update_camera_motion_speed')
+    @Slot(int, name='update_camera_motion_speed')
     def update_camera_motion_speed(self, speed):
         """
         Informs the renderer to update the camera motion speed
@@ -300,7 +300,7 @@ class ViewRenderSceneOptions(QWidget):
         """
         self._renderer.update_camera_motion_speed(speed)
 
-    @pyqtSlot(bool, name='update_camera_clipping')
+    @Slot(bool, name='update_camera_clipping')
     def update_camera_clipping(self, state):
         """
         Informs the renderer to update camera clipping
@@ -309,7 +309,7 @@ class ViewRenderSceneOptions(QWidget):
         """
         self._renderer.update_camera_clipping(state)
 
-    @pyqtSlot(bool, name='reset_camera_options')
+    @Slot(bool, name='reset_camera_options')
     def reset_camera_options(self, clicked):
         """
         Inform the renderer to reset the camera settings
@@ -319,7 +319,7 @@ class ViewRenderSceneOptions(QWidget):
         self._renderer.reset_camera_motion_speed()
         self.load_camera_settings()
 
-    @pyqtSlot(int, name='update_scene_opacity')
+    @Slot(int, name='update_scene_opacity')
     def update_scene_opacity(self, opacity):
         """
         Informs the renderer to update the scene opacity
@@ -329,7 +329,7 @@ class ViewRenderSceneOptions(QWidget):
         max_value = self.sliderMeshOpacity.maximum()
         self._renderer.update_scene_opacity(float(opacity / max_value))
 
-    @pyqtSlot(bool, name='reset_scene_opacity')
+    @Slot(bool, name='reset_scene_opacity')
     def reset_scene_opacity(self, clicked):
         """
         Informs the renderer to reset the scenes opacity
@@ -339,7 +339,7 @@ class ViewRenderSceneOptions(QWidget):
         self._renderer.reset_scene_opacity()
         self.load_scene_settings()
 
-    @pyqtSlot(int, name='update_path_opacity')
+    @Slot(int, name='update_path_opacity')
     def update_path_opacity(self, opacity):
         """
         Informs the renderer to update the path opacity
@@ -349,7 +349,7 @@ class ViewRenderSceneOptions(QWidget):
         max_value = self.sliderPathOpacity.maximum()
         self._renderer.update_path_opacity(float(opacity / max_value))
 
-    @pyqtSlot(int, name='update_path_size')
+    @Slot(int, name='update_path_size')
     def update_path_size(self, size):
         """
         Informs the renderer to update the path size
@@ -358,7 +358,7 @@ class ViewRenderSceneOptions(QWidget):
         """
         self._renderer.update_path_size(size)
 
-    @pyqtSlot(bool, name='reset_path')
+    @Slot(bool, name='reset_path')
     def reset_path(self, clicked):
         """
         Informs the renderer to reset the paths size and opacity
@@ -368,7 +368,7 @@ class ViewRenderSceneOptions(QWidget):
         self._renderer.reset_path()
         self.load_path_settings()
 
-    @pyqtSlot(bool, name='show_traced_path')
+    @Slot(bool, name='show_traced_path')
     def show_traced_path(self, state):
         """
         Informs the renderer to show all traced paths
@@ -381,7 +381,7 @@ class ViewRenderSceneOptions(QWidget):
         self.cbShowOmegaI.setChecked(state)
         self.cbShowOmegaI.blockSignals(False)
 
-    @pyqtSlot(bool, name='show_traced_path_nee')
+    @Slot(bool, name='show_traced_path_nee')
     def show_traced_path_nee(self, state):
         """
         Informs the renderer to show paths next event estimations
@@ -394,7 +394,7 @@ class ViewRenderSceneOptions(QWidget):
         self.cbShowNEE.setChecked(state)
         self.cbShowNEE.blockSignals(False)
 
-    @pyqtSlot(bool, name='show_other_paths')
+    @Slot(bool, name='show_other_paths')
     def show_other_paths(self, state):
         """
         Informs the renderer to show all other traced paths besides the current selected one
@@ -403,7 +403,7 @@ class ViewRenderSceneOptions(QWidget):
         """
         self._renderer.show_other_paths(state)
 
-    @pyqtSlot(int, name='update_vertex_opacity')
+    @Slot(int, name='update_vertex_opacity')
     def update_vertex_opacity(self, opacity):
         """
         Informs the renderer to update the vertex opacity of the current selected vertex
@@ -413,7 +413,7 @@ class ViewRenderSceneOptions(QWidget):
         max_value = self.sliderVertexOpacity.maximum()
         self._renderer.update_vertex_opacity(float(opacity / max_value))
 
-    @pyqtSlot(int, name='update_vertex_size')
+    @Slot(int, name='update_vertex_size')
     def update_vertex_size(self, size):
         """
         Informs the renderer to update the vertex size of the current selected vertex
@@ -422,7 +422,7 @@ class ViewRenderSceneOptions(QWidget):
         """
         self._renderer.update_vertex_size(size)
 
-    @pyqtSlot(bool, name='reset_vertex')
+    @Slot(bool, name='reset_vertex')
     def reset_vertex(self, clicked):
         """
         Informs the renderer to reset the vertex opacity and size
@@ -432,7 +432,7 @@ class ViewRenderSceneOptions(QWidget):
         self._renderer.reset_vertex()
         self.load_vertex_settings()
 
-    @pyqtSlot(bool, name='show_vertex_omega_i')
+    @Slot(bool, name='show_vertex_omega_i')
     def show_vertex_omega_i(self, state):
         """
         Informs the renderer to visualize the incoming ray of the current selected vertex,
@@ -442,7 +442,7 @@ class ViewRenderSceneOptions(QWidget):
         """
         self._renderer.show_vertex_omega_i(state)
 
-    @pyqtSlot(bool, name='show_vertex_omega_o')
+    @Slot(bool, name='show_vertex_omega_o')
     def show_vertex_omega_o(self, state):
         """
         Informs the renderer to visualize the outgoing ray of the current selected vertex,
@@ -452,7 +452,7 @@ class ViewRenderSceneOptions(QWidget):
         """
         self._renderer.show_vertex_omega_o(state)
 
-    @pyqtSlot(bool, name='show_vertex_nee')
+    @Slot(bool, name='show_vertex_nee')
     def show_vertex_nee(self, state):
         """
         Informs the renderer to visualize the next event estimation of the current selected vertex,
@@ -462,7 +462,7 @@ class ViewRenderSceneOptions(QWidget):
         """
         self._renderer.show_vertex_nee(state)
 
-    @pyqtSlot(bool, name='show_other_verts')
+    @Slot(bool, name='show_other_verts')
     def show_other_verts(self, state):
         """
         Informs the renderer to visualize all other vertices besides the current visible ones,

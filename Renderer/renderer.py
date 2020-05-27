@@ -29,7 +29,7 @@ from Renderer.meshes import Meshes
 from Renderer.camera import Camera
 from Renderer.path import Path
 from Renderer.vertex import Vertex
-from PyQt5.QtWidgets import QFrame
+from PySide2.QtWidgets import QFrame
 import vtk
 import time
 import logging
