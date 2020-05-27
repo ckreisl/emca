@@ -209,7 +209,7 @@ class Controller(QObject):
             logging.info('Handle Disconnect ...')
             self._sstream_backend.disconnect_stream()
 
-    def handle_connect(self, hostname, port):
+    def connect_socket_stream(self, hostname, port):
         """
         Connects the client to the given hostname:port.
         Establishes the connection and starts the Thread,
@@ -218,21 +218,17 @@ class Controller(QObject):
         :param port:
         :return:
         """
-        logging.info('connect {}:{}'.format(hostname, port))
         self._model.options_data.set_last_hostname_and_port(hostname, port)
-        try:
-            self._stream = SocketStream(hostname=hostname, port=port)
-        except Exception as e:
-            # server is not running
-            self._view.view_popup.server_error(str(e))
-            logging.error(e)
-            return False
+        self._stream = SocketStream(hostname=hostname, port=port)
 
-        self._sstream_backend = SocketStreamBackend(stream=self._stream,
-                                                    model=self._model,
-                                                    controller=self)
+        is_connected, error_msg = self._stream.connect()
+        if not is_connected and error_msg:
+            self._view.view_popup.server_error(error_msg)
+            return is_connected
+
+        self._sstream_backend = SocketStreamBackend(stream=self._stream, model=self._model, controller=self)
         self._sstream_backend.start()
-        return True
+        return is_connected
 
     def load_image_dialog(self, triggered):
         """
@@ -436,7 +432,7 @@ class Controller(QObject):
         # update connect view about last settings
         self._view.view_connect.set_hostname_and_port(last_hostname, last_port)
         if options.get_option_auto_connect():
-            self.handle_connect(last_hostname, last_port)
+            self.connect_socket_stream(last_hostname, last_port)
         if options.get_option_auto_image_load():
             filepath = options.get_last_rendered_image_filepath()
             success = False

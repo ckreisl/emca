@@ -29,7 +29,7 @@ import logging
 
 class SocketStream(Stream):
     """
-    Socket Stream inheriates from Stream
+    Socket Stream inherits from Stream
 
     Handles Port, Hostname and Socket.
     Handles read and write from Socket Stream pipeline
@@ -37,11 +37,10 @@ class SocketStream(Stream):
 
     def __init__(self, port, hostname=None):
         Stream.__init__(self)
-        logging.info("Starting SocketStream ...")
+        logging.info("Init SocketStream ...")
         self._port = port
         self._hostname = hostname or socket.gethostname()
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._socket.connect((self._hostname, self._port))
 
     @property
     def port(self):
@@ -67,6 +66,21 @@ class SocketStream(Stream):
         """
         return self._socket
 
+    def connect(self):
+        """
+        Connect to host:port
+        """
+        logging.info("Connecting to {}:{}".format(self._hostname, self._port))
+        try:
+            self._socket.connect((self._hostname, self._port))
+        except socket.error as e:
+            logging.error("Socket error {}".format(e))
+            return False, str(e)
+        except Exception as e:
+            logging.error("Exception {}".format(e))
+            return False, str(e)
+        return True, None
+
     def disconnect(self):
         """
         Closes the socket and disconnects from the server
@@ -78,8 +92,11 @@ class SocketStream(Stream):
             self._socket = None
         except socket.error as e:
             logging.error("Socket error {}".format(e))
+            return False
         except Exception as e:
             logging.error("Exception {}".format(e))
+            return False
+        return True
 
     def read(self, size):
         """

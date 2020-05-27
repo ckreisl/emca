@@ -103,6 +103,6 @@ class ViewConnectSettings(QWidget):
             logging.error(e)
             return None
 
-        if self._controller.handle_connect(self._hostname, self._port):
+        if self._controller.connect_socket_stream(self._hostname, self._port):
             self.close()
 
