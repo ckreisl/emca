@@ -248,7 +248,7 @@ class Controller(QObject):
         """
 
         # check if client is connected, if not inform user
-        if not self._sstream_client:
+        if not self._sstream_client.is_connected():
             self._view.view_popup.error_not_connected("")
             return None
 
