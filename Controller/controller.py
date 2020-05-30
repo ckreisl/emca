@@ -26,7 +26,6 @@ from PySide2.QtCore import QObject
 from PySide2.QtCore import Slot
 from PySide2.QtWidgets import QFileDialog
 from Core.messages import StateMsg
-from Core.messages import ViewMode
 from Core.socket_stream_client import SocketStreamClient
 import numpy as np
 import threading
@@ -50,7 +49,7 @@ class Controller(QObject):
 
         # set connection between model and controller
         self._model.set_controller(self)
-        self._model.sendStateMsgSig.connect(self.handle_state_msg)
+        self._model.set_callback(self.handle_state_msg)
 
         # controller keeps track of current selected path indices
         self._indices = np.array([], dtype=np.int32)
@@ -58,6 +57,7 @@ class Controller(QObject):
         # setup socket stream client
         port = self._view.view_connect.get_port()
         hostname = self._view.view_connect.get_hostname()
+        # init socket stream with default values hostname:port
         self._sstream_client = SocketStreamClient(port, hostname)
         self._sstream_client.set_callback(self.handle_state_msg)
         self._sstream_client.set_model(model)
@@ -100,7 +100,7 @@ class Controller(QObject):
             self._view.view_render_image.enable_view(False)
             self._view.view_render_scene.enable_view(False)
             self._model.plugins_handler.enable_plugins(False)
-            self._sstream_client.shutdown()
+            self._sstream_client.disconnect_socket_stream()
         elif msg is StateMsg.DATA_INFO:
             self._view.view_render_info.update_render_info(tpl[1])
             # automatically request scene data once render info is available
@@ -131,7 +131,7 @@ class Controller(QObject):
                 args=(tpl[1],)))
 
             threads.append(threading.Thread(
-                target=self._model.create_scatter_plot,
+                target=self._model.init_scatter_plot_data,
                 args=()))
 
             for thread in threads:
@@ -165,7 +165,7 @@ class Controller(QObject):
             pass
         elif msg is StateMsg.QUIT:
             self._sstream_client.wait()
-            self._sstream_client.shutdown()
+            self._sstream_client.disconnect_socket_stream()
         elif msg is StateMsg.UPDATE_PLUGIN:
             plugin = self._model.plugins_handler.get_plugin_by_flag(tpl[1])
             if plugin:
@@ -180,7 +180,7 @@ class Controller(QObject):
         """
         if self._sstream_client.is_connected():
             logging.info('Handle Disconnect ...')
-            self._sstream_client.disconnect_stream()
+            self._sstream_client.request_disconnect()
 
     def connect_socket_stream(self, hostname, port):
         """
@@ -192,7 +192,7 @@ class Controller(QObject):
         :return:
         """
         self._model.options_data.set_last_hostname_and_port(hostname, port)
-        is_connected, error_msg = self._sstream_client.connect_stream(hostname, port)
+        is_connected, error_msg = self._sstream_client.connect_socket_stream(hostname, port)
         if not is_connected and error_msg:
             self._view.view_popup.server_error(error_msg)
             return is_connected

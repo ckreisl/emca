@@ -101,30 +101,32 @@ class SocketStreamClient(QThread):
         self._stream.write_int(int(pixel.y()))
         self._stream.write_int(int(sample_count))
 
-    def is_connected(self):
-        """
-        Returns true when there is a open socket connection
-        """
-        return self._stream.is_connected()
-
-    def connect_stream(self, hostname, port):
-        """
-        Connects the socket stream
-        """
-        self._stream.hostname = hostname
-        self._stream.port = port
-        return self._stream.connect()
-
-    def disconnect_stream(self):
+    def request_disconnect(self):
         """
         Sends disconnect signal to server
         :return:
         """
         self._stream.write_short(ServerMsg.EMCA_DISCONNECT.value)
 
-    def shutdown(self):
+    def is_connected(self):
         """
-        Shutdown / Disconnect the SocketStream
+        Returns true when there is a open socket connection
+        """
+        return self._stream.is_connected()
+
+    def connect_socket_stream(self, hostname, port):
+        """
+        Connects the socket stream and returns if successful
+        :return: True|False, None|ErrorMsg
+        """
+        self._stream.hostname = hostname
+        self._stream.port = port
+        return self._stream.connect()
+
+    def disconnect_socket_stream(self):
+        """
+        Shutdown / Disconnect the SocketStream and returns if successful
+        :return: True|False, None|ErrorMsg
         """
         return self._stream.disconnect()
 
@@ -152,19 +154,21 @@ class SocketStreamClient(QThread):
         if state is not ServerMsg.EMCA_HELLO:
             logging.error('Received wrong handshake message from server')
             self._stream.write_short(ServerMsg.EMCA_QUIT.value)
+            return None
 
         self._stream.write_short(ServerMsg.EMCA_HELLO.value)
         # Handshake complete, set StateMsg to controller to enable views
         self._sendStateMsgSig.emit((StateMsg.CONNECT, None))
 
-        running = True
-
-        while running:
+        while True:
 
             try:
                 # read header of message (message identifier)
                 msg = self._stream.read_short()
             except RuntimeError as e:
+                logging.error(e)
+                break
+            except Exception as e:
                 logging.error(e)
                 break
 
@@ -195,4 +199,4 @@ class SocketStreamClient(QThread):
                 self._sendStateMsgSig.emit((StateMsg.QUIT, None))
                 break
 
-        logging.info("Shutdown client-backend thread ...")
+        logging.info("Shutdown SocketStreamClient Thread ...")

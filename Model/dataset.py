@@ -45,7 +45,7 @@ class Dataset(QObject):
         Dataset
         Represents the Model of the Model-View-Controller.
         Stores and handles all data files.
-        Therefore deserializes the data from the socket stream or xml file.
+        Therefore deserializes the data from the socket stream.
     """
 
     sendStateMsgSig = Signal(tuple)
@@ -65,6 +65,12 @@ class Dataset(QObject):
 
         self._li_plot_data = None
         self._controller = None
+
+    def set_callback(self, callback):
+        """
+        Set / Connect Qt signal callback to controllers msg handler
+        """
+        self.sendStateMsgSig.connect(callback)
 
     def set_controller(self, controller):
         """
@@ -256,7 +262,7 @@ class Dataset(QObject):
         logging.info('deserialize render data in: {:.3}s'.format(time.time() - start))
         self.sendStateMsgSig.emit((StateMsg.DATA_RENDER, self._render_data))
 
-    def create_scatter_plot(self):
+    def init_scatter_plot_data(self):
         """
         Initialises the Final Estimate data and informs the controller about it
         :return:
