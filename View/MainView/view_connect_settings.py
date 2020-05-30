@@ -70,9 +70,15 @@ class ViewConnectSettings(QWidget):
         self._hostname = hostname
         self.leHostname.setText(hostname)
 
+    def get_hostname(self):
+        return self.leHostname.text()
+
     def set_port(self, port):
         self._port = port
         self.lePort.setText(str(port))
+
+    def get_port(self):
+        return self.lePort.text()
 
     def set_hostname_and_port(self, hostname, port):
         self.set_hostname(hostname)

@@ -55,7 +55,12 @@ class Controller(QObject):
         # controller keeps track of current selected path indices
         self._indices = np.array([], dtype=np.int32)
 
-        self._sstream_client = None
+        # setup socket stream client
+        port = self._view.view_connect.get_port()
+        hostname = self._view.view_connect.get_hostname()
+        self._sstream_client = SocketStreamClient(port, hostname)
+        self._sstream_client.set_callback(self.handle_state_msg)
+        self._sstream_client.set_model(model)
 
         self.init_view()
 
@@ -96,7 +101,6 @@ class Controller(QObject):
             self._view.view_render_scene.enable_view(False)
             self._model.plugins_handler.enable_plugins(False)
             self._sstream_client.shutdown()
-            self._sstream_client = None
         elif msg is StateMsg.DATA_INFO:
             self._view.view_render_info.update_render_info(tpl[1])
             # automatically request scene data once render info is available
@@ -174,7 +178,7 @@ class Controller(QObject):
         :param disconnected:
         :return:
         """
-        if self._sstream_client:
+        if self._sstream_client.is_connected():
             logging.info('Handle Disconnect ...')
             self._sstream_client.disconnect_stream()
 
@@ -188,12 +192,7 @@ class Controller(QObject):
         :return:
         """
         self._model.options_data.set_last_hostname_and_port(hostname, port)
-        self._sstream_client = SocketStreamClient(port=port,
-                                                  hostname=hostname,
-                                                  model=self._model,
-                                                  callback=self.handle_state_msg)
-
-        is_connected, error_msg = self._sstream_client.connect_stream()
+        is_connected, error_msg = self._sstream_client.connect_stream(hostname, port)
         if not is_connected and error_msg:
             self._view.view_popup.server_error(error_msg)
             return is_connected
@@ -248,7 +247,7 @@ class Controller(QObject):
         """
 
         # check if client is connected, if not inform user
-        if not self._sstream_client:
+        if not self._sstream_client.is_connected():
             self._view.view_popup.error_not_connected("")
             return None
 
@@ -412,7 +411,7 @@ class Controller(QObject):
         self._view.view_filter.close()
         self._view.close()
         # handle disconnect from server if socket connection is still active
-        if self._sstream_client:
+        if self._sstream_client.is_connected():
             self._sstream_client.close()
 
     def update_and_run_detector(self, m, alpha, k, pre_filter, is_default, is_active):

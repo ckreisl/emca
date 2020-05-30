@@ -41,16 +41,24 @@ class SocketStreamClient(QThread):
 
     _sendStateMsgSig = Signal(tuple)
 
-    def __init__(self, port, hostname, model, callback):
+    def __init__(self, port, hostname):
         QThread.__init__(self)
         # init socket stream
         self._stream = SocketStream(port=port, hostname=hostname)
         # model will be used to deserialize data within this thread
-        self._model = model
-        # callback function (QtSlot) to controller
-        self._sendStateMsgSig.connect(callback)
+        self._model = None
         # bool to check an open socket connection
         self._is_connected = False
+
+    def set_model(self, model):
+        """
+        Set Model / Dataset
+        """
+        self._model = model
+
+    def set_callback(self, callback):
+        # callback function (QtSlot) to controller msg handler
+        self._sendStateMsgSig.connect(callback)
 
     @property
     def stream(self):
@@ -99,10 +107,12 @@ class SocketStreamClient(QThread):
         """
         return self._stream.is_connected()
 
-    def connect_stream(self):
+    def connect_stream(self, hostname, port):
         """
         Connects the socket stream
         """
+        self._stream.hostname = hostname
+        self._stream.port = port
         return self._stream.connect()
 
     def disconnect_stream(self):
