@@ -58,21 +58,6 @@ class RenderData(object):
             # append deserialized path to dict
             self._dict_paths[path_data.sample_idx] = path_data
 
-    def deserialize_xml(self, node):
-        """
-        Deserialize a DataView object from a xml file
-        :param node:
-        :return:
-        """
-        self._dict_paths.clear()
-        for item in list(node):
-            if item.tag == "integer" and item.attrib["name"] == "pathCount":
-                self._sample_count = int(item.text)
-            elif item.tag == "path":
-                path_data = PathData()
-                path_data.deserialize_xml(item)
-                self._dict_paths[path_data.sample_idx] = path_data
-
     @property
     def dict_paths(self):
         """

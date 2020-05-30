@@ -54,9 +54,7 @@ class MainView(QMainWindow):
         self.setWindowTitle('Explorer of Monte-Carlo based Algorithms (EMCA)')
         # Accept drops for Drag n drop events
         self.setAcceptDrops(True)
-
         self.add_menu_bar()
-
         self._controller = None
 
     def add_menu_bar(self):
@@ -80,36 +78,11 @@ class MainView(QMainWindow):
         exit_action.setToolTip("Closes the Application")
         exit_action.triggered.connect(self.close)
 
-        """ 
-            Remove buggy and not full implemented functions
-            Screenshot is buggy since the vtk renderer view will stay transparent
-        """
-        """
-        save_xml = QAction("Save State", self)
-        save_xml.setShortcut("Ctrl+S")
-        save_xml.setToolTip("Saves all information about current pixel")
-        save_xml.triggered.connect(self.save_xml)
-
-        load_xml = QAction("Load State", self)
-        load_xml.setShortcut("Ctrl+L")
-        load_xml.setToolTip("Load xml file with saved state")
-        load_xml.triggered.connect(self.load_xml)
-
-        screenshot = QAction("Screenshot", self)
-        screenshot.setShortcut("F5")
-        screenshot.setToolTip("Takes a Screenshot of the whole view")
-        screenshot.triggered.connect(self.take_screenshot)
-        """
-
         main_menu = self.menuBar()
         main_menu.setNativeMenuBar(False)
         menu = main_menu.addMenu("&Menu")
         menu.addAction(load_image)
         menu.addAction(options)
-        # Remove buggy and not fully implemented functions
-        #menu.addAction(load_xml)
-        #menu.addAction(save_xml)
-        #menu.addAction(screenshot)
         menu.addAction(exit_action)
 
     def set_controller(self, controller):
@@ -154,33 +127,6 @@ class MainView(QMainWindow):
         :return:
         """
         self._controller.load_image_dialog(clicked)
-
-    @Slot(bool, name='save_xml')
-    def save_xml(self, clicked):
-        """
-        Opens the dialog to save the render data within a xml file
-        :param clicked: boolean
-        :return:
-        """
-        self._controller.save_xml(clicked)
-
-    @Slot(bool, name='load_xml')
-    def load_xml(self, clicked):
-        """
-        Opens the dialog to load a xml file with a stored render state
-        :param clicked: boolean
-        :return:
-        """
-        self._controller.load_xml(clicked)
-
-    @Slot(bool, name='take_screenshot')
-    def take_screenshot(self, clicked):
-        """
-        Takes a screenshow of the whole EMCA widget
-        :param clicked: boolean
-        :return:
-        """
-        self._controller.take_screenshot(self.centralWidget())
 
     @property
     def controller(self):

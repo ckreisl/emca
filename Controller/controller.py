@@ -156,34 +156,6 @@ class Controller(QObject):
                 render_data = self._model.render_data
                 xs = self._model.filter.apply_filters(render_data)
                 self.update_path(xs, False)
-        elif msg is StateMsg.XML_LOADED:
-            self.prepare_new_data()
-            logging.info("xml file loaded")
-            """
-                todo: test and verify
-                still experimental to save / load current state via xml
-            """
-            filepath = self._model.render_info.output_filepath
-            if not filepath.endswith(".exr"):
-                filepath = filepath + ".exr"
-            if self._view.view_render_image.load_hdr_image(filepath):
-                self._view.view_render_image.enable_view(True)
-            self._view.view_render_info.update_render_info(self._model.render_info)
-
-            self._view.view_emca.enable_view(True, ViewMode.XML)
-            self._view.view_render_scene.enable_view(True, ViewMode.XML)
-            self._model.plugins_handler.enable_plugins(True)
-
-            self._view.view_render_scene.load_scene(self._model.camera_data,
-                                                    self._model.mesh_data)
-            self._view.view_render_scene.load_traced_paths(self._model.render_data)
-            self._model.create_scatter_plot()
-
-            self._view.view_emca.update_pixel_hist(self._model.pixel_info)
-            self._view.view_render_data.init_data(self._model.render_data)
-            self._model.plugins_handler.init_data(self._model.render_data)
-            self._view.view_filter.init_data(self._model.render_data)
-
         elif msg is StateMsg.DATA_NOT_VALID:
             logging.info("data not valid")
             pass
@@ -245,36 +217,6 @@ class Controller(QObject):
             if self._view.view_render_image.load_hdr_image(filepath):
                 self._view.view_render_image.enable_view(True)
                 self.save_options({'rendered_image_filepath': filepath})
-
-    def load_xml(self, clicked):
-        """
-        Loads render data from a xml file
-        :param clicked:
-        :return:
-        """
-        dialog = QFileDialog()
-        dialog.setNameFilters(['*.xml'])
-        dialog.setDefaultSuffix('.xml')
-
-        if dialog.exec() == QFileDialog.Accepted:
-            threading.Thread(target=self._model.read_xml,
-                             args=(dialog.selectedFiles()[0],)).start()
-
-    def save_xml(self, clicked):
-        """
-        Saves the current render data within an xml file
-        :param clicked:
-        :return:
-        """
-        dialog = QFileDialog()
-        path = dialog.getSaveFileName(
-            self._view,
-            'Save xml',
-            os.getenv('HOME'),
-            filter='xml (*.xml)')
-        if path:
-            threading.Thread(target=self._model.write_xml,
-                             args=(path[0],)).start()
 
     def request_render_info(self):
         """
@@ -549,20 +491,6 @@ class Controller(QObject):
         xs = self._model.filter.delete_filter(w.get_idx())
         self.update_path(xs, False)
         del i
-
-    def take_screenshot(self, widget):
-        """
-        Takes a screenshot of the whole visible view widget
-        :param widget: view widget
-        :return:
-        """
-        dialog = QFileDialog(widget)
-        dialog.setNameFilter("Images (*.png *.jpg)")
-        dialog.selectNameFilter("Images (*.png *.jpg)")
-        filename = dialog.getSaveFileName(widget)[0]
-        if filename:
-            pixmap = widget.grab()
-            pixmap.save(filename, "png")
 
     def open_options(self, clicked):
         options = self._model.options_data

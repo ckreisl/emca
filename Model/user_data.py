@@ -22,7 +22,6 @@
     SOFTWARE.
 """
 
-from Types.factory import TypeFactory
 from CustomData.custom_data_handler import CustomDataHandler
 import logging
 
@@ -71,38 +70,6 @@ class UserData(object):
         self._dict_color3f = self._deserialize_color3f(stream)
         self._dict_string = self._deserialize_string(stream)
         self._dict_custom_data = self._deserialize_custom_data(stream)
-        self.init_data_list()
-
-    def deserialize_xml(self, node):
-        """
-        Deserialize UserData class from a xml file
-        :param node:
-        :return:
-        """
-        self.clear()
-        for item in list(node):
-            if item.tag == "boolean":
-                self._dict_bool[item.attrib["name"]] = [TypeFactory.create_boolean_from_str(item.text)]
-            elif item.tag == "float":
-                self._dict_float[item.attrib["name"]] = [float(item.text)]
-            elif item.tag == "double":
-                # todo think about better precision
-                # https://stackoverflow.com/questions/6663272/double-precision-floating-values-in-python
-                self._dict_double[item.attrib["name"]] = [float(item.text)]
-            elif item.tag == "integer":
-                self._dict_int[item.attrib["name"]] = [int(item.text)]
-            elif item.tag == "point2i":
-                self._dict_point2i[item.attrib["name"]] = [TypeFactory.create_point2i_from_str(item.text)]
-            elif item.tag == "point2f":
-                self._dict_point2f[item.attrib["name"]] = [TypeFactory.create_point2f_from_str(item.text)]
-            elif item.tag == "point3i":
-                self._dict_point3i[item.attrib["name"]] = [TypeFactory.create_point3i_from_str(item.text)]
-            elif item.tag == "point3f":
-                self._dict_point3i[item.attrib["name"]] = [TypeFactory.create_point3f_from_str(item.text)]
-            elif item.tag == "color3f":
-                self._dict_color3f[item.attrib["name"]] = [TypeFactory.create_color3f_from_str(item.text)]
-            elif item.tag == "string":
-                self._dict_string[item.attrib["name"]] = [item.text]
         self.init_data_list()
 
     def init_data_list(self):

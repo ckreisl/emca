@@ -24,7 +24,6 @@
 
 from Model.vertex_data import VertexData
 from Model.user_data import UserData
-from Types.factory import TypeFactory
 import logging
 
 
@@ -72,35 +71,6 @@ class PathData(UserData):
             vertex = VertexData()
             vertex.deserialize(stream)
             self._dict_vertices[vertex_idx] = vertex
-
-    def deserialize_xml(self, node):
-        """
-        Deserializes one path object from a xml file
-        :param node:
-        :return:
-        """
-        self._dict_vertices.clear()
-        for item in list(node):
-            if item.tag == "integer" and item.attrib["name"] == "pathIndex":
-                self._sample_idx = int(item.text)
-            elif item.tag == "integer" and item.attrib["name"] == "pathDepth":
-                self._path_depth = int(item.text)
-            elif item.tag == "point3f" and item.attrib["name"] == "origin":
-                self._path_origin = TypeFactory.create_point3f_from_str(item.text)
-            elif item.tag == "color3f" and item.attrib["name"] == "finalEstimate":
-                self._final_estimate = TypeFactory.create_color3f_from_str(item.text)
-            elif item.tag == "boolean" and item.attrib["name"] == "showPath":
-                self._show_path = TypeFactory.create_boolean_from_str(item.text)
-            elif item.tag == "boolean" and item.attrib["name"] == "showNE":
-                self._show_ne = TypeFactory.create_boolean_from_str(item.text)
-            elif item.tag == "integer" and item.attrib["name"] == "vertexCount":
-                self._vertex_count = int(item.text)
-            elif item.tag == "vertex":
-                vertex = VertexData()
-                vertex.deserialize_xml(item)
-                self._dict_vertices[vertex.depth_idx] = vertex
-            elif item.tag == "userdata":
-                super().deserialize_xml(item)
 
     @property
     def final_estimate(self):

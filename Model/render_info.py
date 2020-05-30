@@ -61,26 +61,6 @@ class RenderInfo(object):
         stream.write_short(ServerMsg.EMCA_SEND_RENDER_INFO.value)
         stream.write_int(self._sample_count)
 
-    def deserialize_xml(self, node):
-        """
-        Deserialize a Render Info object from a xml file
-        :param node:
-        :return:
-        """
-        for item in list(node):
-            if item.tag == "string" and item.attrib["name"] == "name":
-                self._scene_name = item.text
-            elif item.tag == "string" and item.attrib["name"] == "filepath":
-                self._output_filepath = item.text
-            elif item.tag == "string" and item.attrib["name"] == "extension":
-                self._extension = item.text
-            elif item.tag == "integer" and item.attrib["name"] == "sampleCount":
-                self._sample_count = int(item.text)
-            else:
-                logging.info("Could not parse item (tag, attrib, text): {}".format(item.tag,
-                                                                                   item.attrib,
-                                                                                   item.text))
-
     @staticmethod
     def is_valid_str(s):
         """

@@ -22,7 +22,6 @@
     SOFTWARE.
 """
 
-from Types.factory import TypeFactory
 from Types.vector3 import Vec3f
 from Types.point3 import Point3f
 import logging
@@ -58,28 +57,6 @@ class CameraData(object):
         self._up = stream.read_vec3f()
         self._direction = stream.read_vec3f()
         self._origin = stream.read_point3f()
-
-    def deserialize_xml(self, node):
-        """
-        Deserializes all camera information from the xml file
-        :param node:
-        :return:
-        """
-        for item in list(node):
-            if item.tag == "float" and item.attrib["name"] == "nearClip":
-                self._near_clip = float(item.text)
-            elif item.tag == "float" and item.attrib["name"] == "farClip":
-                self._far_clip = float(item.text)
-            elif item.tag == "float" and item.attrib["name"] == "focusDist":
-                self._focus_dist = float(item.text)
-            elif item.tag == "float" and item.attrib["name"] == "fov":
-                self._fov = float(item.text)
-            elif item.tag == "vec3f" and item.attrib["name"] == "viewUp":
-                self._up = TypeFactory.create_vec3f_from_str(item.text)
-            elif item.tag == "vec3f" and item.attrib["name"] == "viewDirection":
-                self._direction = TypeFactory.create_vec3f_from_str(item.text)
-            elif item.tag == "point3f" and item.attrib["name"] == "origin":
-                self._origin = TypeFactory.create_point3f_from_str(item.text)
 
     @property
     def near_clip(self):

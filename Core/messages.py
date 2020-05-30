@@ -27,7 +27,6 @@ from enum import Enum
 
 class ViewMode(Enum):
     CONNECTED       = 1
-    XML             = 2
 
 
 class StateMsg(Enum):
@@ -43,9 +42,8 @@ class StateMsg(Enum):
     DATA_SCATTER_PLOT   = 9
     DATA_3D_PATHS       = 10
     DATA_DETECTOR       = 11
-    XML_LOADED          = 12
-    QUIT                = 13
-    UPDATE_PLUGIN       = 14
+    QUIT                = 12
+    UPDATE_PLUGIN       = 13
 
 
 class ServerMsg(Enum):

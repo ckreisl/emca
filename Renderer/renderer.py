@@ -219,20 +219,6 @@ class Renderer(RenderInterface):
         self._camera.reset()
         self._vtkWidget.update()
 
-    def take_screenshot(self, filename):
-        """
-        Takes a screenshot of the vtkRenderer view and saves it under the given filename
-        :param filename: string
-        :return:
-        """
-        w2if = vtk.vtkWindowToImageFilter()
-        w2if.SetInput(self._vtkWidget.GetRenderWindow())
-        w2if.Update()
-        writer = vtk.vtkPNGWriter()
-        writer.SetFileName(filename)
-        writer.SetInputConnection(w2if.GetOutputPort())
-        writer.Write()
-
     def clear_scene_objects(self):
         """
         Clears all scene / mesh objects within the scene view

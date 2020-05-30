@@ -22,11 +22,9 @@
     SOFTWARE.
 """
 
-from Types.factory import TypeFactory
 from Types.point2 import Point2i
 from Types.color3 import Color3f
 from PySide2.QtGui import QPixmap
-from PySide2.QtGui import QImage
 from PySide2.QtGui import QColor
 from PySide2.QtGui import QIcon
 from PySide2.QtCore import QPoint
@@ -78,22 +76,6 @@ class PixelInfo(object):
         :return: Color3f
         """
         return Color3f(self._color.red(), self._color.green(), self._color.blue(), self._color.alpha())
-
-    def deserialize_xml(self, node):
-        """
-        Deserializes pixel info information from a xml file
-        :param node:
-        :return:
-        """
-        for item in list(node):
-            if item.tag == "point2i" and item.attrib["name"] == "pixelPos":
-                pos = TypeFactory.create_point2i_from_str(item.text)
-                self._pixel_pos = QPoint(pos.x, pos.y)
-            elif item.tag == "color3f" and item.attrib["name"] == "pixelColor":
-                color = TypeFactory.create_color3f_from_str(item.text)
-                self._color = QColor(color.red, color.green, color.blue, color.alpha)
-                self._pixmap.fill(self._color)
-                self._pixel_icon.addPixmap(self._pixmap)
 
     def set_pixel(self, pixmap, pixel):
         """

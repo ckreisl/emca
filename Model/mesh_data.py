@@ -22,7 +22,6 @@
     SOFTWARE.
 """
 
-from Types.factory import TypeFactory
 from Types.color3 import Color3f
 import logging
 
@@ -64,28 +63,6 @@ class Mesh(object):
         # remember we got the alpha channel!
         self._specular_color = stream.read_color3f()
         self._diffuse_color = stream.read_color3f()
-
-    def deserialize_xml(self, node):
-        """
-        Deserialize a Mesh object from a xml file
-        :param node:
-        :return:
-        """
-        self._triangles.clear()
-        self._vertices.clear()
-        for item in list(node):
-            if item.tag == "integer" and item.attrib["name"] == "vertexCount":
-                self._vertex_count = int(item.text)
-            elif item.tag == "point3f" and item.attrib["name"] == "vertex":
-                self._vertices.append(TypeFactory.create_point3f_from_str(item.text))
-            elif item.tag == "integer" and item.attrib["name"] == "triangleCount":
-                self._triangle_count = int(item.text)
-            elif item.tag == "point3i" and item.attrib["name"] == "triangleIndices":
-                self._triangles.append(TypeFactory.create_point3i_from_str(item.text))
-            elif item.tag == "color3f" and item.attrib["name"] == "specular":
-                self._specular_color = TypeFactory.create_color3f_from_str(item.text)
-            elif item.tag == "color3f" and item.attrib["name"] == "diffuse":
-                self._diffuse_color = TypeFactory.create_color3f_from_str(item.text)
 
     @property
     def vertex_count(self):
@@ -168,19 +145,6 @@ class MeshData(object):
         mesh = Mesh()
         mesh.deserialize(stream)
         self._meshes.append(mesh)
-
-    def deserialize_xml(self, node):
-        """
-        Deserializes a mesh object from a xml file and appends it to the overall mesh list
-        :param node:
-        :return:
-        """
-        self._meshes.clear()
-        for item in list(node):
-            if item.tag == "mesh":
-                mesh = Mesh()
-                mesh.deserialize_xml(item)
-                self._meshes.append(mesh)
 
     @property
     def mesh_count(self):

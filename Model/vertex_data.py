@@ -23,7 +23,6 @@
 """
 
 from Model.user_data import UserData
-from Types.factory import TypeFactory
 import logging
 
 
@@ -80,36 +79,6 @@ class VertexData(UserData):
         self._set_li = stream.read_bool()
         if self._set_li:
             self._li = stream.read_color3f()
-
-    def deserialize_xml(self, node):
-        """
-        Deserialize a VertexData object from a xml file
-        :param node:
-        :return:
-        """
-        for item in list(node):
-            if item.tag == "integer" and item.attrib["name"] == "vertexIndex":
-                self._depth_idx = int(item.text)
-            elif item.tag == "point3f" and item.attrib["name"] == "pos":
-                self._pos = TypeFactory.create_point3f_from_str(item.text)
-            elif item.tag == "boolean" and item.attrib["name"] == "setPos":
-                self._set_pos = TypeFactory.create_boolean_from_str(item.text)
-            elif item.tag == "point3f" and item.attrib["name"] == "posNE":
-                self._pos_ne = TypeFactory.create_point3f_from_str(item.text)
-            elif item.tag == "boolean" and item.attrib["name"] == "setNE":
-                self._set_ne = TypeFactory.create_boolean_from_str(item.text)
-            elif item.tag == "boolean" and item.attrib["name"] == "occludedNE":
-                self._occluded_ne = TypeFactory.create_boolean_from_str(item.text)
-            elif item.tag == "point3f" and item.attrib["name"] == "posEnvmap":
-                self._pos_envmap = TypeFactory.create_point3f_from_str(item.text)
-            elif item.tag == "boolean" and item.attrib["name"] == "setEnvmap":
-                self._set_envmap = TypeFactory.create_boolean_from_str(item.text)
-            elif item.tag == "color3f" and item.attrib["name"] == "estimate":
-                self._li = TypeFactory.create_color3f_from_str(item.text)
-            elif item.tag == "boolean" and item.attrib["name"] == "setEstimate":
-                self._set_li = TypeFactory.create_boolean_from_str(item.text)
-            elif item.tag == "userdata":
-                super().deserialize_xml(item)
 
     @property
     def depth_idx(self):

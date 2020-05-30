@@ -22,7 +22,6 @@
     SOFTWARE.
 """
 
-from Parser.xml_parser import XMLParser
 from PluginsHandler.plugins_handler import PluginsHandler
 from Model.options_data import OptionsConfig
 from Model.render_info import RenderInfo
@@ -57,7 +56,6 @@ class Dataset(QObject):
         self._detector = Detector()
         self._filter = Filter()
         self._plugins_handler = PluginsHandler()
-        self._xml_parser = XMLParser()
 
         self._render_info = RenderInfo()
         self._camera_data = CameraData()
@@ -267,21 +265,3 @@ class Dataset(QObject):
         self._li_plot_data = FinalEstimate(self._render_data.dict_paths)
         logging.info('time to create scatter plot data runtime: {:.3}s'.format(time.time() - start))
         self.sendStateMsgSig.emit((StateMsg.DATA_SCATTER_PLOT, self._li_plot_data))
-
-    def write_xml(self, filename):
-        """
-        Saves current state within a xml file.
-        This includes Render data, Mesh data, Camera data, Render Info data
-        :param filename:
-        :return:
-        """
-        self._xml_parser.write_xml(filename, self)
-
-    def read_xml(self, filepath):
-        """
-        Loads a xml file and informs the controller about it
-        :param filepath:
-        :return:
-        """
-        self._xml_parser.read_xml(filepath, self)
-        self.sendStateMsgSig.emit((StateMsg.XML_LOADED, None))

@@ -64,9 +64,6 @@ class ViewRenderScene(QWidget):
         self.btnSceneOptions.clicked.connect(self.open_view_render_options)
         self.btnLoadScene.clicked.connect(self.request_scene)
         self.btnReset.clicked.connect(self.reset)
-        # Currently buggy, returns sometimes a black image of the scene view.
-        #self.btnScreenshot.clicked.connect(self.screenshot)
-        self.btnScreenshot.deleteLater()
 
     def set_renderer(self, renderer):
         self._renderer = renderer
@@ -110,20 +107,6 @@ class ViewRenderScene(QWidget):
         """
         self._renderer.reset_scene()
 
-    @Slot(bool, name='screenshot')
-    def screenshot(self, clicked):
-        """
-        Informs the renderer to take a screenshot of the view and save it under the given filename
-        :param clicked: boolean
-        :return:
-        """
-        dialog = QFileDialog(self)
-        dialog.setNameFilter("Images (*.png *.jpg)")
-        dialog.selectNameFilter("Images (*.png *.jpg)")
-        filename = dialog.getSaveFileName(self)[0]
-        if filename:
-            self._renderer.take_screenshot(filename)
-
     def enable_view(self, enabled, mode=ViewMode.CONNECTED):
         """
         Enables the view elements depending on the ViewMode
@@ -135,13 +118,6 @@ class ViewRenderScene(QWidget):
             self.btnLoadScene.setEnabled(enabled)
             self.btnReset.setEnabled(enabled)
             self.btnSceneOptions.setEnabled(enabled)
-            # TODO disabled because of buggy behaviour
-            #self.btnScreenshot.setEnabled(enabled)
-        elif mode is ViewMode.XML:
-            self.btnReset.setEnabled(enabled)
-            self.btnSceneOptions.setEnabled(enabled)
-            # comment out because of buggy behaviour when taking a screenshot
-            # self.btnScreenshot.setEnabled(enabled)
 
     def prepare_new_data(self):
         """
