@@ -35,12 +35,13 @@ class SocketStream(Stream):
     Handles read and write from Socket Stream pipeline
     """
 
-    def __init__(self, port, hostname=None):
+    def __init__(self, port=None, hostname=None):
         Stream.__init__(self)
         logging.info("Init SocketStream ...")
         self._port = port
         self._hostname = hostname or socket.gethostname()
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._is_connected = False
 
     @property
     def port(self):
@@ -50,6 +51,13 @@ class SocketStream(Stream):
         """
         return self._port
 
+    @port.setter
+    def port(self, port):
+        """
+        Sets the port of the socket stream connection
+        """
+        self._port = port
+
     @property
     def hostname(self):
         """
@@ -58,6 +66,13 @@ class SocketStream(Stream):
         """
         return self._hostname
 
+    @hostname.setter
+    def hostname(self, hostname):
+        """
+        Sets the hostname of the socket stream connection
+        """
+        self._hostname = hostname
+
     @property
     def socket(self):
         """
@@ -65,6 +80,12 @@ class SocketStream(Stream):
         :return:
         """
         return self._socket
+
+    def is_connected(self):
+        """
+        Holds a boolean about whether the a socket connection is open or not
+        """
+        return self._is_connected
 
     def connect(self):
         """
@@ -79,6 +100,7 @@ class SocketStream(Stream):
         except Exception as e:
             logging.error("Exception {}".format(e))
             return False, str(e)
+        self._is_connected = True
         return True, None
 
     def disconnect(self):
@@ -92,11 +114,12 @@ class SocketStream(Stream):
             self._socket = None
         except socket.error as e:
             logging.error("Socket error {}".format(e))
-            return False
+            return False, str(e)
         except Exception as e:
             logging.error("Exception {}".format(e))
-            return False
-        return True
+            return False, str(e)
+        self._is_connected = False
+        return True, None
 
     def read(self, size):
         """

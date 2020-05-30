@@ -303,10 +303,10 @@ class ViewEMCA(QWidget):
             if enabled:
                 self.btnConnect.setText('Disconnect')
                 self.btnConnect.clicked.disconnect(self.open_connect_view)
-                self.btnConnect.clicked.connect(self._controller.handle_disconnect)
+                self.btnConnect.clicked.connect(self._controller.disconnect_socket_stream)
             else:
                 self.btnConnect.setText('Connect')
-                self.btnConnect.clicked.disconnect(self._controller.handle_disconnect)
+                self.btnConnect.clicked.disconnect(self._controller.disconnect_socket_stream)
                 self.btnConnect.clicked.connect(self.open_connect_view)
                 self.btnFilter.setEnabled(enabled)
 

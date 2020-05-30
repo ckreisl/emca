@@ -23,16 +23,17 @@
 """
 
 from PySide2.QtCore import QThread
+from Core.socket_stream import SocketStream
 from Core.messages import ServerMsg
 from Core.messages import StateMsg
 from PySide2.QtCore import Signal
 import logging
 
 
-class SocketStreamBackend(QThread):
+class SocketStreamClient(QThread):
 
     """
-    Socket Stream Backend (QThread)
+    Socket Stream Client (QThread)
 
     Handles all incoming messages from the server and sends them via a Qt Signal to the controller.
     Incoming data is deserialized within this thread.
@@ -40,14 +41,23 @@ class SocketStreamBackend(QThread):
 
     _sendStateMsgSig = Signal(tuple)
 
-    def __init__(self, stream, controller, model, parent=None):
-        QThread.__init__(self, parent=parent)
-        # socket stream reference
-        self._stream = stream
-        # holds a reference to the model to deserialize incoming data
+    def __init__(self, port, hostname, model, callback):
+        QThread.__init__(self)
+        # init socket stream
+        self._stream = SocketStream(port=port, hostname=hostname)
+        # model will be used to deserialize data within this thread
         self._model = model
-        # connection to the controller
-        self._sendStateMsgSig.connect(controller.handle_state_msg)
+        # callback function (QtSlot) to controller
+        self._sendStateMsgSig.connect(callback)
+        # bool to check an open socket connection
+        self._is_connected = False
+
+    @property
+    def stream(self):
+        """
+        Return socket stream connection
+        """
+        return self._stream
 
     def request_render_info(self):
         """
@@ -83,13 +93,17 @@ class SocketStreamBackend(QThread):
         self._stream.write_int(int(pixel.y()))
         self._stream.write_int(int(sample_count))
 
-    def send_render_info(self, render_info):
+    def is_connected(self):
         """
-        Sends the render info to the server
-        :param render_info:
-        :return:
+        Returns true when there is a open socket connection
         """
-        render_info.serialize(stream=self._stream)
+        return self._stream.is_connected()
+
+    def connect_stream(self):
+        """
+        Connects the socket stream
+        """
+        return self._stream.connect()
 
     def disconnect_stream(self):
         """
@@ -97,6 +111,12 @@ class SocketStreamBackend(QThread):
         :return:
         """
         self._stream.write_short(ServerMsg.EMCA_DISCONNECT.value)
+
+    def shutdown(self):
+        """
+        Shutdown / Disconnect the SocketStream
+        """
+        return self._stream.disconnect()
 
     def close(self):
         """
@@ -112,7 +132,7 @@ class SocketStreamBackend(QThread):
         The model will inform the controller via a Qt signal after data package deserialization.
         :return:
         """
-        logging.info('Start SSBackend ...')
+        logging.info('Start SocketStreamClient ...')
 
         # Next few lines handle the handshake protocol with the server
         msg = self._stream.read_short()

@@ -27,8 +27,7 @@ from PySide2.QtCore import Slot
 from PySide2.QtWidgets import QFileDialog
 from Core.messages import StateMsg
 from Core.messages import ViewMode
-from Core.socket_stream import SocketStream
-from Core.socket_stream_backend import SocketStreamBackend
+from Core.socket_stream_client import SocketStreamClient
 import numpy as np
 import threading
 import logging
@@ -56,8 +55,7 @@ class Controller(QObject):
         # controller keeps track of current selected path indices
         self._indices = np.array([], dtype=np.int32)
 
-        self._stream = None
-        self._sstream_backend = None
+        self._sstream_client = None
 
         self.init_view()
 
@@ -88,7 +86,7 @@ class Controller(QObject):
         msg = tpl[0]
         logging.info('State: {}'.format(msg))
         if msg is StateMsg.CONNECT:
-            self._sstream_backend.request_render_info()
+            self._sstream_client.request_render_info()
             self._view.view_emca.enable_view(True)
             self._view.view_render_scene.enable_view(True)
             self._model.plugins_handler.enable_plugins(True)
@@ -97,15 +95,14 @@ class Controller(QObject):
             self._view.view_render_image.enable_view(False)
             self._view.view_render_scene.enable_view(False)
             self._model.plugins_handler.enable_plugins(False)
-            self._stream.disconnect()
-            self._sstream_backend = None
-            self._stream = None
+            self._sstream_client.shutdown()
+            self._sstream_client = None
         elif msg is StateMsg.DATA_INFO:
             self._view.view_render_info.update_render_info(tpl[1])
             # automatically request scene data once render info is available
             if self._model.options_data.get_option_auto_scene_load():
                 self._view.view_render_scene.remove_scene_objects()
-                self._sstream_backend.request_scene_data()
+                self._sstream_client.request_scene_data()
         elif msg is StateMsg.DATA_CAMERA:
             self._view.view_render_scene.load_camera(tpl[1])
         elif msg is StateMsg.DATA_MESH:
@@ -191,23 +188,23 @@ class Controller(QObject):
             logging.info("data not valid")
             pass
         elif msg is StateMsg.QUIT:
-            self._sstream_backend.wait()
-            self._stream.disconnect()
+            self._sstream_client.wait()
+            self._sstream_client.shutdown()
         elif msg is StateMsg.UPDATE_PLUGIN:
             plugin = self._model.plugins_handler.get_plugin_by_flag(tpl[1])
             if plugin:
                 plugin.update_view()
 
-    @Slot(bool, name='handle_disconnect')
-    def handle_disconnect(self, disconnected):
+    @Slot(bool, name='disconnect_socket_stream')
+    def disconnect_socket_stream(self, disconnected):
         """
         Disconnects the client from the server
         :param disconnected:
         :return:
         """
-        if self._sstream_backend and self._stream:
+        if self._sstream_client:
             logging.info('Handle Disconnect ...')
-            self._sstream_backend.disconnect_stream()
+            self._sstream_client.disconnect_stream()
 
     def connect_socket_stream(self, hostname, port):
         """
@@ -219,15 +216,17 @@ class Controller(QObject):
         :return:
         """
         self._model.options_data.set_last_hostname_and_port(hostname, port)
-        self._stream = SocketStream(hostname=hostname, port=port)
+        self._sstream_client = SocketStreamClient(port=port,
+                                                  hostname=hostname,
+                                                  model=self._model,
+                                                  callback=self.handle_state_msg)
 
-        is_connected, error_msg = self._stream.connect()
+        is_connected, error_msg = self._sstream_client.connect_stream()
         if not is_connected and error_msg:
             self._view.view_popup.server_error(error_msg)
             return is_connected
 
-        self._sstream_backend = SocketStreamBackend(stream=self._stream, model=self._model, controller=self)
-        self._sstream_backend.start()
+        self._sstream_client.start()
         return is_connected
 
     def load_image_dialog(self, triggered):
@@ -282,21 +281,21 @@ class Controller(QObject):
         Requests the render info data from the server interface
         :return:
         """
-        self._sstream_backend.request_render_info()
+        self._sstream_client.request_render_info()
 
     def request_render_image(self):
         """
         Requests the render image from the server (sends start render call)
         :return:
         """
-        self._sstream_backend.request_render_image()
+        self._sstream_client.request_render_image()
 
     def request_scene_data(self):
         """
         Requests the scene data
         :return:
         """
-        self._sstream_backend.request_scene_data()
+        self._sstream_client.request_scene_data()
 
     def request_render_data(self, pixel):
         """
@@ -307,7 +306,7 @@ class Controller(QObject):
         """
 
         # check if client is connected, if not inform user
-        if not self._sstream_backend:
+        if not self._sstream_client:
             self._view.view_popup.error_not_connected("")
             return None
 
@@ -319,7 +318,7 @@ class Controller(QObject):
         pixel_info.set_pixel(pixmap, pixel)
         sample_count = self._model.render_info.sample_count
         self._view.view_emca.update_pixel_hist(pixel_info)
-        self._sstream_backend.request_render_data(pixel, sample_count)
+        self._sstream_client.request_render_data(pixel, sample_count)
 
     def request_plugin(self, flag):
         """
@@ -328,9 +327,9 @@ class Controller(QObject):
         :param flag: plugin_id
         :return:
         """
-        if self._stream:
+        if self._sstream_client.is_connected():
             plugins_handler = self._model.plugins_handler
-            plugins_handler.request_plugin(flag, self._stream)
+            plugins_handler.request_plugin(flag, self._sstream_client.stream)
 
     def send_render_info(self):
         """
@@ -338,8 +337,7 @@ class Controller(QObject):
         Currently updates only the sample count value
         :return:
         """
-        render_info = self._model.render_info
-        self._sstream_backend.send_render_info(render_info)
+        self._model.render_info.serialize(self._sstream_client.stream)
         self._view.view_render_info.close()
 
     def update_render_info_sample_count(self, value):
@@ -472,8 +470,8 @@ class Controller(QObject):
         self._view.view_filter.close()
         self._view.close()
         # handle disconnect from server if socket connection is still active
-        if self._sstream_backend:
-            self._sstream_backend.close()
+        if self._sstream_client:
+            self._sstream_client.close()
 
     def update_and_run_detector(self, m, alpha, k, pre_filter, is_default, is_active):
         """
@@ -489,7 +487,7 @@ class Controller(QObject):
         detector = self._model.detector
         detector.update_values(m, alpha, k, pre_filter, is_default, is_active)
         # run detector if client is connected to server
-        if self._stream:
+        if self._sstream_client.is_connected():
             self.run_detector(detector)
 
     def run_detector(self, detector):
