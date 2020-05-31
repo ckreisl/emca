@@ -65,8 +65,13 @@ class ViewRenderScene(QWidget):
         self.btnLoadScene.clicked.connect(self.request_scene)
         self.btnReset.clicked.connect(self.reset)
 
-    def set_renderer(self, renderer):
-        self._renderer = renderer
+    @property
+    def renderer(self):
+        """
+        Return 3D renderer object
+        :return: Renderer
+        """
+        return self._renderer
 
     def set_controller(self, controller):
         """

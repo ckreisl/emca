@@ -53,6 +53,13 @@ class PluginsHandler(object):
         for _, value in self._plugins_view_container.items():
             value.set_controller(controller)
 
+    def set_renderer(self, renderer):
+        """
+        Sets the renderer reference to all registered plugins
+        """
+        for _, value in self._plugins_view_container.items():
+            value.set_renderer(renderer)
+
     def apply_theme(self, theme):
         for _, value in self._plugins_view_container.items():
             value.plugin.apply_theme(theme)

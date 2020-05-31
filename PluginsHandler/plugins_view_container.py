@@ -165,6 +165,14 @@ class PluginsViewContainer(QWidget):
         """
         self._controller = controller
 
+    def set_renderer(self, renderer):
+        """
+        Set the renderer
+        :param: renderer
+        :return:
+        """
+        self._plugin.set_renderer(renderer)
+
     def init_render_data(self, render_data):
         """
         Calls the Plugin init_render_data function.

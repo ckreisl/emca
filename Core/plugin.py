@@ -42,6 +42,7 @@ class Plugin(QWidget):
         QWidget.__init__(self, parent=None)
         self._name = name
         self._flag = flag
+        self._renderer = None
 
     @property
     def flag(self):
@@ -58,6 +59,15 @@ class Plugin(QWidget):
         :return: plugin name
         """
         return self._name
+
+    @property
+    def renderer(self):
+        """
+        Return the renderer
+        Allows plugin full control of renderer
+        Plugin itself has to handle add / remove of items
+        """
+        return self._renderer
 
     def send_update_path_indices(self, indices, add_item):
         """
@@ -88,6 +98,11 @@ class Plugin(QWidget):
 
     @abc.abstractmethod
     def apply_theme(self, theme):
+        """
+        Apply the current theme 'light' | 'dark' to the plugins view
+        :param: theme (dark|light)
+        :return:
+        """
         pass
 
     @abc.abstractmethod

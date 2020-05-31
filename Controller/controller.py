@@ -76,6 +76,9 @@ class Controller(QObject):
         # set plugin btn
         plugins = self._model.plugins_handler.plugins
         self._view.view_emca.add_plugins(plugins)
+        # set renderer to plugins
+        self._model.plugins_handler.set_renderer(
+            self._view.view_render_scene.renderer)
         # init detector view with values from detector class
         self._view.view_detector.init_values(self._detector)
 

@@ -84,7 +84,3 @@ class PathDepth(Plugin):
     def deserialize(self, stream):
         # nothing to-do here since we work directly on render data
         pass
-
-    def update_data(self):
-        # nothing to-do here since we work directly on render data
-        pass
