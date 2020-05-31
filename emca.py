@@ -27,7 +27,7 @@ from PySide2.QtCore import QFile, QTextStream
 from Core.logger import InitLogSystem
 import sys
 
-from Model.dataset import Dataset
+from Model.model import Model
 from View.MainView.main_view import MainView
 from Controller.controller import Controller
 import Resources.breeze_resources
@@ -40,7 +40,7 @@ class EMCAClient(object):
     """
 
     def __init__(self):
-        self.model = Dataset()
+        self.model = Model()
         self.view = MainView()
         self.controller = Controller(self.model, self.view)
 

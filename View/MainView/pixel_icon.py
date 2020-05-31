@@ -31,7 +31,7 @@ from PySide2.QtCore import QPoint
 import logging
 
 
-class PixelInfo(object):
+class PixelIcon(object):
 
     """
         PixelInfo

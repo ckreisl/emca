@@ -29,9 +29,6 @@ from Model.camera_data import CameraData
 from Model.mesh_data import MeshData
 from Model.render_data import RenderData
 from Model.plot_data import FinalEstimate
-from Model.detector import Detector
-from Model.pixel_info import PixelInfo
-from Model.filter import Filter
 from PySide2.QtCore import Signal
 from PySide2.QtCore import QObject
 from Core.messages import StateMsg
@@ -39,7 +36,7 @@ import time
 import logging
 
 
-class Dataset(QObject):
+class Model(QObject):
 
     """
         Dataset
@@ -53,15 +50,12 @@ class Dataset(QObject):
     def __init__(self):
         QObject.__init__(self, parent=None)
         self._options = OptionsConfig()
-        self._detector = Detector()
-        self._filter = Filter()
         self._plugins_handler = PluginsHandler()
 
         self._render_info = RenderInfo()
         self._camera_data = CameraData()
         self._mesh_data = MeshData()
         self._render_data = RenderData()
-        self._pixel_info = PixelInfo()
 
         self._li_plot_data = None
         self._controller = None
@@ -137,30 +131,6 @@ class Dataset(QObject):
         :return: Options Object
         """
         return self._options
-
-    @property
-    def detector(self):
-        """
-        Returns the Detector
-        :return:
-        """
-        return self._detector
-
-    @property
-    def filter(self):
-        """
-        Returns the Filter
-        :return:
-        """
-        return self._filter
-
-    @property
-    def pixel_info(self):
-        """
-        Returns the Pixel Info
-        :return:
-        """
-        return self._pixel_info
 
     @render_info.setter
     def render_info(self, new_render_info):

@@ -193,7 +193,9 @@ class Renderer(RenderInterface):
                                         path_data=path)
         except Exception as e:
             logging.error(e)
+            return False
         logging.info("creating traced paths runtime: {}ms".format(time.time() - start))
+        return True
 
     def prepare_new_data(self):
         """
@@ -224,10 +226,9 @@ class Renderer(RenderInterface):
         Clears all scene / mesh objects within the scene view
         :return:
         """
-        if self._meshes:
-            for mesh in self._meshes.meshes:
-                self._renderer.RemoveActor(mesh)
-            self._vtkWidget.update()
+        for mesh in self._meshes.meshes:
+            self._renderer.RemoveActor(mesh)
+        self._vtkWidget.update()
 
     def clear_paths(self):
         """

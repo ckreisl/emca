@@ -27,8 +27,9 @@ from PySide2.QtCore import Slot
 from PySide2.QtWidgets import QFileDialog
 from Core.messages import StateMsg
 from Core.socket_stream_client import SocketStreamClient
+from Detector.detector import Detector
+from Filter.filter import Filter
 import numpy as np
-import threading
 import logging
 import os
 
@@ -43,6 +44,9 @@ class Controller(QObject):
 
         self._model = model
         self._view = view
+
+        self._filter = Filter()
+        self._detector = Detector()
 
         # set connection between views and controller
         self._view.set_controller(self)
@@ -73,8 +77,7 @@ class Controller(QObject):
         plugins = self._model.plugins_handler.plugins
         self._view.view_emca.add_plugins(plugins)
         # init detector view with values from detector class
-        detector = self._model.detector
-        self._view.view_detector.init_values(detector)
+        self._view.view_detector.init_values(self._detector)
 
     @property
     def indices(self):
@@ -125,40 +128,26 @@ class Controller(QObject):
                 self._view.view_popup.error_no_sample_idx_set("")
                 return None
 
-            threads = list()
-            threads.append(threading.Thread(
-                target=self._view.view_render_scene.load_traced_paths,
-                args=(tpl[1],)))
-
-            threads.append(threading.Thread(
-                target=self._model.init_scatter_plot_data,
-                args=()))
-
-            for thread in threads:
-                thread.setDaemon(True)
-                thread.start()
-
+            self._view.view_render_scene.load_traced_paths(tpl[1])
             self._view.view_render_data.init_data(tpl[1])
             self._view.view_filter.init_data(tpl[1])
             self._view.enable_filter(True)
             self._view.view_render_data.enable_view(True)
             self._model.plugins_handler.init_data(tpl[1])
-
-            for thread in threads:
-                thread.join()
-
-            threads.clear()
+            # init scatter plot must be called last
+            # since it will call DATA_SCATTER_PLOT next
+            # path data is needed if detector is active
+            self._model.init_scatter_plot_data()
 
         elif msg is StateMsg.DATA_SCATTER_PLOT:
             self._view.view_plot.plot_final_estimate(tpl[1])
             # check if detector is enabled and run outlier detection
-            detector = self._model.detector
-            if detector.is_active:
-                self.run_detector(detector)
+            if self._detector.is_active:
+                self.run_detector(self._detector)
             # run filter
             if self._view.view_filter.is_active():
                 render_data = self._model.render_data
-                xs = self._model.filter.apply_filters(render_data)
+                xs = self._filter.apply_filters(render_data)
                 self.update_path(xs, False)
         elif msg is StateMsg.DATA_NOT_VALID:
             logging.info("data not valid")
@@ -255,10 +244,10 @@ class Controller(QObject):
         self.prepare_new_data()
 
         pixmap = self._view.view_render_image.pixmap
-        pixel_info = self._model.pixel_info
-        pixel_info.set_pixel(pixmap, pixel)
+        pixel_icon = self._view.pixel_icon
+        pixel_icon.set_pixel(pixmap, pixel)
         sample_count = self._model.render_info.sample_count
-        self._view.view_emca.update_pixel_hist(pixel_info)
+        self._view.view_emca.update_pixel_hist(pixel_icon)
         self._sstream_client.request_render_data(pixel, sample_count)
 
     def request_plugin(self, flag):
@@ -425,11 +414,11 @@ class Controller(QObject):
         :param is_active:
         :return:
         """
-        detector = self._model.detector
-        detector.update_values(m, alpha, k, pre_filter, is_default, is_active)
+
+        self._detector.update_values(m, alpha, k, pre_filter, is_default, is_active)
         # run detector if client is connected to server
         if self._sstream_client.is_connected():
-            self.run_detector(detector)
+            self.run_detector(self._detector)
 
     def run_detector(self, detector):
         """
@@ -454,7 +443,7 @@ class Controller(QObject):
         """
         self._view.view_filter.add_filter_to_view(filter_settings)
         render_data = self._model.render_data
-        xs = self._model.filter.filter(filter_settings, render_data)
+        xs = self._filter.filter(filter_settings, render_data)
         if xs is None:
             logging.error("Issue with filter ...")
             return
@@ -466,7 +455,7 @@ class Controller(QObject):
         :return:
         """
         render_data = self._model.render_data
-        xs = self._model.filter.apply_filters(render_data)
+        xs = self._filter.apply_filters(render_data)
         self.update_path(xs, False)
 
     def clear_filter(self):
@@ -474,7 +463,7 @@ class Controller(QObject):
         Clears the filter entries
         :return:
         """
-        self._model.filter.clear_all()
+        self._filter.clear_all()
         self._view.view_filter.filterList.clear()
 
     def delete_filter(self, item):
@@ -487,7 +476,7 @@ class Controller(QObject):
         w = self._view.view_filter.filterList.itemWidget(item)
         row = self._view.view_filter.filterList.row(item)
         i = self._view.view_filter.filterList.takeItem(row)
-        xs = self._model.filter.delete_filter(w.get_idx())
+        xs = self._filter.delete_filter(w.get_idx())
         self.update_path(xs, False)
         del i
 

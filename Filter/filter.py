@@ -22,7 +22,7 @@
     SOFTWARE.
 """
 
-from View.MainView.view_filter import FilterType
+from Filter.filter_type import FilterType
 import logging
 import time
 import numpy as np

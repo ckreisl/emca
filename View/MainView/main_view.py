@@ -28,7 +28,7 @@ from PySide2.QtWidgets import QAction
 from PySide2.QtCore import Slot
 from View.MainView.view_emca import ViewEMCA
 from View.MainView.popup_messages import PopupMessages
-from View.MainView.view_options import ViewOptions
+from View.MainView.pixel_icon import PixelIcon
 
 
 class MainView(QMainWindow):
@@ -50,6 +50,8 @@ class MainView(QMainWindow):
         self._view_emca = ViewEMCA(parent=self)
         # Popup view handling error messages
         self._view_popup = PopupMessages(parent=self)
+        # Pixel Icon of selected Pixel in MainView
+        self._pixel_icon = PixelIcon()
         self.setCentralWidget(self._view_emca)
         self.setWindowTitle('Explorer of Monte-Carlo based Algorithms (EMCA)')
         # Accept drops for Drag n drop events
@@ -135,6 +137,14 @@ class MainView(QMainWindow):
         :return: Controller
         """
         return self._controller
+
+    @property
+    def pixel_icon(self):
+        """
+        Return the pixel icon object
+        :return: PixelIcon
+        """
+        return self._pixel_icon
 
     @property
     def view_emca(self):
