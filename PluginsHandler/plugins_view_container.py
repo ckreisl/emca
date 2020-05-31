@@ -171,7 +171,7 @@ class PluginsViewContainer(QWidget):
         :param: renderer
         :return:
         """
-        self._plugin.set_renderer(renderer)
+        self._plugin.renderer = renderer
 
     def init_render_data(self, render_data):
         """

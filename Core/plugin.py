@@ -69,6 +69,15 @@ class Plugin(QWidget):
         """
         return self._renderer
 
+    @renderer.setter
+    def renderer(self, renderer):
+        """
+        Sets the renderer
+        Allows plugin full control of renderer
+        Plugin itself has to handle add / remove of items
+        """
+        self._renderer = renderer
+
     def send_update_path_indices(self, indices, add_item):
         """
         This function gets overwritten by the plugin view container,
