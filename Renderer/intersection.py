@@ -29,7 +29,7 @@ class Intersection(object):
 
     """
         Intersection
-        Represents a intersection.
+        Represents an intersection.
         Holding render information for the 3D view for every vertex,
         such as incoming, outgoing, next event estimation vector, opacity and size
     """

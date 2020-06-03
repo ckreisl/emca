@@ -22,25 +22,42 @@
     SOFTWARE.
 """
 
-from Renderer.shape import Shape
-import vtk
+from Renderer.vertex import Vertex
+from Types.color3 import Color3f
 import logging
 
 
-class Vertex(Shape):
+class PathVertex(Vertex):
 
-    def __init__(self, pos):
-        self.pos = pos
-        pts = vtk.vtkPoints()
-        pts.InsertNextPoint(pos.x, pos.y, pos.z)
-        verts = vtk.vtkCellArray()
-        vertex = vtk.vtkVertex()
-        vertex.GetPointIds().SetId(0, 0)
-        verts.InsertNextCell(vertex)
-        poly_data = vtk.vtkPolyData()
-        poly_data.SetPoints(pts)
-        poly_data.SetVerts(verts)
-        super(Shape, self).__init__(poly_data)
+    """
+        Vertex
+        Represents and visualizes one vertex within the 3D scene viewer
+    """
 
-    def get_pos(self):
-        return self.pos
+    def __init__(self, path_idx, vertex_idx, pos):
+        super(Vertex, self).__init__(pos)
+        self.set_selected_color(Color3f(1, 0.6, 0))
+
+        self._path_idx = path_idx
+        self._vertex_idx = vertex_idx
+
+    def get_path_index(self):
+        """
+        Returns the corresponding path index
+        :return: integer
+        """
+        return self._path_idx
+
+    def get_vertex_index(self):
+        """
+        Returns the index of the vertex
+        :return: integer
+        """
+        return self._vertex_idx
+
+    def get_index_tpl(self):
+        """
+        Returns the index tuple based on the path and vertex index
+        :return: tuple(path_index, vertex_index)
+        """
+        return self._path_idx, self._vertex_idx

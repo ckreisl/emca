@@ -27,20 +27,37 @@ import vtk
 import logging
 
 
-class Vertex(Shape):
+class Triangle(Shape):
 
-    def __init__(self, pos):
-        self.pos = pos
-        pts = vtk.vtkPoints()
-        pts.InsertNextPoint(pos.x, pos.y, pos.z)
-        verts = vtk.vtkCellArray()
-        vertex = vtk.vtkVertex()
-        vertex.GetPointIds().SetId(0, 0)
-        verts.InsertNextCell(vertex)
-        poly_data = vtk.vtkPolyData()
-        poly_data.SetPoints(pts)
-        poly_data.SetVerts(verts)
-        super(Shape, self).__init__(poly_data)
+    """
+        Triangle
+        Represents a vtk Triangle object within the 3D scene
+    """
 
-    def get_pos(self):
-        return self.pos
+    def __init__(self, p1, p2, p3):
+
+        self.p1 = p1
+        self.p2 = p2
+        self.p3 = p3
+
+        # create points
+        points = vtk.vtkPoints()
+        points.InsertNextPoint(p1.x, p1.y, p1.z)
+        points.InsertNextPoint(p2.x, p2.y, p2.z)
+        points.InsertNextPoint(p3.x, p3.y, p3.z)
+
+        triangle = vtk.vtkTriangle()
+        triangle.GetPointIds().SetId(0, 0)
+        triangle.GetPointIds().SetId(1, 1)
+        triangle.GetPointIds().SetId(2, 2)
+
+        triangles = vtk.vtkCellArray()
+        triangles.InsertNextCell(triangle)
+
+        # polydata object
+        triangle_poly_data = vtk.vtkPolyData()
+        triangle_poly_data.SetPoints(points)
+        triangle_poly_data.SetPolys(triangles)
+
+        super().__init__(triangle_poly_data)
+

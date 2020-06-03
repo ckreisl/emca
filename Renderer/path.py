@@ -23,7 +23,7 @@
 """
 
 from Renderer.ray import Ray
-from Renderer.vertex import Vertex
+from Renderer.path_vertex import PathVertex
 from Renderer.intersection import Intersection
 import logging
 
@@ -66,7 +66,7 @@ class Path(object):
                 if last_vertex:
                     wi = Ray(last_vertex.pos, vertex.pos)
 
-            its = Vertex(idx, key, vertex.pos)
+            its = PathVertex(idx, key, vertex.pos)
 
             wo = None
             next_vertex = dict_vertices.get(key+1, None)

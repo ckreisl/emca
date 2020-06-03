@@ -23,12 +23,15 @@
 """
 
 from Core.render_interface import RenderInterface
-from Renderer.interactor_rubberband import RubberBandInteractor
+from Renderer.rubberband import RubberBandInteractor
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from Renderer.meshes import Meshes
 from Renderer.camera import Camera
 from Renderer.path import Path
-from Renderer.vertex import Vertex
+from Renderer.path_vertex import Vertex
+from Renderer.line import Line
+from Renderer.sphere import Sphere
+from Renderer.triangle import Triangle
 from PySide2.QtWidgets import QFrame
 import vtk
 import time
@@ -781,4 +784,53 @@ class Renderer(RenderInterface):
                         for vert_idx, vert in path.its_dict.items():
                             vert.clear_vert(self._renderer)
                 self._all_verts_visible = not self._all_verts_visible
+        self._vtkWidget.update()
+
+    # plugin functions
+    def draw_triangle(self, p1, p2, p3):
+        """
+        Draws a triangle in the 3D scene
+        :param p1: Point3f
+        :param p2: Point3f
+        :param p3: Point3f
+        :return: vtkActor
+        """
+        pass
+
+    def draw_sphere(self, center, radius):
+        """
+        Draws a sphere in the 3D scene with given radius
+        :param center: Point3f
+        :param radius: float
+        :return: vtkActor
+        """
+        obj = Sphere(center, radius)
+        self._renderer.AddActor(obj)
+        self._vtkWidget.update()
+        return obj
+
+    def draw_line(self, start_pos, end_pos):
+        """
+        Draws a line in the 3D scene
+        :param start_pos: Point3f
+        :param end_pos: Point3f
+        :return: vtkActor
+        """
+        obj = Line(start_pos, end_pos)
+        self._renderer.AddActor(obj)
+        self._vtkWidget.update()
+        return obj
+
+    def draw_point(self, pos):
+        """
+        Draws a point / vertex in the 3D scene
+        :param pos: Point3f
+        :return: vtkActor
+        """
+        pass
+
+    def update_widget(self):
+        """
+        Calls update method of widget to render latest added object
+        """
         self._vtkWidget.update()

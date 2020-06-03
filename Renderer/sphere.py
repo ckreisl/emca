@@ -27,20 +27,37 @@ import vtk
 import logging
 
 
-class Vertex(Shape):
+class Sphere(Shape):
 
-    def __init__(self, pos):
-        self.pos = pos
-        pts = vtk.vtkPoints()
-        pts.InsertNextPoint(pos.x, pos.y, pos.z)
-        verts = vtk.vtkCellArray()
-        vertex = vtk.vtkVertex()
-        vertex.GetPointIds().SetId(0, 0)
-        verts.InsertNextCell(vertex)
-        poly_data = vtk.vtkPolyData()
-        poly_data.SetPoints(pts)
-        poly_data.SetVerts(verts)
-        super(Shape, self).__init__(poly_data)
+    """
+        Sphere
+        Represents a vtk Sphere object within the 3D scene
+    """
 
-    def get_pos(self):
-        return self.pos
+    def __init__(self, center, radius):
+
+        sphere = vtk.vtkSphereSource()
+        # center (x,y,z)
+        sphere.SetCenter(center)
+        sphere.SetRadius(radius)
+
+        # get poly data
+        if vtk.VTK_MAJOR_VERSION <= 5:
+            mesh_poly_data = sphere.GetOutput()
+        else:
+            mesh_poly_data = sphere.GetOutputPort()
+
+        super(Shape, self).__init__(mesh_poly_data)
+
+    def get_radius(self):
+        pass
+
+    def set_radius(self, radius):
+        pass
+
+    def get_center(self):
+        pass
+
+    def set_center(self, center):
+        pass
+

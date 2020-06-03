@@ -79,6 +79,12 @@ class Color3f(Color):
     def mean(self):
         return (self._r + self._g + self._b) / 3.0
 
+    def to_list(self):
+        return [self._r, self._g, self._b, self._alpha]
+
+    def to_list_rgb(self):
+        return [self._r, self._g, self._b]
+
     def to_string(self):
         return '[{}, {}, {}, {}]'.format(self.data[0],
                                          self.data[1],

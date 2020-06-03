@@ -35,7 +35,6 @@ class Meshes(object):
 
     def __init__(self):
         self._meshes = []
-        self._opacity = 0.25
 
     @property
     def mesh_count(self):
@@ -53,23 +52,6 @@ class Meshes(object):
         """
         return self._meshes
 
-    @property
-    def opacity(self):
-        """
-        Returns the default opacity of all meshes 0.25
-        :return: float[0,1]
-        """
-        return self._opacity
-
-    @opacity.setter
-    def opacity(self, new_opacity):
-        """
-        Sets the opacity
-        :param new_opacity: float[0,1]
-        :return:
-        """
-        self._opacity = new_opacity
-
     def set_opacity(self, opacity):
         """
         Sets the opacity of all meshes in the scene
@@ -85,7 +67,7 @@ class Meshes(object):
         :return:
         """
         for mesh in self._meshes:
-            mesh.set_opacity(self._opacity)
+            mesh.reset_opacity()
 
     def add_mesh(self, mesh_data):
         """
@@ -93,7 +75,7 @@ class Meshes(object):
         :param mesh_data: Mesh object
         :return:
         """
-        self._meshes.append(Mesh(mesh_data, self._opacity))
+        self._meshes.append(Mesh(mesh_data))
 
     def load_from_mesh_data(self, meshes):
         """
@@ -104,7 +86,7 @@ class Meshes(object):
         """
         self._meshes.clear()
         for mesh_data in meshes.meshes:
-            self._meshes.append(Mesh(mesh_data, self._opacity))
+            self._meshes.append(Mesh(mesh_data))
 
     def clear(self):
         """
