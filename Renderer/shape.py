@@ -37,14 +37,14 @@ class Shape(vtk.vtkActor):
                  default_color_diffuse=Color3f(1, 1, 1),
                  default_color_specular=Color3f(0, 0, 0),
                  color_selected=Color3f(0, 1, 0)):
-        super(vtk.Actor, self).__init__()
-        self.default_color = default_color
-        self.default_color_diffuse = default_color_diffuse
-        self.default_color_specular = default_color_specular
-        self.default_opacity = default_opacity
-        self.default_size = default_size
-        self.color_selected = color_selected
-        self.is_selected = False
+        super().__init__()
+        self._default_color = default_color
+        self._default_color_diffuse = default_color_diffuse
+        self._default_color_specular = default_color_specular
+        self._default_opacity = default_opacity
+        self._default_size = default_size
+        self._color_selected = color_selected
+        self._is_selected = False
 
         # mapper
         mapper = vtk.vtkPolyDataMapper()
@@ -65,18 +65,29 @@ class Shape(vtk.vtkActor):
         self.GetProperty().LightingOn()
         self.GetProperty().SetShading(True)
         self.GetProperty().ShadingOn()
-        self.GetProperty().SetDiffuseColor(self.default_color_diffuse.red,
-                                           self.default_color_diffuse.green,
-                                           self.default_color_diffuse.blue)
-        self.GetProperty().SetSpecularColor(self.default_color_specular.red,
-                                            self.default_color_specular.green,
-                                            self.default_color_specular.blue,)
+        self.GetProperty().SetDiffuseColor(self._default_color_diffuse.red,
+                                           self._default_color_diffuse.green,
+                                           self._default_color_diffuse.blue)
         self.GetProperty().SetDiffuse(1)
+        """
+        self.GetProperty().SetSpecularColor(self._default_color_specular.red, 
+                                            self._default_color_specular.green, 
+                                            self._default_color_specular.blue,)        
         self.GetProperty().SetSpecular(1)
+        """
         self.GetProperty().SetAmbient(0)
-        self.GetProperty().SetOpacity(self.default_opacity)
+        self.GetProperty().SetOpacity(self._default_opacity)
 
-    def set_selected(self, selected):
+    @property
+    def selected(self):
+        """
+        Returns if the item is currently selected and highlighted
+        :return: boolean
+        """
+        return self._is_selected
+
+    @selected.setter
+    def selected(self, selected):
         """
         Highlight the mesh object as selected
         :param selected: boolean
@@ -90,97 +101,239 @@ class Shape(vtk.vtkActor):
             self.GetProperty().SetColor(self.default_color.red,
                                         self.default_color.green,
                                         self.default_color.blue)
-        self.is_selected = selected
+        self._is_selected = selected
 
-    def set_selected_color(self, color):
+    @property
+    def selected_color(self):
+        """
+        Returns the color if item is selected
+        :return: Color3f / List
+        """
+        return self._color_selected
+
+    @selected_color.setter
+    def selected_color(self, color):
         """
         Set the color if the items gets selected
         :param: Color3f
         """
-        self.color_selected = color
+        self._color_selected = color
 
-    def get_size(self):
+    @property
+    def size(self):
         """
         Return vtkGetPointSize of object
         :return: float
         """
         return self.GetProperty().GetPointSize()
 
-    def get_default_size(self):
-        """
-        Returns default set object size
-        :return: float
-        """
-        return self.default_size
-
-    def set_size(self, size):
+    @size.setter
+    def size(self, size):
         """
         Sets the size of the object
         :param size: float
         """
         self.GetProperty().SetPointSize(size)
 
-    def get_opacity(self):
-        return self.GetProperty.GetOpacity()
+    @property
+    def default_size(self):
+        """
+        Returns default set object size
+        :return: float
+        """
+        return self._default_size
 
-    def get_default_opacity(self):
-        return self.default_opacity
+    @default_size.setter
+    def default_size(self, size):
+        """
+        Sets the default size of the object
+        :param: integer
+        :return: None
+        """
+        self._default_size = size
 
-    def get_color(self):
+    @property
+    def opacity(self):
+        """
+        Returns the current opacity of the object
+        :return: float
+        """
+        return self.GetProperty().GetOpacity()
+
+    @opacity.setter
+    def opacity(self, value):
+        """
+        Sets the opacity of the object
+        :param: float
+        :return: None
+        """
+        self.GetProperty().SetOpacity(value)
+
+    @property
+    def default_opacity(self):
+        """
+        Returns the default object opacity which was set
+        :return: float
+        """
+        return self._default_opacity
+
+    @default_opacity.setter
+    def default_opacity(self, value):
+        """
+        Sets the default opacity of the object
+        :param: float [0,1]
+        """
+        self._default_opacity = value
+
+    @property
+    def color(self):
+        """
+        Returns the actual color of the object
+        :return: Color3f / list
+        """
         return self.GetProperty().GetColor()
 
-    def get_default_color(self):
-        return self.default_color
-
-    def set_color(self, color):
+    @color.setter
+    def color(self, color):
+        """
+        Sets the current color of the object
+        :param: Color3f / list
+        :return: None
+        """
         if isinstance(color, list):
-            self.GetProperty.SetColor(color)
+            self.GetProperty().SetColor(color)
         elif isinstance(color, Color3f):
-            self.GetProperty.SetColor(color.to_list_rgb())
+            self.GetProperty().SetColor(color.to_list_rgb())
+
+    @property
+    def default_color(self):
+        """
+        Returns the default color of the object
+        :return: Color3f
+        """
+        return self._default_color
+
+    @default_color.setter
+    def default_color(self, color):
+        """
+        Sets the default color of the object
+        :param: Color3f
+        :return: None
+        """
+        self._default_color = color
 
     def set_color_rgb(self, r, g, b):
-        self.GetProperty.SetColor([r, g, b])
+        """
+        Sets the color of the actual object
+        """
+        self.GetProperty().SetColor([r, g, b])
 
-    def get_color_diffuse(self):
+    @property
+    def color_diffuse(self):
+        """
+        Returns the current diffuse color of the object
+        :return: Color3f
+        """
         return self.GetProperty().GetDiffuseColor()
 
-    def get_default_color_diffuse(self):
-        return self.default_color_diffuse
-
-    def set_color_diffuse(self, color_diffuse):
+    @color_diffuse.setter
+    def color_diffuse(self, color_diffuse):
+        """
+        Sets the diffuse color of the object
+        :param: Color3f / list
+        :return: None
+        """
         if isinstance(color_diffuse, list):
-            self.GetProperty.SetDiffuseColor(color_diffuse)
+            self.GetProperty().SetDiffuseColor(color_diffuse)
         elif isinstance(color_diffuse, Color3f):
-            self.GetProperty.SetDiffuseColor(color_diffuse.to_list_rgb())
+            self.GetProperty().SetDiffuseColor(color_diffuse.to_list_rgb())
 
-    def get_color_specular(self):
+    @property
+    def default_color_diffuse(self):
+        """
+        Get the default diffuse color of the object
+        :return: Color3f
+        """
+        return self._default_color_diffuse
+
+    @default_color_diffuse.setter
+    def default_color_diffuse(self, color):
+        """
+        Sets the default diffuse color of the object
+        :param: Color3f
+        """
+        self._default_color_diffuse = color
+
+    @property
+    def color_specular(self):
+        """
+        Return the current specular color of the object
+        :return: list
+        """
         return self.GetProperty().GetSpecularColor()
 
-    def get_default_color_specular(self):
-        return self.default_color_specular
-
-    def set_color_specular(self, color_specular):
+    @color_specular.setter
+    def color_specular(self, color_specular):
+        """
+        Sets the specular color of the object
+        :param: Color3f / list
+        :return: None
+        """
         if isinstance(color_specular, list):
             self.GetProperty.SetSpecularColor(color_specular)
         elif isinstance(color_specular, Color3f):
             self.GetProperty.SetSpecularColor(color_specular.to_list_rgb())
 
+    @property
+    def default_color_specular(self):
+        """
+        Return the default specular color of the object
+        :return: Color3f
+        """
+        return self.default_color_specular
+
+    @default_color_specular.setter
+    def default_color_specular(self, color):
+        """
+        Sets the default specular color of the object
+        """
+        self._default_color_specular = color
+
     def reset_size(self):
-        self.GetProperty.SetPointSize(self.default_size)
+        """
+        Resets the size to the set default value
+        """
+        self.GetProperty().SetPointSize(self._default_size)
 
     def reset_opacity(self):
-        self.GetProperty.SetOpacity(self.default_opacity)
+        """
+        Resets the opacity to the set default value
+        """
+        self.GetProperty().SetOpacity(self._default_opacity)
 
     def reset_color(self):
-        self.GetProperty.SetColor(self.default_color.to_list_rgb())
+        """
+        Resets the object color to the set default value
+        """
+        self.GetProperty().SetColor(self._default_color.to_list_rgb())
 
     def reset_color_diffuse(self):
-        self.GetProperty.SetColor(self.default_color_diffuse.to_list_rgb())
+        """
+        Resets the objects diffuse color to the default value which is set
+        """
+        self.GetProperty().SetColor(self._default_color_diffuse.to_list_rgb())
 
     def reset_color_specular(self):
-        self.GetProperty.SetColor(self.default_color_specular.to_list_rgb())
+        """
+        Resets the objects specular color to the default value which is set
+        """
+        self.GetProperty().SetColor(self._default_color_specular.to_list_rgb())
 
     def reset_all(self):
+        """
+        Reset everything, size, opacity, color, diffuse color, specular color
+        Everything will be reseted to the provided default value.
+        """
         self.reset_size()
         self.reset_opacity()
         self.reset_color()

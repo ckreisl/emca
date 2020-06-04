@@ -47,7 +47,7 @@ class Sphere(Shape):
         else:
             mesh_poly_data = sphere.GetOutputPort()
 
-        super(Shape, self).__init__(mesh_poly_data)
+        super().__init__(mesh_poly_data)
 
     def get_radius(self):
         pass

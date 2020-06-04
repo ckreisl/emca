@@ -35,25 +35,45 @@ class PathVertex(Vertex):
     """
 
     def __init__(self, path_idx, vertex_idx, pos):
-        super(Vertex, self).__init__(pos)
+        super().__init__(pos)
         self.set_selected_color(Color3f(1, 0.6, 0))
 
         self._path_idx = path_idx
         self._vertex_idx = vertex_idx
 
-    def get_path_index(self):
+    @property
+    def path_index(self):
         """
         Returns the corresponding path index
         :return: integer
         """
         return self._path_idx
 
-    def get_vertex_index(self):
+    @path_index.setter
+    def path_index(self, index):
+        """
+        Sets the path index
+        :param: integer
+        :return: None
+        """
+        self._path_idx = index
+
+    @property
+    def vertex_index(self):
         """
         Returns the index of the vertex
         :return: integer
         """
         return self._vertex_idx
+
+    @vertex_index.setter
+    def vertex_index(self, index):
+        """
+        Sets the vertex index
+        :param: integer
+        :return: None
+        """
+        self._vertex_idx = index
 
     def get_index_tpl(self):
         """

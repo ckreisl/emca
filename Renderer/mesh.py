@@ -59,10 +59,13 @@ class Mesh(Shape):
         mesh_poly_data.SetPoints(vertices)
         mesh_poly_data.SetPolys(triangles)
 
-        super(Shape, self).__init__(mesh_poly_data,
-                                    default_opacity=opacity,
-                                    default_color_diffuse=diffuse_color,
-                                    default_color_specular=specular_color)
+        super().__init__(mesh_poly_data)
+        self.default_opacity = opacity
+        self.default_color_specular = specular_color
+        self.default_color_diffuse = diffuse_color
+        self.reset_opacity()
+        self.reset_color_specular()
+        self.reset_color_diffuse()
 
         logging.info('processed mesh containing {} vertices and {} triangles in: {:.3}s'
                      .format(mesh.vertex_count, mesh.triangle_count, time.time() - start))

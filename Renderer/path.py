@@ -126,22 +126,6 @@ class Path(object):
         return self._size
 
     @property
-    def default_opacity(self):
-        """
-        Returns the default path opacity 1.0
-        :return: float
-        """
-        return 1.0
-
-    @property
-    def default_size(self):
-        """
-        Returns the default path size 1.0
-        :return: float
-        """
-        return 1.0
-
-    @property
     def is_visible(self):
         """
         Returns if the path is visible
@@ -185,7 +169,7 @@ class Path(object):
         :param renderer: vtkRenderer
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.draw_vert(renderer)
 
     def clear_verts(self, renderer):
@@ -194,7 +178,7 @@ class Path(object):
         :param renderer: vtkRenderer
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.clear_vert(renderer)
 
     def draw_all(self, renderer):
@@ -203,7 +187,7 @@ class Path(object):
         :param renderer: vtkRenderer
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.draw_all(renderer)
 
     def draw_path(self, renderer):
@@ -212,7 +196,7 @@ class Path(object):
         :param renderer: vtkRenderer
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.draw_wi(renderer)
             if its.is_wo_set:
                 if its.wo.is_envmap:
@@ -224,7 +208,7 @@ class Path(object):
         :param renderer: vtkRenderer
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.draw_ne(renderer)
 
     def clear_path(self, renderer):
@@ -233,7 +217,7 @@ class Path(object):
         :param renderer: vtkRenderer
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.clear_path(renderer)
 
     def clear_ne(self, renderer):
@@ -242,7 +226,7 @@ class Path(object):
         :param renderer: vtkRenderer
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.clear_ne(renderer)
 
     def clear_envmap(self, renderer):
@@ -251,7 +235,7 @@ class Path(object):
         :param renderer: vtkRenderer
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.clear_envmap(renderer)
 
     def clear_all(self, renderer):
@@ -260,7 +244,7 @@ class Path(object):
         :param renderer:
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.clear_all(renderer)
 
     def draw_envmap(self, renderer):
@@ -269,7 +253,7 @@ class Path(object):
         :param renderer:
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.draw_envmap(renderer)
 
     def set_selected(self, selected):
@@ -278,7 +262,7 @@ class Path(object):
         :param selected: boolean
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.set_selected(selected)
 
     def set_opacity(self, value):
@@ -288,7 +272,7 @@ class Path(object):
         :return:
         """
         self._opacity = value
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.set_opacity(value)
 
     def set_path_opacity(self, value):
@@ -298,7 +282,7 @@ class Path(object):
         :return:
         """
         self._opacity = value
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.set_path_opacity(value)
 
     def reset_path_opacity(self):
@@ -307,7 +291,7 @@ class Path(object):
         :return:
         """
         self._opacity = self.default_opacity
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.reset_path_opacity()
 
     def reset_vertex_opacity(self):
@@ -316,7 +300,7 @@ class Path(object):
         :return:
         """
         self._opacity = self.default_opacity
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.reset_vertex_opacity()
 
     def set_path_size(self, value):

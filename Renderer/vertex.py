@@ -30,7 +30,7 @@ import logging
 class Vertex(Shape):
 
     def __init__(self, pos):
-        self.pos = pos
+        self._pos = pos
         pts = vtk.vtkPoints()
         pts.InsertNextPoint(pos.x, pos.y, pos.z)
         verts = vtk.vtkCellArray()
@@ -40,7 +40,12 @@ class Vertex(Shape):
         poly_data = vtk.vtkPolyData()
         poly_data.SetPoints(pts)
         poly_data.SetVerts(verts)
-        super(Shape, self).__init__(poly_data)
+        super().__init__(poly_data)
 
-    def get_pos(self):
+    @property
+    def pos(self):
+        """
+        Returns the position of the vertex
+        :return: Point3f
+        """
         return self.pos

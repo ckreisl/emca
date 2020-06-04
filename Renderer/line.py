@@ -30,8 +30,8 @@ import logging
 class Line(Shape):
 
     def __init__(self, start_pos, end_pos):
-        self.start_pos = start_pos
-        self.end_pos = end_pos
+        self._start_pos = start_pos
+        self._end_pos = end_pos
 
         pts = vtk.vtkPoints()
         pts.InsertNextPoint(start_pos.x, start_pos.y, start_pos.z)
@@ -45,18 +45,22 @@ class Line(Shape):
         poly_data.SetPoints(pts)
         poly_data.SetLines(segment)
 
-        super(Shape, self).__init__(poly_data)
+        super().__init__(poly_data)
 
-    def get_start_pos(self):
-        return self.start_pos
+    @property
+    def start_pos(self):
+        return self._start_pos
 
-    def get_end_pos(self):
-        return self.end_pos
+    @property
+    def end_pos(self):
+        return self._end_pos
 
-    def get_size(self):
+    @property
+    def size(self):
         return self.GetProperty().GetLineWidth()
 
-    def set_size(self, size):
+    @size.setter
+    def size(self, size):
         self.GetProperty().SetLineWidth(size)
 
     def reset_size(self):

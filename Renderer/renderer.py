@@ -38,6 +38,7 @@ import time
 import logging
 import numpy as np
 import threading
+from autologging import traced
 
 
 class Renderer(RenderInterface):
@@ -138,6 +139,7 @@ class Renderer(RenderInterface):
                     self.send_select_vertex(tpl)
                     break
 
+    @traced
     def load_camera(self, camera_data):
         """
         Loads the camera data from the Model,
@@ -149,6 +151,7 @@ class Renderer(RenderInterface):
         self._renderer.SetActiveCamera(self._camera)
         self._vtkWidget.update()
 
+    @traced
     def load_mesh(self, mesh_data):
         """
         Loads a mesh from the models mesh data,
@@ -795,7 +798,10 @@ class Renderer(RenderInterface):
         :param p3: Point3f
         :return: vtkActor
         """
-        pass
+        obj = Triangle(p1, p2, p3)
+        self._renderer.AddActor(obj)
+        self._vtkWidget.update()
+        return obj
 
     def draw_sphere(self, center, radius):
         """

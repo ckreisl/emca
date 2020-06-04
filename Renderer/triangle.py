@@ -36,9 +36,9 @@ class Triangle(Shape):
 
     def __init__(self, p1, p2, p3):
 
-        self.p1 = p1
-        self.p2 = p2
-        self.p3 = p3
+        self._p1 = p1
+        self._p2 = p2
+        self._p3 = p3
 
         # create points
         points = vtk.vtkPoints()
@@ -60,4 +60,16 @@ class Triangle(Shape):
         triangle_poly_data.SetPolys(triangles)
 
         super().__init__(triangle_poly_data)
+
+    @property
+    def p1(self):
+        return self._p1
+
+    @property
+    def p2(self):
+        return self._p2
+
+    @property
+    def p3(self):
+        return self._p3
 

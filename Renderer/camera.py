@@ -34,7 +34,7 @@ class Camera(vtk.vtkCamera):
     """
 
     def __init__(self):
-        super(vtk.Camera, self).__init__()
+        super().__init__()
         # boolean to check if camera should always set the viewing direction to selected vertex
         self._auto_clipping = True
         self._speed = 1.0

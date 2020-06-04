@@ -74,7 +74,7 @@ class Ray(Line):
             # mark rays which hit the envmap
             color = Color3f(1, 1, 0)
 
-        super(Line, self).__init__(start_pos, end_pos)
+        super().__init__(start_pos, end_pos)
         self.set_selected_color(selected_color)
         self.set_color(color)
 
