@@ -29,36 +29,6 @@ from PySide2.QtWidgets import QApplication
 import logging
 
 
-class SceneRenderSettings(object):
-
-    def __init__(self, view):
-        self._init(view)
-
-    def update(self, view):
-        self._init(view)
-
-    def _init(self, view):
-        # Save general Scene options settings
-        self.is_all_nees_visible = view.cbShowAllNEEs.isChecked()
-        self.is_all_paths_visible = view.cbShowAllPaths.isChecked()
-        self.is_all_verts_visible = view.cbShowAllVerts.isChecked()
-
-        # Save path options settings
-        self.is_path_visible = view.cbShowPathRays.isChecked()
-        self.is_path_ne_visible = view.cbShowNEERays.isChecked()
-        self.path_opacity = view.sliderPathOpacity.value()
-        self.path_size = view.sliderPathSize.value()
-        self.is_show_all_other_paths = view.cbShowAllOtherPaths.isChecked()
-
-        # Save vertex option settings
-        self.is_omega_i_visible = view.cbShowOmegaI.isChecked()
-        self.is_omega_o_visible = view.cbShowOmegaO.isChecked()
-        self.is_vertex_ne_visible = view.cbShowNEE.isChecked()
-        self.vert_opacity = view.sliderVertexOpacity.value()
-        self.vert_size = view.sliderVertexSize.value()
-        self.is_show_all_other_verts = view.cbShowAllOtherVertices.isChecked()
-
-
 class ViewRenderSceneOptions(QWidget):
 
     """
@@ -67,11 +37,11 @@ class ViewRenderSceneOptions(QWidget):
         Informs the render interface about view changes
     """
 
-    def __init__(self):
+    def __init__(self, parent):
         QWidget.__init__(self, parent=None)
         loadUi('View/ui/render_scene_options.ui', self)
 
-        self._renderer = None
+        self._parent = parent
 
         # center widget depending on screen size
         desktop_widget = QApplication.desktop()
@@ -111,11 +81,6 @@ class ViewRenderSceneOptions(QWidget):
         self.cbShowOmegaO.toggled.connect(self.show_vertex_omega_o)
         self.cbShowNEE.toggled.connect(self.show_vertex_nee)
         self.cbShowAllOtherVertices.toggled.connect(self.show_other_verts)
-
-        self._settings = SceneRenderSettings(self)
-
-    def set_renderer(self, renderer):
-        self._renderer = renderer
 
     def prepare_new_data(self):
         """

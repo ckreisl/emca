@@ -36,7 +36,7 @@ class PathVertex(Vertex):
 
     def __init__(self, path_idx, vertex_idx, pos):
         super().__init__(pos)
-        self.set_selected_color(Color3f(1, 0.6, 0))
+        self.set_selected_color = Color3f(1, 0.6, 0)
 
         self._path_idx = path_idx
         self._vertex_idx = vertex_idx

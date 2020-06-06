@@ -24,10 +24,8 @@
 
 from Core.messages import ViewMode
 from View.SceneView.view_render_scene_options import ViewRenderSceneOptions
-from Renderer.renderer import Renderer
 from PySide2.QtCore import Slot
 from PySide2.QtWidgets import QWidget
-from PySide2.QtWidgets import QFileDialog
 from Core.pyside2_uic import loadUi
 import os
 import logging
@@ -46,32 +44,16 @@ class ViewRenderScene(QWidget):
         loadUi(ui_filepath, self)
 
         self._controller = None
-
-        # init renderer
-        self._renderer = Renderer()
-
-        # init scene options with renderer
-        self._view_render_options = ViewRenderSceneOptions()
-        self._view_render_options.set_renderer(self._renderer)
-
-        # connect renderer to views
-        self._renderer.set_view_render_scene(self)
-        self._renderer.set_view_render_scene_options(self._view_render_options)
-
-        # add render widget to view
-        self.sceneLayout.addWidget(self._renderer.widget)
+        self._scene_renderer = None
+        self._view_render_options = ViewRenderSceneOptions(self)
 
         self.btnSceneOptions.clicked.connect(self.open_view_render_options)
         self.btnLoadScene.clicked.connect(self.request_scene)
-        self.btnReset.clicked.connect(self.reset)
+        self.btnReset.clicked.connect(self.reset_camera_position)
 
-    @property
-    def renderer(self):
-        """
-        Return 3D renderer object
-        :return: Renderer
-        """
-        return self._renderer
+    def init_scene_renderer(self, scene_renderer):
+        self._scene_renderer = scene_renderer
+        self.sceneLayout.addWidget(scene_renderer.widget)
 
     def set_controller(self, controller):
         """
@@ -93,24 +75,23 @@ class ViewRenderScene(QWidget):
         else:
             self._view_render_options.show()
 
-    @Slot(bool, name='load_scene')
+    @Slot(bool, name='request_scene')
     def request_scene(self, clicked):
         """
         Informs the controller to request the 3D scene data from the server
         :param clicked: boolean
         :return:
         """
-        self._renderer.clear_scene_objects()
         self._controller.request_scene_data()
 
-    @Slot(bool, name='reset')
-    def reset(self, clicked):
+    @Slot(bool, name='reset_camera_position')
+    def reset_camera_position(self, clicked):
         """
         Informs the renderer to reset the scenes camera view
         :param clicked: boolean
         :return:
         """
-        self._renderer.reset_scene()
+        self._scene_renderer.reset_camera_position()
 
     def enable_view(self, enabled, mode=ViewMode.CONNECTED):
         """
@@ -129,15 +110,15 @@ class ViewRenderScene(QWidget):
         Prepare new incoming data, informs the renderer that new data is coming
         :return:
         """
-        self._view_render_options.prepare_new_data()
-        self._renderer.prepare_new_data()
+        #self._view_render_options.prepare_new_data()
+        self._scene_renderer.prepare_new_data()
 
-    def remove_scene_objects(self):
+    def clear_scene_objects(self):
         """
         Informs the renderer to clear all objects within the scene
         :return:
         """
-        self._renderer.clear_scene_objects()
+        self._scene_renderer.clear_scene_objects()
 
     def load_camera(self, camera_data):
         """
@@ -146,9 +127,9 @@ class ViewRenderScene(QWidget):
         :param camera_data:
         :return:
         """
-        self._renderer.load_camera(camera_data)
-        self._view_render_options.load_camera_settings()
-        self._view_render_options.set_camera_settings_enabled(True)
+        self._scene_renderer.load_camera(camera_data)
+        #self._view_render_options.load_camera_settings()
+        #self._view_render_options.set_camera_settings_enabled(True)
 
     def load_mesh(self, mesh_data):
         """
@@ -157,10 +138,10 @@ class ViewRenderScene(QWidget):
         :param mesh_data: MeshData
         :return:
         """
-        self._renderer.load_mesh(mesh_data)
+        self._scene_renderer.load_mesh(mesh_data)
         # todo is called #mesh times just enable settings once
-        self._view_render_options.load_scene_settings()
-        self._view_render_options.set_scene_settings_enabled(True)
+        #self._view_render_options.load_scene_settings()
+        #self._view_render_options.set_scene_settings_enabled(True)
 
     def load_scene(self, camera_data, mesh_data):
         """
@@ -182,8 +163,8 @@ class ViewRenderScene(QWidget):
         :param render_data:
         :return:
         """
-        self._renderer.load_traced_paths(render_data)
-        self._view_render_options.set_general_settings_enabled(True)
+        self._scene_renderer.load_traced_paths(render_data)
+        #self._view_render_options.set_general_settings_enabled(True)
 
     def display_traced_paths(self, indices):
         """
@@ -191,7 +172,7 @@ class ViewRenderScene(QWidget):
         :param indices: numpy array containing path indices
         :return:
         """
-        self._renderer.display_traced_paths(indices)
+        self._scene_renderer.display_traced_paths(indices)
 
     def clear_traced_paths(self):
         """
@@ -216,8 +197,8 @@ class ViewRenderScene(QWidget):
         :return:
         """
         self._renderer.select_path(index)
-        self._view_render_options.load_path_settings()
-        self._view_render_options.set_path_settings_enabled(True)
+        #self._view_render_options.load_path_settings()
+        #self._view_render_options.set_path_settings_enabled(True)
 
     def select_vertex(self, tpl):
         """

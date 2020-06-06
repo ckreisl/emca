@@ -76,9 +76,11 @@ class Controller(QObject):
         # set plugin btn
         plugins = self._model.plugins_handler.plugins
         self._view.view_emca.add_plugins(plugins)
+        """
         # set renderer to plugins
         self._model.plugins_handler.set_renderer(
-            self._view.view_render_scene.renderer)
+            self._view.view_render_scene.scene_renderer)
+        """
         # init detector view with values from detector class
         self._view.view_detector.init_values(self._detector)
 
@@ -111,11 +113,15 @@ class Controller(QObject):
             self._view.view_render_info.update_render_info(tpl[1])
             # automatically request scene data once render info is available
             if self._model.options_data.get_option_auto_scene_load():
-                self._view.view_render_scene.remove_scene_objects()
+                self._view.view_render_scene.clear_scene_objects()
                 self._sstream_client.request_scene_data()
         elif msg is StateMsg.DATA_CAMERA:
+            # TODO remove separate DATA_CAMERA and DATA_MESH information
+            # handle both together and inform controller when everything is loaded ?!
+            # thing about pros and cons
             self._view.view_render_scene.load_camera(tpl[1])
         elif msg is StateMsg.DATA_MESH:
+            # TODO check comment above
             self._view.view_render_scene.load_mesh(tpl[1])
         elif msg is StateMsg.DATA_IMAGE:
             try:
@@ -228,6 +234,7 @@ class Controller(QObject):
         Requests the scene data
         :return:
         """
+        self._view.view_render_scene.clear_scene_objects()
         self._sstream_client.request_scene_data()
 
     def request_render_data(self, pixel):
@@ -319,9 +326,11 @@ class Controller(QObject):
         self._view.view_render_data.display_traced_path_data(self._indices)
         # update all plugins
         self._model.plugins_handler.update_path_indices(self._indices)
+        """
         # select first path
         if np.size(self._indices) == 1:
             self.select_path(self._indices[0])
+        """
 
     def select_path(self, index):
         """
@@ -376,9 +385,21 @@ class Controller(QObject):
                 self._view.view_render_image.enable_view(True)
                 self._view.view_render_image.reset(True)
 
-    def apply_theme(self, theme):
+    def get_theme(self):
+        return self._model.options_data.get_theme()
+
+    def set_theme(self, theme):
         self._view.view_plot.apply_theme(theme)
         self._model.plugins_handler.apply_theme(theme)
+
+    def get_render_scene(self):
+        return self._view.view_render_scene.scene_renderer
+
+    def set_render_scene(self, scene_renderer):
+        self._view.view_render_scene.init_scene_renderer(scene_renderer)
+
+    def scene_renderer_init(self):
+        pass
 
     def display_view(self):
         """

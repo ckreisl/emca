@@ -23,19 +23,28 @@
 """
 
 from Renderer.mesh import Mesh
+from Renderer.camera import Camera
 import logging
 
 
-class Meshes(object):
+class SceneGeometry(object):
 
     """
         Meshes
         Represents the list of vtkActors / Meshes within the scene
     """
 
-    def __init__(self):
+    def __init__(self, opacity):
+        self._camera = Camera()
         self._meshes = []
-        self._opacity = 0.25
+        self._scene_opacity = opacity
+
+    @property
+    def camera(self):
+        """
+        Returns the camera object
+        """
+        return self._camera
 
     @property
     def meshes(self):
@@ -46,11 +55,11 @@ class Meshes(object):
         return self._meshes
 
     @property
-    def opacity(self):
+    def scene_opacity(self):
         """
         Returns the default opacity value which is applied to all objects
         """
-        return self._opacity
+        return self._scene_opacity
 
     @property
     def mesh_count(self):
@@ -60,7 +69,7 @@ class Meshes(object):
         """
         return len(self._meshes)
 
-    def set_opacity(self, opacity):
+    def set_scene_opacity(self, opacity):
         """
         Sets the opacity of all meshes in the scene
         :param opacity: float[0,1]
@@ -69,7 +78,7 @@ class Meshes(object):
         for mesh in self._meshes:
             mesh.opacity = opacity
 
-    def reset_opacity(self):
+    def reset_scene_opacity(self):
         """
         Resets the opacity of all meshes to its default value (0.25)
         :return:
@@ -85,18 +94,26 @@ class Meshes(object):
         """
         self._meshes.append(Mesh(mesh_data))
 
-    def load_from_mesh_data(self, meshes):
+    def load_camera_data(self, camera_data):
+        """
+        Initialises the camera settings with data from the model
+        :param: camera_data
+        :return:
+        """
+        self._camera.load_settings(camera_data)
+
+    def load_scene_geometry(self, meshes_data):
         """
         Initialises and appends vtkMeshes to the mesh list,
         the data is loaded from the model.
-        :param meshes: Mesh list from the model
+        :param meshes_data: MeshData list from the model
         :return:
         """
         self._meshes.clear()
-        for mesh_data in meshes.meshes:
+        for mesh_data in meshes_data.meshes:
             self._meshes.append(Mesh(mesh_data))
 
-    def clear(self):
+    def clear_scene_objects(self):
         """
         Clears the list containing all meshes within the scene
         :return:

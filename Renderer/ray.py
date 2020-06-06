@@ -75,8 +75,8 @@ class Ray(Line):
             color = Color3f(1, 1, 0)
 
         super().__init__(start_pos, end_pos)
-        self.set_selected_color(selected_color)
-        self.set_color(color)
+        self.selected_color = selected_color
+        self.color = color
 
     @property
     def is_ne(self):
