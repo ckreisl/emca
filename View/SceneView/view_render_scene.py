@@ -63,6 +63,12 @@ class ViewRenderScene(QWidget):
         """
         self._controller = controller
 
+    def update_path_indices(self, indices):
+        """
+        Updates the view with given path indices keys from controller
+        """
+        self._scene_renderer.update_path_indices(indices)
+
     @Slot(bool, name='open_view_render_options')
     def open_view_render_options(self, clicked):
         """
@@ -196,7 +202,7 @@ class ViewRenderScene(QWidget):
         :param index: integer
         :return:
         """
-        self._renderer.select_path(index)
+        self._scene_renderer.select_path(index)
         #self._view_render_options.load_path_settings()
         #self._view_render_options.set_path_settings_enabled(True)
 
@@ -206,9 +212,9 @@ class ViewRenderScene(QWidget):
         :param tpl: tuple(path_index, vertex_index)
         :return:
         """
-        self._renderer.select_vertex(tpl)
-        self._view_render_options.load_vertex_settings()
-        self._view_render_options.set_vertex_settings_enabled(True)
+        self._scene_renderer.select_vertex(tpl)
+        #self._view_render_options.load_vertex_settings()
+        #self._view_render_options.set_vertex_settings_enabled(True)
 
     def send_select_path(self, index):
         """

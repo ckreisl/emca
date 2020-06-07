@@ -57,6 +57,35 @@ class SceneTracedPaths(object):
         """
         return self._path_indices
 
+    @path_indices.setter
+    def path_indices(self, indices):
+        """
+        Returns the current numpy array of path indices
+        """
+        self._path_indices = indices
+
+    def select_path(self, index):
+        self._selected_path = True
+        self._selected_path_index = index
+
+    def select_vertex(self, tpl):
+        # tpl = (path_idx, vertex_idx)
+        if not self._selected_vertex:
+            self._selected_vertex = True
+        if self._selected_vertex_tpl:
+            path = self._paths[self._selected_vertex_tpl[0]]
+            vertex = path.its_dict[self._selected_vertex_tpl[1]]
+            vertex.set_selected(False)
+        self._selected_vertex_tpl = tpl
+        path = self._paths[tpl[0]]
+        vertex = path.its_dict[tpl[1]]
+        vertex.set_selected(True)
+
+    def get_path_and_vertex(self, tpl):
+        path = self._paths[tpl[0]]
+        vertex = path.its_dict[tpl[1]]
+        return path, vertex
+
     def load_traced_paths(self, render_data):
         """
         Initialises the 3D path structure from the render data of the model.
@@ -66,16 +95,7 @@ class SceneTracedPaths(object):
         """
         start = time.time()
         for key, path in render_data.dict_paths.items():
-            self._paths[key] = Path(idx=key,
-                                    origin=path.path_origin,
-                                    path_data=path)
-        """
-        try:
-
-        except Exception as e:
-            logging.error(e)
-            return False
-        """
+            self._paths[key] = Path(idx=key, origin=path.path_origin, path_data=path)
         logging.info("creating traced paths runtime: {}ms".format(time.time() - start))
         return True
 

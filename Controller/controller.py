@@ -321,9 +321,9 @@ class Controller(QObject):
         # mark scatter plot
         self._view.view_plot.update_path_indices(self._indices)
         # draw 3d paths
-        self._view.view_render_scene.display_traced_paths(self._indices)
+        self._view.view_render_scene.update_path_indices(self._indices)
         # update render data view
-        self._view.view_render_data.display_traced_path_data(self._indices)
+        self._view.view_render_data.update_path_indices(self._indices)
         # update all plugins
         self._model.plugins_handler.update_path_indices(self._indices)
         """
@@ -332,12 +332,15 @@ class Controller(QObject):
             self.select_path(self._indices[0])
         """
 
+    # TODO select_path function completely stupid ?!
+    # Everything is handled via update_path ?!
     def select_path(self, index):
         """
         Send path index update to all views
         :param index: path_index
         :return:
         """
+        # self._view.view_plot.select_path(index) # does not work / function now available
         # this index must be an element of indices
         self._view.view_render_scene.select_path(index)
         # select path in render data view

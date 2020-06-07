@@ -118,6 +118,14 @@ class Path(object):
         return self._opacity
 
     @property
+    def default_opacity(self):
+        return 1.0
+
+    @property
+    def default_size(self):
+        return 1.0
+
+    @property
     def size(self):
         """
         Returns the path size

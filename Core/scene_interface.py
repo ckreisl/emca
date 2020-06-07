@@ -57,10 +57,40 @@ class SceneInterface(object):
         pass
 
     @abc.abstractmethod
+    def update_path_indices(self, indices):
+        """
+        Update of current selected path key indices
+        :param: numpy array containing path indices
+        :return:
+        """
+        pass
+
+    @abc.abstractmethod
+    def select_path(self, index):
+        """
+        Select and highlight one path if other paths are active in parallel decrease opacity
+        :param: integer index
+        :return:
+        """
+        pass
+
+    @abc.abstractmethod
+    def select_vertex(self, tpl):
+        """
+        Informs the renderer to select / highlight the vertex - Tuple (path_index, vertex_index)
+        :param tpl: tuple(path_index, vertex_index)
+        :return:
+        """
+        pass
+
+    @abc.abstractmethod
     def load_scene(self, camera_data, mesh_data):
         """
         Loads the 3D rendered scene.
         Containing information about the camera and all scene objects.
+        :param camera_data: Model Camera Data
+        :param mesh_data: Model Mesh Data
+        :return:
         """
         pass
 
@@ -68,6 +98,8 @@ class SceneInterface(object):
     def load_camera(self, camera_data):
         """
         Loads the 3D camera from provided camera settings from the render system server
+        :param camera_data: Model Camera Data
+        :return:
         """
         pass
 
@@ -75,6 +107,8 @@ class SceneInterface(object):
     def load_mesh(self, mesh_data):
         """
         Loads one mesh objects provided by the render system server
+        :param: Model Mesh Data
+        :return:
         """
         pass
 
@@ -82,7 +116,10 @@ class SceneInterface(object):
     def load_traced_paths(self, render_data):
         """
         Creates and loads the 3D path objects from the render data sent by the render system server
+        :param: Model Render Data
+        :return:
         """
+        pass
 
     @abc.abstractmethod
     def display_traced_paths(self, indices):

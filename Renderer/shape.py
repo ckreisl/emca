@@ -94,13 +94,13 @@ class Shape(vtk.vtkActor):
         :return:
         """
         if selected:
-            self.GetProperty().SetColor(self.color_selected.red,
-                                        self.color_selected.green,
-                                        self.color_selected.blue)
+            self.GetProperty().SetColor(self._color_selected.red,
+                                        self._color_selected.green,
+                                        self._color_selected.blue)
         else:
-            self.GetProperty().SetColor(self.default_color.red,
-                                        self.default_color.green,
-                                        self.default_color.blue)
+            self.GetProperty().SetColor(self._default_color.red,
+                                        self._default_color.green,
+                                        self._default_color.blue)
         self._is_selected = selected
 
     @property

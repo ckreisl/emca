@@ -307,9 +307,9 @@ class Intersection(object):
         :return:
         """
         if self._wi:
-            self._wi.set_selected(selected)
+            self._wi.selected = selected
         if self._its:
-            self._its.set_selected(selected)
+            self._its.selected = selected
 
     def set_color_wi(self, color):
         """
@@ -396,11 +396,11 @@ class Intersection(object):
         :return:
         """
         if self._wi:
-            self._wi.set_opacity(value)
+            self._wi.opacity = value
         if self._wo:
-            self._wo.set_opacity(value)
+            self._wo.opacity = value
         if self._ne:
-            self._ne.set_opacity(value)
+            self._ne.opacity = value
 
     def reset_path_opacity(self):
         """

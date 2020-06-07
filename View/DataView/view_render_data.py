@@ -80,6 +80,9 @@ class ViewRenderData(QWidget):
         """
         self._selected_indices = np.append(self._selected_indices, index)
 
+    def update_path_indices(self, indices):
+        self.display_traced_path_data(indices)
+
     @Slot(QTreeWidgetItem, QTreeWidgetItem, name='select_tree_item')
     def select_tree_item(self, item, previous):
         """

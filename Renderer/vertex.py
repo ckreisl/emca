@@ -48,4 +48,4 @@ class Vertex(Shape):
         Returns the position of the vertex
         :return: Point3f
         """
-        return self.pos
+        return self._pos

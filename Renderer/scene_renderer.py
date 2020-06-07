@@ -77,6 +77,40 @@ class SceneRenderer(SceneInterface):
         self.widget.update()
         self._widget_update_timer_running = False
 
+    def update_path_indices(self, indices):
+        self.remove_traced_paths_by_indices(self._scene_traced_paths.path_indices)
+        self.display_traced_paths(indices)
+
+    def select_path(self, index):
+        for key in self._scene_traced_paths.path_indices:
+            if key == index:
+                path = self._scene_traced_paths.paths[key]
+                if path.is_ne_visible:
+                    path.draw_ne(self._renderer)
+                if path.opacity != path.default_opacity:
+                    path.set_path_opacity(path.default_opacity)
+            else:
+                self._scene_traced_paths.paths[key].set_path_opacity(0.25)
+        self._scene_traced_paths.select_path(index)
+        self.widget.update()
+
+    def select_vertex(self, tpl):
+        self._scene_traced_paths.select_vertex(tpl)
+        path, vertex = self._scene_traced_paths.get_path_and_vertex(tpl)
+        if vertex.is_ne_visible:
+            vertex.draw_ne(self._renderer)
+        if vertex.is_wi_visible:
+            vertex.draw_wi(self._renderer)
+        if vertex.is_wo_visible:
+            vertex.draw_wo(self._renderer)
+        if self._scene_geometry.camera.auto_clipping:
+            self._scene_geometry.camera.set_focal_point(vertex.pos)
+        self.widget.update()
+
+    def remove_traced_paths_by_indices(self, indices):
+        for key in indices:
+            self._scene_traced_paths.paths[key].clear_all(self._renderer)
+
     def load_scene(self, camera_data, mesh_data):
         # currently not used ?!
         self.clear_scene_objects()
