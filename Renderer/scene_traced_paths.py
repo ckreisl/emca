@@ -35,13 +35,13 @@ class SceneTracedPaths(object):
 
         self._paths = {}
         self._path_indices = np.array([], dtype=np.int32)
-        self._selected_path = False
+        self._is_path_selected = False
         self._selected_path_index = -1
-        self._selected_vertex = False
+        self._is_vertex_selected = False
         self._selected_vertex_tpl = ()
 
         self._all_paths_visible = False
-        self._all_verts_visible = False
+        self._all_vertices_visible = False
 
     @property
     def paths(self):
@@ -64,14 +64,38 @@ class SceneTracedPaths(object):
         """
         self._path_indices = indices
 
+    @property
+    def is_path_selected(self):
+        return self._is_path_selected
+
+    @property
+    def selected_path_index(self):
+        return self._selected_path_index
+
+    @property
+    def is_vertex_selected(self):
+        return self._is_vertex_selected
+
+    @property
+    def selected_vertex_tpl(self):
+        return self._selected_vertex_tpl
+
+    @property
+    def all_paths_visible(self):
+        return self._all_paths_visible
+
+    @property
+    def all_vertices_visible(self):
+        return self._all_vertices_visible
+
     def select_path(self, index):
-        self._selected_path = True
+        self._is_path_selected = True
         self._selected_path_index = index
 
     def select_vertex(self, tpl):
         # tpl = (path_idx, vertex_idx)
-        if not self._selected_vertex:
-            self._selected_vertex = True
+        if not self._is_vertex_selected:
+            self._is_vertex_selected = True
         if self._selected_vertex_tpl:
             path = self._paths[self._selected_vertex_tpl[0]]
             vertex = path.its_dict[self._selected_vertex_tpl[1]]
@@ -133,9 +157,9 @@ class SceneTracedPaths(object):
         """
         self._paths.clear()
         self._path_indices = np.array([], dtype=np.int32)
-        self._selected_path = False
+        self._is_path_selected = False
         self._selected_path_index = -1
-        self._selected_vertex = False
+        self._is_vertex_selected = False
         self._selected_vertex_tpl = ()
         self._all_paths_visible = False
-        self._all_verts_visible = False
+        self._all_vertices_visible = False

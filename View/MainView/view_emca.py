@@ -285,6 +285,14 @@ class ViewEMCA(QWidget):
         return self._view_render_scene
 
     @property
+    def view_render_scene_options(self):
+        """
+        Returns the 3D Scene options
+        :return: QWidget
+        """
+        return self._view_render_scene.view_render_scene_options
+
+    @property
     def view_options(self):
         """
         Returns the options widget

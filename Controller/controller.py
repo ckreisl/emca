@@ -398,7 +398,9 @@ class Controller(QObject):
     def get_render_scene(self):
         return self._view.view_render_scene.scene_renderer
 
-    def set_render_scene(self, scene_renderer):
+    def init_scene_renderer(self, scene_renderer):
+        scene_renderer.set_view_render_scene(self._view.view_render_scene)
+        scene_renderer.set_view_render_scene_options(self._view.view_render_scene_options)
         self._view.view_render_scene.init_scene_renderer(scene_renderer)
 
     def scene_renderer_init(self):

@@ -25,7 +25,7 @@
 from Renderer.rubberband import RubberBandInteractor
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from Renderer.path import Path
-from Renderer.path_vertex import Vertex
+from Renderer.path_vertex import PathVertex
 from Renderer.line import Line
 from Renderer.sphere import Sphere
 from Renderer.triangle import Triangle
@@ -71,8 +71,10 @@ class Renderer(vtk.vtkRenderer):
         # set picket to allow rubber band picker (rectangle 3D selection)
         area_picker = vtk.vtkAreaPicker()
         area_picker.AddObserver(vtk.vtkCommand.EndPickEvent, self.area_picker_event)
-        self._iren.SetPicker(area_picker)
 
+        self._rubber_band_callback = None
+
+        self._iren.SetPicker(area_picker)
         self._iren.Initialize()
         self._iren.Start()
 
@@ -83,6 +85,9 @@ class Renderer(vtk.vtkRenderer):
         :return: vtkWidget
         """
         return self._vtkWidget
+
+    def set_rubber_band_callback(self, callback):
+        self._rubber_band_callback = callback
 
     def area_picker_event(self, picker, event):
         """
@@ -97,20 +102,11 @@ class Renderer(vtk.vtkRenderer):
         picked = props.GetNumberOfItems()
         for i in range(0, picked):
             prop = props.GetNextProp3D()
-            if isinstance(prop, Vertex):
+            if isinstance(prop, PathVertex):
                 tpl = prop.get_index_tpl()
-                if tpl[0] in self._path_indices:
-                    # same path select vertex
-                    if tpl[0] != self._selected_path_index:
-                        self.send_select_path(tpl[0])
-                    self.send_select_vertex(tpl)
-                    break
-                else:
-                    # some other path is selected update whole view
-                    self.send_update_path(np.array([tpl[0]]), False)
-                    self.send_select_path(tpl[0])
-                    self.send_select_vertex(tpl)
-                    break
+                # TODO check case if callback function is none
+                self._rubber_band_callback(tpl)
+                break
 
     def load_traced_paths(self, render_data):
         """

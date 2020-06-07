@@ -26,6 +26,7 @@ from Core.scene_interface import SceneInterface
 from Renderer.scene_geometry import SceneGeometry
 from Renderer.scene_traced_paths import SceneTracedPaths
 from Renderer.renderer import Renderer
+import numpy as np
 import threading
 import logging
 
@@ -34,9 +35,10 @@ class SceneRenderer(SceneInterface):
 
     def __init__(self):
         super().__init__()
-        self._renderer = Renderer()
         self._scene_geometry = SceneGeometry(0.25)
         self._scene_traced_paths = SceneTracedPaths(1.0)
+        self._renderer = Renderer()
+        self._renderer.set_rubber_band_callback(self.rubber_band_selection)
 
         # Introduced to prevent multiple update calls while loading scene objects
         # Updating view is expensive
@@ -72,6 +74,18 @@ class SceneRenderer(SceneInterface):
         Returns the 3D render widget
         """
         return self._renderer.widget
+
+    def rubber_band_selection(self, tpl):
+        if tpl[0] in self._scene_traced_paths.paths:
+            # same path select vertex
+            if tpl[0] != self._scene_traced_paths.selected_path_index:
+                self.send_select_path(tpl[0])
+            self.send_select_vertex(tpl)
+        else:
+            # some other path is selected update whole view
+            self.send_update_path(np.array([tpl[0]]), False)
+            self.send_select_path(tpl[0])
+            self.send_select_vertex(tpl)
 
     def widget_update_from_timer(self):
         self.widget.update()

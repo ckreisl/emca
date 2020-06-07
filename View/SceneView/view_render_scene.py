@@ -51,6 +51,10 @@ class ViewRenderScene(QWidget):
         self.btnLoadScene.clicked.connect(self.request_scene)
         self.btnReset.clicked.connect(self.reset_camera_position)
 
+    @property
+    def view_render_scene_options(self):
+        return self._view_render_options
+
     def init_scene_renderer(self, scene_renderer):
         self._scene_renderer = scene_renderer
         self.sceneLayout.addWidget(scene_renderer.widget)
