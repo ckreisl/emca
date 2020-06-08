@@ -37,11 +37,11 @@ class ViewRenderSceneOptions(QWidget):
         Informs the render interface about view changes
     """
 
-    def __init__(self, parent):
+    def __init__(self):
         QWidget.__init__(self, parent=None)
         loadUi('View/ui/render_scene_options.ui', self)
 
-        self._parent = parent
+        self._scene_renderer = None
 
         # center widget depending on screen size
         desktop_widget = QApplication.desktop()
@@ -59,7 +59,7 @@ class ViewRenderSceneOptions(QWidget):
         # handle camera settings
         self.sliderCameraSpeed.valueChanged.connect(self.update_camera_motion_speed)
         self.cbCameraClipping.toggled.connect(self.update_camera_clipping)
-        self.pbResetCamera.clicked.connect(self.reset_camera_options)
+        self.pbResetCamera.clicked.connect(self.reset_camera_motion_speed)
 
         # handle scene settings
         self.sliderMeshOpacity.valueChanged.connect(self.update_scene_opacity)
@@ -82,6 +82,9 @@ class ViewRenderSceneOptions(QWidget):
         self.cbShowNEE.toggled.connect(self.show_vertex_nee)
         self.cbShowAllOtherVertices.toggled.connect(self.show_other_verts)
 
+    def init_scene_renderer(self, scene_renderer):
+        self._scene_renderer = scene_renderer
+
     def prepare_new_data(self):
         """
         Prepare view for new incoming render data,
@@ -90,14 +93,6 @@ class ViewRenderSceneOptions(QWidget):
         """
         self.set_path_settings_enabled(False)
         self.set_vertex_settings_enabled(False)
-        self.save_current_settings()
-
-    def save_current_settings(self):
-        """
-        Saves current scene option settings
-        :return:
-        """
-        self._settings.update(self)
 
     def set_general_settings_enabled(self, enabled):
         """
@@ -116,18 +111,16 @@ class ViewRenderSceneOptions(QWidget):
         self.widgetCamera.setEnabled(enabled)
         self.widgetBtnsCamera.setEnabled(enabled)
 
-    def load_camera_settings(self):
+    def load_camera_settings(self, camera_settings):
         """
         Initialises the camera settings with data from the renderer
         :return:
         """
-        motion_speed = self._renderer.get_camera_motion_speed()
         self.sliderCameraSpeed.blockSignals(True)
-        self.sliderCameraSpeed.setValue(motion_speed)
+        self.sliderCameraSpeed.setValue(camera_settings.get('motion_speed', 1.0))
         self.sliderCameraSpeed.blockSignals(False)
-        camera_clipping = self._renderer.camera_clipping()
         self.cbCameraClipping.blockSignals(True)
-        self.cbCameraClipping.setChecked(camera_clipping)
+        self.cbCameraClipping.setChecked(camera_settings.get('auto_clipping', True))
         self.cbCameraClipping.blockSignals(False)
 
     def set_scene_settings_enabled(self, enabled):
@@ -139,12 +132,12 @@ class ViewRenderSceneOptions(QWidget):
         self.widgetMesh.setEnabled(enabled)
         self.widgetBtnsMesh.setEnabled(enabled)
 
-    def load_scene_settings(self):
+    def load_scene_settings(self, scene_settings):
         """
         Initializes the scene settings with data from the renderer
         :return:
         """
-        opacity = self._renderer.get_scene_opacity()
+        opacity = scene_settings.get('scene_opacity', 1.0)
         max_value = self.sliderMeshOpacity.maximum()
         self.sliderMeshOpacity.blockSignals(True)
         self.sliderMeshOpacity.setValue(int(opacity * max_value))
@@ -263,7 +256,7 @@ class ViewRenderSceneOptions(QWidget):
         :param speed: float
         :return:
         """
-        self._renderer.update_camera_motion_speed(speed)
+        self._scene_renderer.apply_camera_option_settings({'motion_speed': speed})
 
     @Slot(bool, name='update_camera_clipping')
     def update_camera_clipping(self, state):
@@ -272,17 +265,18 @@ class ViewRenderSceneOptions(QWidget):
         :param state: boolean
         :return:
         """
-        self._renderer.update_camera_clipping(state)
+        self._scene_renderer.apply_camera_option_settings({'auto_clipping': state})
 
-    @Slot(bool, name='reset_camera_options')
-    def reset_camera_options(self, clicked):
+    @Slot(bool, name='reset_camera_motion_speed')
+    def reset_camera_motion_speed(self, clicked):
         """
         Inform the renderer to reset the camera settings
         :param clicked: boolean
         :return:
         """
-        self._renderer.reset_camera_motion_speed()
-        self.load_camera_settings()
+        self._scene_renderer.reset_camera_option_settings()
+        camera_settings = self._scene_renderer.get_camera_option_settings()
+        self.load_camera_settings(camera_settings)
 
     @Slot(int, name='update_scene_opacity')
     def update_scene_opacity(self, opacity):
@@ -292,7 +286,7 @@ class ViewRenderSceneOptions(QWidget):
         :return:
         """
         max_value = self.sliderMeshOpacity.maximum()
-        self._renderer.update_scene_opacity(float(opacity / max_value))
+        self._scene_renderer.apply_scene_option_settings({'scene_opacity': float(opacity / max_value)})
 
     @Slot(bool, name='reset_scene_opacity')
     def reset_scene_opacity(self, clicked):
@@ -301,8 +295,9 @@ class ViewRenderSceneOptions(QWidget):
         :param clicked: boolean
         :return:
         """
-        self._renderer.reset_scene_opacity()
-        self.load_scene_settings()
+        self._scene_renderer.reset_scene_option_settings()
+        scene_settings = self._scene_renderer.get_scene_option_settings()
+        self.load_scene_settings(scene_settings)
 
     @Slot(int, name='update_path_opacity')
     def update_path_opacity(self, opacity):

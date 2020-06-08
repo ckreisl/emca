@@ -37,6 +37,7 @@ class SceneGeometry(object):
     def __init__(self, opacity):
         self._camera = Camera()
         self._meshes = []
+        self._default_scene_opacity = opacity
         self._scene_opacity = opacity
 
     @property
@@ -69,6 +70,12 @@ class SceneGeometry(object):
         """
         return len(self._meshes)
 
+    def create_mesh(self, mesh_data):
+        mesh = Mesh(mesh_data)
+        mesh.opacity = self._scene_opacity
+        mesh.default_opacity = self._default_scene_opacity
+        return mesh
+
     def set_scene_opacity(self, opacity):
         """
         Sets the opacity of all meshes in the scene
@@ -77,6 +84,7 @@ class SceneGeometry(object):
         """
         for mesh in self._meshes:
             mesh.opacity = opacity
+        self._scene_opacity = opacity
 
     def reset_scene_opacity(self):
         """
@@ -84,7 +92,8 @@ class SceneGeometry(object):
         :return:
         """
         for mesh in self._meshes:
-            mesh.reset_opacity()
+            mesh.opacity = self._default_scene_opacity
+        self._scene_opacity = self._default_scene_opacity
 
     def add_mesh(self, mesh_data):
         """
@@ -92,7 +101,8 @@ class SceneGeometry(object):
         :param mesh_data: Mesh object
         :return:
         """
-        self._meshes.append(Mesh(mesh_data))
+        mesh = self.create_mesh(mesh_data)
+        self._meshes.append(mesh)
 
     def load_camera_data(self, camera_data):
         """
@@ -111,7 +121,8 @@ class SceneGeometry(object):
         """
         self._meshes.clear()
         for mesh_data in meshes_data.meshes:
-            self._meshes.append(Mesh(mesh_data))
+            mesh = self.create_mesh(mesh_data)
+            self._meshes.append(mesh)
 
     def clear_scene_objects(self):
         """

@@ -31,7 +31,9 @@ import logging
 class SceneTracedPaths(object):
 
     def __init__(self, opacity):
+
         self._path_opacity = opacity
+        self._path_size = 1.0
 
         self._paths = {}
         self._path_indices = np.array([], dtype=np.int32)
@@ -119,7 +121,11 @@ class SceneTracedPaths(object):
         """
         start = time.time()
         for key, path in render_data.dict_paths.items():
-            self._paths[key] = Path(idx=key, origin=path.path_origin, path_data=path)
+            self._paths[key] = Path(idx=key,
+                                    origin=path.path_origin,
+                                    path_data=path,
+                                    default_opacity=self._path_opacity,
+                                    default_size=self._path_size)
         logging.info("creating traced paths runtime: {}ms".format(time.time() - start))
         return True
 

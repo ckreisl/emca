@@ -35,15 +35,32 @@ class Path(object):
         Visualizes one path in the vtkRenderer (3D viewer)
     """
 
-    def __init__(self, idx, origin, path_data):
+    def __init__(self, idx, origin, path_data, default_opacity=1.0, default_size=1.0):
         self._path_idx = idx
         self._origin = origin
         self._its_dict = {}
 
-        self._opacity = 1.0
-        self._size = 1.0
+        self._default_opacity = default_opacity
+        self._opacity = default_opacity
+        self._default_size = default_size
+        self._size = default_size
+
         self._visible = True
         self._visible_ne = False
+
+        self.create_path(idx, origin, path_data)
+
+    def init_default_opacity_and_size(self, objects):
+        for obj in objects:
+            obj.default_opacity = self._default_opacity
+            obj.opacity = self._opacity
+            obj.default_size = self._default_size
+            obj.size = self._size
+
+    def create_path(self, idx, origin, path_data):
+        """
+        Initializes the path and sets inits each corresponding intersection point with its rays
+        """
 
         dict_vertices = path_data.dict_vertices
 
@@ -83,6 +100,7 @@ class Path(object):
             if vertex.is_ne_set:
                 ne = Ray(vertex.pos, vertex.pos_ne, is_ne=True, is_ne_occluded=vertex.is_ne_occluded)
 
+            self.init_default_opacity_and_size([i for i in [its, wi, wo, ne] if i])
             self._its_dict[key] = Intersection(key, wi, its, wo, ne)
 
     @property
@@ -112,23 +130,29 @@ class Path(object):
     @property
     def opacity(self):
         """
-        Returns the path opacity
+        Returns the current path opacity
         :return: float[0,1]
         """
         return self._opacity
 
     @property
     def default_opacity(self):
-        return 1.0
+        """
+        Returns the default opacity of the path
+        """
+        return self._default_opacity
 
     @property
     def default_size(self):
-        return 1.0
+        """
+        Returns the default size of the path
+        """
+        return self._default_size
 
     @property
     def size(self):
         """
-        Returns the path size
+        Returns the current path size
         :return: float[0,1]
         """
         return self._size
@@ -272,16 +296,6 @@ class Path(object):
         """
         for _, its in self._its_dict.items():
             its.set_selected(selected)
-
-    def set_opacity(self, value):
-        """
-        Sets the opacity of the path and its vertices
-        :param value: float[0,1]
-        :return:
-        """
-        self._opacity = value
-        for _, its in self._its_dict.items():
-            its.set_opacity(value)
 
     def set_path_opacity(self, value):
         """

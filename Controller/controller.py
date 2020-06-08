@@ -403,9 +403,6 @@ class Controller(QObject):
         scene_renderer.set_view_render_scene_options(self._view.view_render_scene_options)
         self._view.view_render_scene.init_scene_renderer(scene_renderer)
 
-    def scene_renderer_init(self):
-        pass
-
     def display_view(self):
         """
         Opens and shows the EMCA view

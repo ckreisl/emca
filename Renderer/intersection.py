@@ -367,16 +367,6 @@ class Intersection(object):
         self._its.set_opacity(self.default_opacity)
         self._its.set_size(self.default_size)
 
-    def set_opacity(self, value):
-        """
-        Sets the opacity of the path and vertex
-        :param value:
-        :return:
-        """
-        self._opacity = value
-        self.set_path_opacity(value)
-        self.set_vertex_opacity(value)
-
     def set_path_size(self, value):
         """
         Sets size of whole path

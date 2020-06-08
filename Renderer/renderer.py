@@ -87,6 +87,11 @@ class Renderer(vtk.vtkRenderer):
         return self._vtkWidget
 
     def set_rubber_band_callback(self, callback):
+        """
+        Sets the rubber band callback function.
+        Informs the scene renderer about picked items
+        :param callback: function
+        """
         self._rubber_band_callback = callback
 
     def area_picker_event(self, picker, event):

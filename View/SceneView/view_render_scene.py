@@ -45,7 +45,9 @@ class ViewRenderScene(QWidget):
 
         self._controller = None
         self._scene_renderer = None
-        self._view_render_options = ViewRenderSceneOptions(self)
+        self._view_render_options = ViewRenderSceneOptions()
+
+        self._scene_loaded = False
 
         self.btnSceneOptions.clicked.connect(self.open_view_render_options)
         self.btnLoadScene.clicked.connect(self.request_scene)
@@ -57,6 +59,7 @@ class ViewRenderScene(QWidget):
 
     def init_scene_renderer(self, scene_renderer):
         self._scene_renderer = scene_renderer
+        self._view_render_options.init_scene_renderer(scene_renderer)
         self.sceneLayout.addWidget(scene_renderer.widget)
 
     def set_controller(self, controller):
@@ -129,6 +132,7 @@ class ViewRenderScene(QWidget):
         :return:
         """
         self._scene_renderer.clear_scene_objects()
+        self._scene_loaded = False
 
     def load_camera(self, camera_data):
         """
@@ -138,8 +142,9 @@ class ViewRenderScene(QWidget):
         :return:
         """
         self._scene_renderer.load_camera(camera_data)
-        #self._view_render_options.load_camera_settings()
-        #self._view_render_options.set_camera_settings_enabled(True)
+        camera_settings = self._scene_renderer.get_camera_option_settings()
+        self._view_render_options.load_camera_settings(camera_settings)
+        self._view_render_options.set_camera_settings_enabled(True)
 
     def load_mesh(self, mesh_data):
         """
@@ -149,9 +154,11 @@ class ViewRenderScene(QWidget):
         :return:
         """
         self._scene_renderer.load_mesh(mesh_data)
-        # todo is called #mesh times just enable settings once
-        #self._view_render_options.load_scene_settings()
-        #self._view_render_options.set_scene_settings_enabled(True)
+        if not self._scene_loaded:
+            self._scene_loaded = True
+            scene_settings = self._scene_renderer.get_scene_option_settings()
+            self._view_render_options.load_scene_settings(scene_settings)
+            self._view_render_options.set_scene_settings_enabled(True)
 
     def load_scene(self, camera_data, mesh_data):
         """
@@ -161,11 +168,7 @@ class ViewRenderScene(QWidget):
         :param mesh_data:
         :return:
         """
-        self._renderer.load_scene(camera_data, mesh_data)
-        self._view_render_options.load_camera_settings()
-        self._view_render_options.load_scene_settings()
-        self._view_render_options.set_camera_settings_enabled(True)
-        self._view_render_options.set_scene_settings_enabled(True)
+        pass
 
     def load_traced_paths(self, render_data):
         """

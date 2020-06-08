@@ -157,12 +157,6 @@ class SceneRenderer(SceneInterface):
 
     def display_traced_paths(self, indices):
         self._scene_traced_paths.display_traced_paths(indices)
-        # TODO think about other method to load path
-        # do not hand over renderer to render stuff ?!
-        # ----------------- DEBUG START
-        logging.info(self._scene_traced_paths.paths)
-        logging.info(self._scene_traced_paths.path_indices)
-        # ----------------- DEBUG END
         for key in self._scene_traced_paths.path_indices:
             self._scene_traced_paths.paths[key].draw_path(self._renderer)
             self._scene_traced_paths.paths[key].draw_verts(self._renderer)
@@ -185,3 +179,68 @@ class SceneRenderer(SceneInterface):
     def prepare_new_data(self):
         self.clear_traced_paths()
         self._scene_traced_paths.reset()
+
+    # SCENE OPTIONS
+
+    def get_path_option_settings(self, index):
+        path = self._scene_traced_paths.paths[index]
+        return {'opacity': path.opacity,
+                'size': path.size,
+                'is_visible': path.is_visible,
+                'is_ne_visible': path.is_ne_visible}
+
+    def get_vertex_option_settings(self, tpl):
+        _, vertex = self._scene_traced_paths.get_path_and_vertex(tpl)
+        return {'opacity': vertex.opacity,
+                'size': vertex.size,
+                'is_wi_visible': vertex.is_wi_visible,
+                'is_wo_visible': vertex.is_wo_visible,
+                'is_ne_visible': vertex.is_ne_visible}
+
+    def get_camera_option_settings(self):
+        camera = self._scene_geometry.camera
+        return {'motion_speed': camera.motion_speed,
+                'auto_clipping': camera.auto_clipping}
+
+    def get_scene_option_settings(self):
+        return {'scene_opacity': self._scene_geometry.scene_opacity}
+
+    def apply_camera_option_settings(self, camera_settings):
+        motion_speed = camera_settings.get('motion_speed', None)
+        auto_clipping = camera_settings.get('auto_clipping', None)
+        if motion_speed is not None:
+            self._scene_geometry.camera.motion_speed = motion_speed
+        if auto_clipping is not None:
+            self._scene_geometry.camera.auto_clipping = auto_clipping
+        self.widget.update()
+
+    def reset_camera_option_settings(self):
+        self._scene_geometry.camera.reset_motion_speed()
+        self.widget.update()
+
+    def apply_scene_option_settings(self, scene_settings):
+        scene_opacity = scene_settings.get('scene_opacity', None)
+        if scene_opacity is not None:
+            self._scene_geometry.set_scene_opacity(scene_opacity)
+        self.widget.update()
+
+    def reset_scene_option_settings(self):
+        self._scene_geometry.reset_scene_opacity()
+        self.widget.update()
+
+    def apply_path_option_settings(self, path_settings):
+        pass
+
+    def reset_path_option_settings(self):
+        pass
+
+    def apply_vertex_option_settings(self, vertex_settings):
+        pass
+
+    def reset_vertex_option_settings(self):
+        pass
+
+
+
+
+

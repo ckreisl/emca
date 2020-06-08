@@ -54,7 +54,39 @@ class SceneInterface(object):
     @property
     @abc.abstractmethod
     def widget(self):
-        pass
+        """
+        Returns the corresponding 3D scene render QtWidget
+        """
+
+    @abc.abstractmethod
+    def get_path_option_settings(self, index):
+        """
+        Returns the path option settings of one path defined by its index
+        :param index: integer
+        :return: dict
+        """
+
+    @abc.abstractmethod
+    def get_vertex_option_settings(self, tpl):
+        """
+        Returns the vertex option settings defined by its tpl (path_index, vertex_index)
+        :param: tuple (path_index, vertex_index)
+        :return: dict
+        """
+
+    @abc.abstractmethod
+    def get_camera_option_settings(self):
+        """
+        Returns the options settings of the camera
+        :return: dict
+        """
+
+    @abc.abstractmethod
+    def get_scene_option_settings(self):
+        """
+        Returns the options settings of the scene
+        :return: dict
+        """
 
     @abc.abstractmethod
     def update_path_indices(self, indices):
@@ -63,7 +95,6 @@ class SceneInterface(object):
         :param: numpy array containing path indices
         :return:
         """
-        pass
 
     @abc.abstractmethod
     def select_path(self, index):
@@ -72,7 +103,6 @@ class SceneInterface(object):
         :param: integer index
         :return:
         """
-        pass
 
     @abc.abstractmethod
     def select_vertex(self, tpl):
@@ -81,7 +111,6 @@ class SceneInterface(object):
         :param tpl: tuple(path_index, vertex_index)
         :return:
         """
-        pass
 
     @abc.abstractmethod
     def load_scene(self, camera_data, mesh_data):
@@ -92,7 +121,6 @@ class SceneInterface(object):
         :param mesh_data: Model Mesh Data
         :return:
         """
-        pass
 
     @abc.abstractmethod
     def load_camera(self, camera_data):
@@ -101,7 +129,6 @@ class SceneInterface(object):
         :param camera_data: Model Camera Data
         :return:
         """
-        pass
 
     @abc.abstractmethod
     def load_mesh(self, mesh_data):
@@ -110,7 +137,6 @@ class SceneInterface(object):
         :param: Model Mesh Data
         :return:
         """
-        pass
 
     @abc.abstractmethod
     def load_traced_paths(self, render_data):
@@ -119,7 +145,6 @@ class SceneInterface(object):
         :param: Model Render Data
         :return:
         """
-        pass
 
     @abc.abstractmethod
     def display_traced_paths(self, indices):
@@ -128,32 +153,81 @@ class SceneInterface(object):
         :param indices: numpy array containing path indices
         :return:
         """
-        pass
 
     @abc.abstractmethod
     def clear_scene_objects(self):
         """
         Removes all 3D scene objects from the scene
+        :return:
         """
-        pass
 
     @abc.abstractmethod
     def clear_traced_paths(self):
         """
         Removes all traced paths within the scene
+        :return:
         """
-        pass
 
     @abc.abstractmethod
     def reset_camera_position(self):
         """
         Resets the 3D camera position to it's default initialized position
+        :return:
         """
-        pass
 
     @abc.abstractmethod
     def prepare_new_data(self):
         """
         Prepare 3D scene for new incoming selected pixel data from render system server
+        :return:
         """
-        pass
+
+    # SCENE OPTIONS
+
+    @abc.abstractmethod
+    def apply_camera_option_settings(self, camera_settings):
+        """
+        Apply camera option changes from the scene option view
+        """
+
+    @abc.abstractmethod
+    def reset_camera_option_settings(self):
+        """
+        Resets the camera option settings to its default values
+        """
+
+    @abc.abstractmethod
+    def apply_scene_option_settings(self, scene_settings):
+        """
+        Apply scene option changes from the scene option view
+        """
+
+    @abc.abstractmethod
+    def reset_scene_option_settings(self):
+        """
+        Resets the scene option settings to its default values
+        """
+
+    @abc.abstractmethod
+    def apply_path_option_settings(self, path_settings):
+        """
+        Apply path option changes from the scene option view
+        """
+
+    @abc.abstractmethod
+    def reset_path_option_settings(self):
+        """
+        Resets the path option settings to its default values
+        """
+
+    @abc.abstractmethod
+    def apply_vertex_option_settings(self, vertex_settings):
+        """
+        Apply path option changes from the scene option view
+        """
+
+    @abc.abstractmethod
+    def reset_vertex_option_settings(self):
+        """
+        Resets the vertex option settings to its default values
+        """
