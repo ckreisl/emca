@@ -129,7 +129,7 @@ class PluginsViewContainer(QWidget):
         self._plugin.select_vertex(tpl)
         # automatically request new data for the selected vertex if the tool is visible
         if self.isVisible():
-            self._controller.request_plugin(self._plugin.flag)
+            self._controller.stream.request_plugin(self._plugin.flag)
 
     def serialize(self, stream):
         """
@@ -226,7 +226,7 @@ class PluginsViewContainer(QWidget):
         :param clicked:
         :return:
         """
-        self._controller.request_plugin(self._plugin.flag)
+        self._controller.stream.request_plugin(self._plugin.flag)
 
     @Slot(bool, name='display_tool')
     def display_plugin(self, clicked):
@@ -241,4 +241,4 @@ class PluginsViewContainer(QWidget):
             self.activateWindow()
         else:
             self.show()
-            self._controller.request_plugin(self._plugin.flag)
+            self._controller.stream.request_plugin(self._plugin.flag)

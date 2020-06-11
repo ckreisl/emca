@@ -42,10 +42,10 @@ class EMCAClient(object):
 
     def __init__(self):
         self.controller = Controller(Model(), MainView())
-        self.controller.init_scene_renderer(SceneRenderer())
+        self.controller.scene.init_scene_renderer(SceneRenderer())
 
     def load_theme(self, qt_app):
-        theme = self.controller.get_theme()
+        theme = self.controller.options.get_theme()
         if theme == 'light':
             theme_files = "./Resources/light.qss"
         else:
@@ -54,7 +54,7 @@ class EMCAClient(object):
         file.open(QFile.ReadOnly | QFile.Text)
         text_stream = QTextStream(file)
         qt_app.setStyleSheet(text_stream.readAll())
-        self.controller.set_theme(theme)
+        self.controller.options.set_theme(theme)
 
     def start(self):
         """

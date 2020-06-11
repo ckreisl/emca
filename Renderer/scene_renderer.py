@@ -156,7 +156,7 @@ class SceneRenderer(SceneInterface):
         self.widget.update()
 
     def display_traced_paths(self, indices):
-        self._scene_traced_paths.display_traced_paths(indices)
+        self._scene_traced_paths.path_indices = indices
         for key in self._scene_traced_paths.path_indices:
             self._scene_traced_paths.paths[key].draw_path(self._renderer)
             self._scene_traced_paths.paths[key].draw_verts(self._renderer)
@@ -178,20 +178,23 @@ class SceneRenderer(SceneInterface):
 
     def prepare_new_data(self):
         self.clear_traced_paths()
-        self._scene_traced_paths.reset()
+        self._scene_traced_paths.clear()
 
     # SCENE OPTIONS
 
     def get_path_option_settings(self, index):
         path = self._scene_traced_paths.paths[index]
-        return {'opacity': path.opacity,
+        return {'all_paths_visible': self._scene_traced_paths.all_paths_visible,
+                'all_nees_visible': self._scene_traced_paths.all_nees_visible,
+                'opacity': path.opacity,
                 'size': path.size,
                 'is_visible': path.is_visible,
                 'is_ne_visible': path.is_ne_visible}
 
     def get_vertex_option_settings(self, tpl):
         _, vertex = self._scene_traced_paths.get_path_and_vertex(tpl)
-        return {'opacity': vertex.opacity,
+        return {'all_vertices_visible': self._scene_traced_paths.all_vertices_visible,
+                'opacity': vertex.opacity,
                 'size': vertex.size,
                 'is_wi_visible': vertex.is_wi_visible,
                 'is_wo_visible': vertex.is_wo_visible,
@@ -229,13 +232,48 @@ class SceneRenderer(SceneInterface):
         self.widget.update()
 
     def apply_path_option_settings(self, path_settings):
-        pass
+        all_paths_visible = path_settings.get('all_paths_visible', None)
+        all_nees_visible = path_settings.get('all_nees_visible', None)
+        opacity = path_settings.get('opacity', None)
+        size = path_settings.get('size', None)
+        is_visible = path_settings.get('is_visible', None)
+        is_ne_visible = path_settings.get('is_ne_visible', None)
+        if all_paths_visible is not None:
+            pass
+        if all_nees_visible is not None:
+            pass
+        if opacity is not None:
+            pass
+        if size is not None:
+            pass
+        if is_visible is not None:
+            pass
+        if is_ne_visible is not None:
+            pass
+        self.widget.update()
 
     def reset_path_option_settings(self):
         pass
 
     def apply_vertex_option_settings(self, vertex_settings):
-        pass
+        all_vertices_visible = vertex_settings.get('all_vertices_visible', None)
+        opacity = vertex_settings.get('opacity', None)
+        size = vertex_settings.get('size', None)
+        is_wi_visible = vertex_settings.get('is_wi_visible', None)
+        is_wo_visible = vertex_settings.get('is_wo_visible', None)
+        is_ne_visible = vertex_settings.get('is_ne_visible', None)
+        if all_vertices_visible is not None:
+            pass
+        if opacity is not None:
+            pass
+        if size is not None:
+            pass
+        if is_wi_visible is not None:
+            pass
+        if is_wo_visible is not None:
+            pass
+        if is_ne_visible is not None:
+            pass
 
     def reset_vertex_option_settings(self):
         pass

@@ -58,6 +58,10 @@ class ViewRenderScene(QWidget):
         return self._view_render_options
 
     def init_scene_renderer(self, scene_renderer):
+        """
+        Initializes the scene renderer in this view render scene and view render scene options
+        :param scene_renderer: SceneRenderer
+        """
         self._scene_renderer = scene_renderer
         self._view_render_options.init_scene_renderer(scene_renderer)
         self.sceneLayout.addWidget(scene_renderer.widget)
@@ -69,12 +73,6 @@ class ViewRenderScene(QWidget):
         :return:
         """
         self._controller = controller
-
-    def update_path_indices(self, indices):
-        """
-        Updates the view with given path indices keys from controller
-        """
-        self._scene_renderer.update_path_indices(indices)
 
     @Slot(bool, name='open_view_render_options')
     def open_view_render_options(self, clicked):
@@ -95,7 +93,7 @@ class ViewRenderScene(QWidget):
         :param clicked: boolean
         :return:
         """
-        self._controller.request_scene_data()
+        self._controller.stream.request_scene_data()
 
     @Slot(bool, name='reset_camera_position')
     def reset_camera_position(self, clicked):
@@ -123,7 +121,7 @@ class ViewRenderScene(QWidget):
         Prepare new incoming data, informs the renderer that new data is coming
         :return:
         """
-        #self._view_render_options.prepare_new_data()
+        self._view_render_options.prepare_new_data()
         self._scene_renderer.prepare_new_data()
 
     def clear_scene_objects(self):
@@ -144,7 +142,7 @@ class ViewRenderScene(QWidget):
         self._scene_renderer.load_camera(camera_data)
         camera_settings = self._scene_renderer.get_camera_option_settings()
         self._view_render_options.load_camera_settings(camera_settings)
-        self._view_render_options.set_camera_settings_enabled(True)
+        self._view_render_options.enable_camera_settings(True)
 
     def load_mesh(self, mesh_data):
         """
@@ -158,17 +156,7 @@ class ViewRenderScene(QWidget):
             self._scene_loaded = True
             scene_settings = self._scene_renderer.get_scene_option_settings()
             self._view_render_options.load_scene_settings(scene_settings)
-            self._view_render_options.set_scene_settings_enabled(True)
-
-    def load_scene(self, camera_data, mesh_data):
-        """
-        Informs the renderer to load the 3D scene from the data,
-        loading camera and mesh data. Enables scene settings.
-        :param camera_data:
-        :param mesh_data:
-        :return:
-        """
-        pass
+            self._view_render_options.enable_scene_settings(True)
 
     def load_traced_paths(self, render_data):
         """
@@ -177,7 +165,6 @@ class ViewRenderScene(QWidget):
         :return:
         """
         self._scene_renderer.load_traced_paths(render_data)
-        #self._view_render_options.set_general_settings_enabled(True)
 
     def display_traced_paths(self, indices):
         """
@@ -192,7 +179,7 @@ class ViewRenderScene(QWidget):
         Informs the renderer to clear all visualizes traced paths
         :return:
         """
-        self._renderer.clear_paths()
+        self._scene_renderer.clear_traced_paths()
 
     def send_update_path(self, indices, add_item):
         """
@@ -202,26 +189,6 @@ class ViewRenderScene(QWidget):
         :return:
         """
         self._controller.update_path(indices, add_item)
-
-    def select_path(self, index):
-        """
-        Informs the renderer to visualize the path with index: index
-        :param index: integer
-        :return:
-        """
-        self._scene_renderer.select_path(index)
-        #self._view_render_options.load_path_settings()
-        #self._view_render_options.set_path_settings_enabled(True)
-
-    def select_vertex(self, tpl):
-        """
-        Informs the renderer to select / highlight the vertex with tuple tpl
-        :param tpl: tuple(path_index, vertex_index)
-        :return:
-        """
-        self._scene_renderer.select_vertex(tpl)
-        #self._view_render_options.load_vertex_settings()
-        #self._view_render_options.set_vertex_settings_enabled(True)
 
     def send_select_path(self, index):
         """
@@ -238,6 +205,28 @@ class ViewRenderScene(QWidget):
         :return:
         """
         self._controller.select_vertex(tpl)
+
+    def update_path_indices(self, indices):
+        """
+        Updates the view with given path indices keys from controller
+        """
+        self._scene_renderer.update_path_indices(indices)
+
+    def select_path(self, index):
+        """
+        Informs the renderer to visualize the path with index: index
+        :param index: integer
+        :return:
+        """
+        self._scene_renderer.select_path(index)
+
+    def select_vertex(self, tpl):
+        """
+        Informs the renderer to select / highlight the vertex with tuple tpl
+        :param tpl: tuple(path_index, vertex_index)
+        :return:
+        """
+        self._scene_renderer.select_vertex(tpl)
 
     def close(self):
         """

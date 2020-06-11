@@ -43,6 +43,7 @@ class SceneTracedPaths(object):
         self._selected_vertex_tpl = ()
 
         self._all_paths_visible = False
+        self._all_nees_visible = False
         self._all_vertices_visible = False
 
     @property
@@ -87,6 +88,10 @@ class SceneTracedPaths(object):
         return self._all_paths_visible
 
     @property
+    def all_nees_visible(self):
+        return self._all_nees_visible
+
+    @property
     def all_vertices_visible(self):
         return self._all_vertices_visible
 
@@ -129,33 +134,7 @@ class SceneTracedPaths(object):
         logging.info("creating traced paths runtime: {}ms".format(time.time() - start))
         return True
 
-    def display_traced_paths(self, indices):
-        """
-        Display traced paths within the 3D scene viewer.
-        All paths which are within the indices list will be displayed.
-        :param indices: numpy array containing path indices
-        :return:
-        """
-        """
-        # clear paths which are not visible anymore
-        # and reset path opacity if a path was selected with others
-        if np.size(self._path_indices) > 0:
-            if self._selected_path:
-                self.reset_path_opacity(self._path_indices)
-                self._selected_path = False
-            if self._selected_vertex:
-                self.reset_vertex_opacity(self._path_indices)
-                self._selected_vertex = False
-            diff = np.setdiff1d(self._path_indices, indices)
-            if not self._all_paths_visible:
-                self.clear_paths_by_indices(diff)
-            if not self._all_verts_visible:
-                self.clear_verts_by_indices(diff)
-        """
-        # update indices list
-        self._path_indices = indices
-
-    def reset(self):
+    def clear(self):
         """
         Prepare render view for new incoming render data,
         is called if a new pixel is clicked and its corresponding data is computed.
@@ -169,3 +148,5 @@ class SceneTracedPaths(object):
         self._selected_vertex_tpl = ()
         self._all_paths_visible = False
         self._all_vertices_visible = False
+        self._all_nees_visible = False
+

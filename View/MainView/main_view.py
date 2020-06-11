@@ -119,7 +119,7 @@ class MainView(QMainWindow):
         :param clicked: boolean
         :return:
         """
-        self._controller.open_options(clicked)
+        self._controller.options.open_options(clicked)
 
     @Slot(bool, name='load_image_dialog')
     def load_image_dialog(self, clicked):
@@ -128,7 +128,7 @@ class MainView(QMainWindow):
         :param clicked: boolean
         :return:
         """
-        self._controller.load_image_dialog(clicked)
+        self._controller.options.load_image_dialog(clicked)
 
     @property
     def controller(self):

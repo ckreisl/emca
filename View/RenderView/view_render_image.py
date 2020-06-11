@@ -133,7 +133,7 @@ class ViewRenderImage(QWidget):
         :param pixel: tuple(x,y)
         :return:
         """
-        self._controller.request_render_data(pixel=pixel)
+        self._controller.stream.request_render_data(pixel=pixel)
 
     def load_hdr_image(self, filepath):
         """
@@ -147,7 +147,7 @@ class ViewRenderImage(QWidget):
         hdr_image = self._graphics_view.hdr_image
         if hdr_image:
             if isinstance(hdr_image.filepath, str):
-                self._controller.save_options({'rendered_image_filepath': hdr_image.filepath})
+                self._controller.options.save_options({'rendered_image_filepath': hdr_image.filepath})
 
     @Slot(bool, name='reset')
     def reset(self, clicked):
@@ -166,4 +166,4 @@ class ViewRenderImage(QWidget):
         :param clicked: boolean
         :return:
         """
-        self._controller.load_image_dialog(clicked)
+        self._controller.options.load_image_dialog(clicked)
