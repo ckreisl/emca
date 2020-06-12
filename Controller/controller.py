@@ -186,9 +186,9 @@ class Controller(QObject):
         self.update_path(indices, False)
         verts = self._view.view_render_scene_options.cbShowAllVerts.isChecked()
         self._view.view_render_scene.scene_renderer.show_all_traced_vertices(verts)
-        self._view.view_render_scene_options.cbShowPath.blockSignals(True)
-        self._view.view_render_scene_options.cbShowPath.setChecked(enabled)
-        self._view.view_render_scene_options.cbShowPath.blockSignals(False)
+        self._view.view_render_scene_options.cbShowPathRays.blockSignals(True)
+        self._view.view_render_scene_options.cbShowPathRays.setChecked(enabled)
+        self._view.view_render_scene_options.cbShowPathRays.blockSignals(False)
 
     def update_render_info_sample_count(self, value):
         """

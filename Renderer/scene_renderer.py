@@ -174,7 +174,7 @@ class SceneRenderer(SceneInterface):
 
     def clear_traced_paths(self):
         for _, path in self._scene_traced_paths.paths.items():
-            self._renderer.RemoveActor(path)
+            path.clear_all(self._renderer)
         self.widget.update()
 
     def reset_camera_position(self):

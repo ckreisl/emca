@@ -34,7 +34,7 @@ class ControllerRenderScene(object):
         self._view.view_render_scene.scene_renderer.show_all_traced_vertices(enabled)
 
     def show_all_other_traced_vertices(self, enabled):
-        self._scene_renderer.show_all_other_traced_vertices(enabled)
+        self._view.view_render_scene.scene_renderer.show_all_other_traced_vertices(enabled)
 
     def show_all_traced_nees(self, enabled):
         # NE checkbox path
