@@ -134,6 +134,8 @@ class ViewRenderSceneOptions(QWidget):
         self.listPaths.itemClicked.connect(self.send_select_path)
         self.listVertices.itemClicked.connect(self.send_select_vertex)
 
+        self.pbResetAll.clicked.connect(self.reset_all_paths_vertices)
+
     def set_controller(self, controller):
         self._controller = controller
 
@@ -560,7 +562,7 @@ class ViewRenderSceneOptions(QWidget):
         :param state: boolean
         :return:
         """
-        self._renderer.show_vertex_omega_i(state)
+        self._controller.scene.show_vertex_omega_i(state)
 
     @Slot(bool, name='show_vertex_omega_o')
     def show_vertex_omega_o(self, state):
@@ -570,7 +572,7 @@ class ViewRenderSceneOptions(QWidget):
         :param state: boolean
         :return:
         """
-        self._renderer.show_vertex_omega_o(state)
+        self._controller.scene.show_vertex_omega_o(state)
 
     @Slot(bool, name='show_vertex_nee')
     def show_vertex_nee(self, state):
@@ -580,7 +582,7 @@ class ViewRenderSceneOptions(QWidget):
         :param state: boolean
         :return:
         """
-        self._renderer.show_vertex_nee(state)
+        self._controller.scene.show_vertex_nee(state)
 
     @Slot(bool, name='show_all_other_traced_vertices')
     def show_all_other_traced_vertices(self, state):
@@ -590,4 +592,8 @@ class ViewRenderSceneOptions(QWidget):
         :param state: boolean
         :return:
         """
-        self._scene_renderer.show_all_other_traced_vertices(state)
+        self._controller.scene.show_all_other_traced_vertices(state)
+
+    @Slot(bool, name='reset_all_paths_vertices')
+    def reset_all_paths_vertices(self, clicked):
+        self._controller.scene.reset_all_paths_vertices(clicked)

@@ -305,4 +305,37 @@ class SceneInterface(object):
     def show_traced_path_nee(self, enabled):
         """
         Displays the next event estimations rays of the current selected path
+        :param enabled: boolean
+        :return:
+        """
+
+    @abc.abstractmethod
+    def show_vertex_omega_o(self, enabled):
+        """
+        Displays the outgoing ray of the current selected vertex / intersection
+        :param enabled: boolean
+        :return:
+        """
+
+    @abc.abstractmethod
+    def show_vertex_omega_i(self, enabled):
+        """
+        Displays the incoming ray of the current selected vertex / intersection
+        :param enabled: boolean
+        :return:
+        """
+
+    @abc.abstractmethod
+    def show_vertex_nee(self, enabled):
+        """
+        Displays the next event estimation ray of the current selected vertex / intersection
+        :param enabled: boolean
+        :return:
+        """
+
+    @abc.abstractmethod
+    def reset_all_paths_vertices(self):
+        """
+        Resets the opacity and size of all paths and its intersections
+        :return:
         """

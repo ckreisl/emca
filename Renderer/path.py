@@ -332,12 +332,20 @@ class Path(object):
 
     def reset_vertex_opacity(self):
         """
-        Resets the opacity of all path vertices
+        Resets the opacity of all path vertices / intersections
         :return:
         """
         self._opacity = self.default_opacity
         for _, its in self._its_dict.items():
             its.reset_vertex_opacity()
+
+    def reset_vertex_size(self):
+        """
+        Resets the size of all path vertices / intersections
+        """
+        self._size = self.default_size
+        for _, its in self._its_dict.items():
+            its.reset_vertex_size()
 
     def set_path_size(self, value):
         """

@@ -345,3 +345,38 @@ class SceneRenderer(SceneInterface):
                     if path.is_ne_visible:
                         path.clear_ne(self._renderer)
         self.widget.update()
+
+    def show_vertex_omega_o(self, enabled):
+        intersection = self._scene_traced_paths.current_vertex
+        if enabled:
+            intersection.draw_wo(self._renderer)
+        else:
+            intersection.clear_wo(self._renderer)
+        self.widget.update()
+
+    def show_vertex_omega_i(self, enabled):
+        intersection = self._scene_traced_paths.current_vertex
+        if enabled:
+            intersection.draw_wi(self._renderer)
+        else:
+            intersection.clear_wi(self._renderer)
+        self.widget.update()
+
+    def show_vertex_nee(self, enabled):
+        intersection = self._scene_traced_paths.current_vertex
+        if enabled:
+            intersection.draw_ne(self._renderer)
+        else:
+            intersection.clear_ne(self._renderer)
+        self.widget.update()
+
+    def reset_all_paths_vertices(self):
+        for _, path in self._scene_traced_paths.paths.items():
+            path.reset_path_size()
+            path.reset_path_opacity()
+            path.reset_vertex_opacity()
+            path.reset_vertex_size()
+        self.widget.update()
+
+
+
