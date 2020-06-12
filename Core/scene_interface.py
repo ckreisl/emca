@@ -56,6 +56,7 @@ class SceneInterface(object):
     def widget(self):
         """
         Returns the corresponding 3D scene render QtWidget
+        :return:
         """
 
     @abc.abstractmethod
@@ -188,46 +189,120 @@ class SceneInterface(object):
     def apply_camera_option_settings(self, camera_settings):
         """
         Apply camera option changes from the scene option view
+        :param camera_settings: dict
+        :return:
         """
 
     @abc.abstractmethod
     def reset_camera_option_settings(self):
         """
         Resets the camera option settings to its default values
+        :return:
         """
 
     @abc.abstractmethod
     def apply_scene_option_settings(self, scene_settings):
         """
         Apply scene option changes from the scene option view
+        :param scene_settings: dict
+        :return:
         """
 
     @abc.abstractmethod
     def reset_scene_option_settings(self):
         """
         Resets the scene option settings to its default values
+        :return:
         """
 
     @abc.abstractmethod
-    def apply_path_option_settings(self, path_settings):
+    def show_all_other_traced_paths(self, enable):
         """
-        Apply path option changes from the scene option view
-        """
-
-    @abc.abstractmethod
-    def reset_path_option_settings(self):
-        """
-        Resets the path option settings to its default values
+        Depending on input show all traced paths within the 3d scene
+        :param enable: boolean
+        :return:
         """
 
     @abc.abstractmethod
-    def apply_vertex_option_settings(self, vertex_settings):
+    def show_all_other_traced_vertices(self, enable):
         """
-        Apply path option changes from the scene option view
+        Depending on input show all traced vertices within the 3d scene
+        :param enable: boolean
+        :return:
         """
 
     @abc.abstractmethod
-    def reset_vertex_option_settings(self):
+    def show_traced_path(self, enable):
         """
-        Resets the vertex option settings to its default values
+        Depending on input enable or disable current select path
+        :param enable: boolean
+        :return:
+        """
+
+    @abc.abstractmethod
+    def update_path_opacity(self, opacity):
+        """
+        Updated the current selected path opacity
+        :param opacity: float
+        :return:
+        """
+
+    @abc.abstractmethod
+    def update_path_size(self, size):
+        """
+        Updated the current selected path size
+        :param size: float
+        :return:
+        """
+
+    @abc.abstractmethod
+    def reset_path(self):
+        """
+        Resets opacity and size of the selected path
+        :return:
+        """
+
+    @abc.abstractmethod
+    def show_all_traced_vertices(self, state):
+        """
+        Depending on input shows all intersections within the 3d scene
+        :param state: boolean
+        :return:
+        """
+
+    @abc.abstractmethod
+    def update_vertex_opacity(self, opacity):
+        """
+        Updates the vertex opacity
+        :param opacity: float
+        :return:
+        """
+
+    @abc.abstractmethod
+    def update_vertex_size(self, size):
+        """
+        Updates the vertex size
+        :param size: float
+        :return:
+        """
+
+    @abc.abstractmethod
+    def reset_vertex(self):
+        """
+        Resets opacity and size of the selected vertex
+        :return:
+        """
+
+    @abc.abstractmethod
+    def show_all_traced_nees(self, enabled):
+        """
+        Displays all next event estimations in the 3d scene
+        :param enabled: boolean
+        :return:
+        """
+
+    @abc.abstractmethod
+    def show_traced_path_nee(self, enabled):
+        """
+        Displays the next event estimations rays of the current selected path
         """

@@ -54,6 +54,30 @@ class SceneTracedPaths(object):
         return self._paths
 
     @property
+    def current_path(self):
+        """
+        Returns the current selected path if there is one otherwise None
+        :return: Path or None
+        """
+        if self._selected_path_index < 0:
+            return None
+        else:
+            return self._paths[self._selected_path_index]
+
+    @property
+    def current_vertex(self):
+        """
+        Returns the current vertex / intersection object
+        :return: Intersection or None
+        """
+        if not self._selected_vertex_tpl:
+            return None
+        else:
+            path_index, vertex_index = self._selected_vertex_tpl
+            path = self._paths[path_index]
+            return path.its_dict[vertex_index]
+
+    @property
     def path_indices(self):
         """
         Returns the current numpy array of path indices
@@ -87,13 +111,25 @@ class SceneTracedPaths(object):
     def all_paths_visible(self):
         return self._all_paths_visible
 
+    @all_paths_visible.setter
+    def all_paths_visible(self, visible):
+        self._all_paths_visible = visible
+
     @property
     def all_nees_visible(self):
         return self._all_nees_visible
 
+    @all_nees_visible.setter
+    def all_nees_visible(self, visible):
+        self._all_nees_visible = visible
+
     @property
     def all_vertices_visible(self):
         return self._all_vertices_visible
+
+    @all_vertices_visible.setter
+    def all_vertices_visible(self, visible):
+        self._all_vertices_visible = visible
 
     def select_path(self, index):
         self._is_path_selected = True

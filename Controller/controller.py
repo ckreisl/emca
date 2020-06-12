@@ -153,7 +153,7 @@ class Controller(QObject):
                 return None
 
             self._view.view_render_scene.load_traced_paths(tpl[1])
-            self._view.view_render_data.init_data(tpl[1])
+            self._view.view_render_scene_options.enable_general_settings(True)
             self._view.view_filter.init_data(tpl[1])
             self._view.enable_filter(True)
             self._view.view_render_data.enable_view(True)
@@ -173,6 +173,20 @@ class Controller(QObject):
         self._controller_filter.handle_state_msg(tpl)
         self._controller_detector.handle_state_msg(tpl)
 
+    def show_all_traced_paths(self, enabled):
+        """
+        Called from view render data
+        """
+        indices = np.array([])
+        if enabled:
+            indices = self._model.render_data.get_indices()
+        self._view.view_render_scene_options.cbShowAllPaths.blockSignals(True)
+        self._view.view_render_scene_options.cbShowAllPaths.setChecked(enabled)
+        self._view.view_render_scene_options.cbShowAllPaths.blockSignals(False)
+        self.update_path(indices, False)
+        verts = self._view.view_render_scene_options.cbShowAllVerts.isChecked()
+        self._view.view_render_scene.scene_renderer.show_all_traced_vertices(verts)
+
     def update_render_info_sample_count(self, value):
         """
         Updates the sample count value of render info
@@ -189,6 +203,7 @@ class Controller(QObject):
         :return:
         """
         self._view.view_render_scene.prepare_new_data()
+        self._view.view_render_scene_options.prepare_new_data()
         self._view.view_render_data.prepare_new_data()
         self._view.view_filter.prepare_new_data()
         self._model.prepare_new_data()
@@ -219,10 +234,14 @@ class Controller(QObject):
         self._view.view_render_scene.update_path_indices(self._indices)
         # update 3d scene options
         self._view.view_render_scene_options.update_path_indices(self._indices)
-        # update render data view
-        self._view.view_render_data.update_path_indices(self._indices)
+        if len(self._model.render_data.get_indices()) != len(self._indices):
+            self._view.view_render_scene_options.cbShowAllPaths.blockSignals(True)
+            self._view.view_render_scene_options.cbShowAllPaths.setChecked(False)
+            self._view.view_render_scene_options.cbShowAllPaths.blockSignals(False)
         # update all plugins
         self._model.plugins_handler.update_path_indices(self._indices)
+        # update render data view
+        self._view.view_render_data.show_path_data(self._indices, self._model.render_data)
 
     def select_path(self, index):
         """

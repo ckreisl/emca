@@ -92,6 +92,11 @@ class SceneRenderer(SceneInterface):
         self._widget_update_timer_running = False
 
     def update_path_indices(self, indices):
+        current_indices = self._scene_traced_paths.path_indices
+        # reset low opacity paths
+        if len(current_indices) > 1:
+            for key in current_indices:
+                self._scene_traced_paths.paths[key].reset_path_opacity()
         self.remove_traced_paths_by_indices(self._scene_traced_paths.path_indices)
         self.display_traced_paths(indices)
 
@@ -231,54 +236,112 @@ class SceneRenderer(SceneInterface):
         self._scene_geometry.reset_scene_opacity()
         self.widget.update()
 
-    def apply_path_option_settings(self, path_settings):
-        all_paths_visible = path_settings.get('all_paths_visible', None)
-        all_nees_visible = path_settings.get('all_nees_visible', None)
-        opacity = path_settings.get('opacity', None)
-        size = path_settings.get('size', None)
-        is_visible = path_settings.get('is_visible', None)
-        is_ne_visible = path_settings.get('is_ne_visible', None)
-        if all_paths_visible is not None:
-            pass
-        if all_nees_visible is not None:
-            pass
-        if opacity is not None:
-            pass
-        if size is not None:
-            pass
-        if is_visible is not None:
-            pass
-        if is_ne_visible is not None:
-            pass
+    def show_all_other_traced_paths(self, enable):
+        current_indices = self._scene_traced_paths.path_indices
+        all_indices = np.array(list(self._scene_traced_paths.paths.keys()))
+        diff = np.setdiff1d(all_indices, current_indices)
+        # reset low opacity paths
+        if len(current_indices) > 1:
+            for key, path in self._scene_traced_paths.paths.items():
+                path.reset_path_opacity()
+        if enable:
+            # draw paths which are not yet visible
+            for key in diff:
+                self._scene_traced_paths.paths[key].draw_path(self._renderer)
+        else:
+            for key in diff:
+                self._scene_traced_paths.paths[key].clear_path(self._renderer)
         self.widget.update()
 
-    def reset_path_option_settings(self):
-        pass
+    def show_all_other_traced_vertices(self, enable):
+        is_all_verts_visible = self._scene_traced_paths.all_vertices_visible
+        if enable:
+            if not is_all_verts_visible:
+                for path_idx, path in self._scene_traced_paths.paths.items():
+                    if path_idx not in self._scene_traced_paths.path_indices:
+                        for vert_idx, vert in path.its_dict.items():
+                            vert.draw_vert(self._renderer)
+                self._scene_traced_paths.all_vertices_visible = not is_all_verts_visible
+        else:
+            if is_all_verts_visible:
+                for path_idx, path in self._scene_traced_paths.paths.items():
+                    if path_idx not in self._scene_traced_paths.path_indices:
+                        for vert_idx, vert in path.its_dict.items():
+                            vert.clear_vert(self._renderer)
+                self._scene_traced_paths.all_vertices_visible = not is_all_verts_visible
+        self.widget.update()
 
-    def apply_vertex_option_settings(self, vertex_settings):
-        all_vertices_visible = vertex_settings.get('all_vertices_visible', None)
-        opacity = vertex_settings.get('opacity', None)
-        size = vertex_settings.get('size', None)
-        is_wi_visible = vertex_settings.get('is_wi_visible', None)
-        is_wo_visible = vertex_settings.get('is_wo_visible', None)
-        is_ne_visible = vertex_settings.get('is_ne_visible', None)
-        if all_vertices_visible is not None:
-            pass
-        if opacity is not None:
-            pass
-        if size is not None:
-            pass
-        if is_wi_visible is not None:
-            pass
-        if is_wo_visible is not None:
-            pass
-        if is_ne_visible is not None:
-            pass
+    def show_traced_path(self, enable):
+        path = self._scene_traced_paths.current_path
+        if enable:
+            if not path.is_visible:
+                path.draw_path(self._renderer)
+                path.is_visible = True
+        else:
+            if path.is_visible:
+                path.clear_path(self._renderer)
+                path.is_visible = False
+        self.widget.update()
 
-    def reset_vertex_option_settings(self):
-        pass
+    def update_path_opacity(self, opacity):
+        path = self._scene_traced_paths.current_path
+        path.set_path_opacity(opacity)
+        self.widget.update()
 
+    def update_path_size(self, size):
+        path = self._scene_traced_paths.current_path
+        path.set_path_size(size)
+        self.widget.update()
 
+    def reset_path(self):
+        path = self._scene_traced_paths.current_path
+        path.reset_path_opacity()
+        path.reset_path_size()
+        self.widget.update()
 
+    def show_all_traced_vertices(self, state):
+        if state:
+            for _, path in self._scene_traced_paths.paths.items():
+                path.draw_verts(self._renderer)
+        else:
+            for key, path in self._scene_traced_paths.paths.items():
+                if key not in self._scene_traced_paths.path_indices:
+                    path.clear_verts(self._renderer)
+        self.widget.update()
 
+    def update_vertex_opacity(self, opacity):
+        intersection = self._scene_traced_paths.current_vertex
+        intersection.set_vertex_opacity(opacity)
+        self.widget.update()
 
+    def update_vertex_size(self, size):
+        intersection = self._scene_traced_paths.current_vertex
+        intersection.set_vertex_size(size)
+        self.widget.update()
+
+    def reset_vertex(self):
+        intersection = self._scene_traced_paths.current_vertex
+        intersection.reset_vertex_opacity()
+        intersection.reset_vertex_size()
+        self.widget.update()
+
+    def show_all_traced_nees(self, enabled):
+        if enabled:
+            for _, path in self._scene_traced_paths.paths.items():
+                path.draw_ne(self._renderer)
+        else:
+            for _, path in self._scene_traced_paths.paths.items():
+                path.clear_ne(self._renderer)
+        self.widget.update()
+
+    def show_traced_path_nee(self, enabled):
+        for path_key in self._scene_traced_paths.path_indices:
+            path = self._scene_traced_paths.paths.get(path_key, None)
+            if path:
+                if enabled:
+                    if not path.is_ne_visible:
+                        path.draw_ne(self._renderer)
+                else:
+                    if path.is_ne_visible:
+                        path.clear_ne(self._renderer)
+        self.widget.update()

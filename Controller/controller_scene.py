@@ -1,4 +1,5 @@
 from Core.messages import StateMsg
+import numpy as np
 
 
 class ControllerRenderScene(object):
@@ -28,3 +29,24 @@ class ControllerRenderScene(object):
         elif msg is StateMsg.DATA_MESH:
             # TODO check comment above
             self._view.view_render_scene.load_mesh(tpl[1])
+
+    def show_all_traced_vertices(self, enabled):
+        self._view.view_render_scene.scene_renderer.show_all_traced_vertices(enabled)
+
+    def show_all_traced_nees(self, enabled):
+        # NE checkbox path
+        self._view.view_render_scene_options.cbShowNEERays.blockSignals(True)
+        self._view.view_render_scene_options.cbShowNEERays.setChecked(enabled)
+        self._view.view_render_scene_options.cbShowNEERays.blockSignals(False)
+        # NE checkbox vertex / intersection
+        self._view.view_render_scene_options.cbShowNEE.blockSignals(True)
+        self._view.view_render_scene_options.cbShowNEE.setChecked(enabled)
+        self._view.view_render_scene_options.cbShowNEE.blockSignals(False)
+        self._view.view_render_scene.scene_renderer.show_all_traced_nees(enabled)
+
+    def show_traced_path_nee(self, enable):
+        # toggle also vertex nee checkbox
+        self._view.view_render_scene_options.cbShowNEE.blockSignals(True)
+        self._view.view_render_scene_options.cbShowNEE.setChecked(enable)
+        self._view.view_render_scene_options.cbShowNEE.blockSignals(False)
+        self._view.view_render_scene.scene_renderer.show_traced_path_nee(enable)

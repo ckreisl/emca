@@ -53,9 +53,13 @@ class ViewRenderScene(QWidget):
         self.btnLoadScene.clicked.connect(self.request_scene)
         self.btnReset.clicked.connect(self.reset_camera_position)
 
-    @property
-    def view_render_scene_options(self):
-        return self._view_render_options
+    def set_controller(self, controller):
+        """
+        Sets the connection to the controller
+        :param controller: Controller
+        :return:
+        """
+        self._controller = controller
 
     def init_scene_renderer(self, scene_renderer):
         """
@@ -66,13 +70,13 @@ class ViewRenderScene(QWidget):
         self._view_render_options.init_scene_renderer(scene_renderer)
         self.sceneLayout.addWidget(scene_renderer.widget)
 
-    def set_controller(self, controller):
-        """
-        Sets the connection to the controller
-        :param controller: Controller
-        :return:
-        """
-        self._controller = controller
+    @property
+    def scene_renderer(self):
+        return self._scene_renderer
+
+    @property
+    def view_render_scene_options(self):
+        return self._view_render_options
 
     @Slot(bool, name='open_view_render_options')
     def open_view_render_options(self, clicked):
@@ -121,7 +125,6 @@ class ViewRenderScene(QWidget):
         Prepare new incoming data, informs the renderer that new data is coming
         :return:
         """
-        self._view_render_options.prepare_new_data()
         self._scene_renderer.prepare_new_data()
 
     def clear_scene_objects(self):

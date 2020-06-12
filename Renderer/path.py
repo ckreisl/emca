@@ -233,6 +233,7 @@ class Path(object):
             if its.is_wo_set:
                 if its.wo.is_envmap:
                     its.draw_wo(renderer)
+        self._visible = True
 
     def draw_ne(self, renderer):
         """
@@ -242,6 +243,7 @@ class Path(object):
         """
         for _, its in self._its_dict.items():
             its.draw_ne(renderer)
+        self._visible_ne = True
 
     def clear_path(self, renderer):
         """
@@ -251,6 +253,7 @@ class Path(object):
         """
         for _, its in self._its_dict.items():
             its.clear_path(renderer)
+        self._visible = False
 
     def clear_ne(self, renderer):
         """
@@ -260,6 +263,7 @@ class Path(object):
         """
         for _, its in self._its_dict.items():
             its.clear_ne(renderer)
+        self._visible_ne = False
 
     def clear_envmap(self, renderer):
         """
@@ -278,6 +282,8 @@ class Path(object):
         """
         for _, its in self._its_dict.items():
             its.clear_all(renderer)
+        self._visible = False
+        self._visible_ne = False
 
     def draw_envmap(self, renderer):
         """
@@ -315,6 +321,14 @@ class Path(object):
         self._opacity = self.default_opacity
         for _, its in self._its_dict.items():
             its.reset_path_opacity()
+
+    def reset_path_size(self):
+        """
+        Resets the path size (no vertices reset)
+        """
+        self._size = self.default_size
+        for _, its in self._its_dict.items():
+            its.reset_path_size()
 
     def reset_vertex_opacity(self):
         """

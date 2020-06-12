@@ -64,7 +64,7 @@ class Line(Shape):
         self.GetProperty().SetLineWidth(size)
 
     def reset_size(self):
-        self.GetProperty().SetLineWidth(self.get_default_size())
+        self.GetProperty().SetLineWidth(self._default_size)
 
     def reset_all(self):
         self.reset_size()
