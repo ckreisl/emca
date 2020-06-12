@@ -106,7 +106,7 @@ class ViewDetectorSettings(QWidget):
         :param clicked: boolean
         :return:
         """
-        self._controller.update_and_run_detector(
+        self._controller.detector.update_and_run_detector(
             self.dsb_m.value(),
             self.dsb_alpha.value(),
             self.dsb_k.value(),

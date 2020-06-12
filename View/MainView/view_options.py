@@ -131,7 +131,7 @@ class ViewOptions(QWidget):
                         'auto_connect': self.get_auto_connect(),
                         'auto_scene_load': self.get_auto_scene_load(),
                         'auto_rendered_image_load': self.get_auto_image_load()}
-        self._controller.save_options(options_dict)
+        self._controller.options.save_options(options_dict)
 
     @Slot(bool, name='btn_close')
     def btn_close(self, clicked):

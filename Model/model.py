@@ -232,12 +232,16 @@ class Model(QObject):
         logging.info('deserialize render data in: {:.3}s'.format(time.time() - start))
         self.sendStateMsgSig.emit((StateMsg.DATA_RENDER, self._render_data))
 
-    def init_scatter_plot_data(self):
+    def create_sample_contribution_data(self):
         """
-        Initialises the Final Estimate data and informs the controller about it
+        Return the Final Estimate data and informs the controller about it
         :return:
         """
         start = time.time()
-        self._li_plot_data = FinalEstimate(self._render_data.dict_paths)
+        try:
+            self._li_plot_data = FinalEstimate(self._render_data.dict_paths)
+        except Exception as e:
+            logging.error("Error generation sample contribution data: {}".format(e))
+            return False
         logging.info('time to create scatter plot data runtime: {:.3}s'.format(time.time() - start))
-        self.sendStateMsgSig.emit((StateMsg.DATA_SCATTER_PLOT, self._li_plot_data))
+        return True

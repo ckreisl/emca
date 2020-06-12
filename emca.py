@@ -30,6 +30,7 @@ import sys
 from Model.model import Model
 from View.MainView.main_view import MainView
 from Controller.controller import Controller
+from Renderer.scene_renderer import SceneRenderer
 import Resources.breeze_resources
 
 
@@ -40,12 +41,11 @@ class EMCAClient(object):
     """
 
     def __init__(self):
-        self.model = Model()
-        self.view = MainView()
-        self.controller = Controller(self.model, self.view)
+        self.controller = Controller(Model(), MainView())
+        self.controller.scene.init_scene_renderer(SceneRenderer())
 
     def load_theme(self, qt_app):
-        theme = self.model.options_data.get_theme()
+        theme = self.controller.options.get_theme()
         if theme == 'light':
             theme_files = "./Resources/light.qss"
         else:
@@ -54,7 +54,7 @@ class EMCAClient(object):
         file.open(QFile.ReadOnly | QFile.Text)
         text_stream = QTextStream(file)
         qt_app.setStyleSheet(text_stream.readAll())
-        self.controller.apply_theme(theme)
+        self.controller.options.set_theme(theme)
 
     def start(self):
         """

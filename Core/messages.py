@@ -39,11 +39,10 @@ class StateMsg(Enum):
     DATA_MESH           = 6
     DATA_INFO           = 7
     DATA_NOT_VALID      = 8
-    DATA_SCATTER_PLOT   = 9
-    DATA_3D_PATHS       = 10
-    DATA_DETECTOR       = 11
+    DATA_3D_PATHS       = 9
+    DATA_DETECTOR       = 10
+    UPDATE_PLUGIN       = 11
     QUIT                = 12
-    UPDATE_PLUGIN       = 13
 
 
 class ServerMsg(Enum):

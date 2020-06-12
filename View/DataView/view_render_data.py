@@ -52,13 +52,12 @@ class ViewRenderData(QWidget):
         self.tree.setHeaderLabels(["Item", "Value"])
         self.tree.setColumnWidth(0, 200)
         self._controller = None
-        self._render_data = None
 
         self.tree.currentItemChanged.connect(self.select_tree_item)
         self.tree.setSelectionMode(QAbstractItemView.SingleSelection)
 
         # connect buttons
-        self.btnShowAll.clicked.connect(self.show_all_data)
+        self.btnShowAll.clicked.connect(self.show_all_traced_paths)
         self.btnInspect.clicked.connect(self.inspect_selected_paths)
         self.cbExpand.toggled.connect(self.expand_items)
 
@@ -80,6 +79,19 @@ class ViewRenderData(QWidget):
         """
         self._selected_indices = np.append(self._selected_indices, index)
 
+    def show_path_data(self, indices, render_data):
+        """
+        Load path render data depending on indices input
+        :param indices: np.array([])
+        :param render_data: RenderData
+        :return:
+        """
+        self.tree.clear()
+        for i in indices:
+            self.add_path_data_node(render_data.dict_paths[i])
+        if self.cbExpand.isChecked():
+            self.expand_items(True)
+
     @Slot(QTreeWidgetItem, QTreeWidgetItem, name='select_tree_item')
     def select_tree_item(self, item, previous):
         """
@@ -90,7 +102,7 @@ class ViewRenderData(QWidget):
 
         self._handling_selection_signal = True
 
-        #select path or vertex of parent nodes
+        # select path or vertex of parent nodes
         while isinstance(item, QTreeWidgetItem):
             if isinstance(item, PathNodeItem) or isinstance(item, VertexNodeItem):
                 break
@@ -106,24 +118,22 @@ class ViewRenderData(QWidget):
             else:
                 self._selected_indices = np.array([item.index], dtype=np.int32)
                 self._controller.select_path(item.index)
-                #select first vertex of the path on path selection
+                # select first vertex of the path on path selection
                 self._controller.select_vertex((item.index, 1))
         elif isinstance(item, VertexNodeItem):
             self._controller.select_vertex(item.index_tpl())
 
         self._handling_selection_signal = True
 
-    @Slot(bool, name='show_all_data')
-    def show_all_data(self, clicked):
+    @Slot(bool, name='show_all_traced_paths')
+    def show_all_traced_paths(self, clicked):
         """
         Handles the button input of show all data,
         shows all paths traced through the selected pixel.
         :param clicked: boolean
         :return:
         """
-        if self._render_data:
-            indices = self._render_data.get_indices()
-            self._controller.update_path(indices, False)
+        self._controller.show_all_traced_paths(True)
 
     @Slot(bool, name='inspect_selected_paths')
     def inspect_selected_paths(self, clicked):
@@ -133,16 +143,15 @@ class ViewRenderData(QWidget):
         :param clicked: boolean
         :return:
         """
-        if self._render_data:
-            if np.size(self._selected_indices) > 1:
-                self._controller.update_path(np.unique(self._selected_indices), False)
-                self._selected_indices = np.array([], dtype=np.int32)
-            else:
-                item = self.tree.currentItem()
-                if isinstance(item, PathNodeItem):
-                    self._controller.update_path(np.array([item.index]), False)
-                elif isinstance(item, VertexNodeItem):
-                    self._controller.update_path(np.array([item.parent_index]), False)
+        if np.size(self._selected_indices) > 1:
+            self._controller.update_path(np.unique(self._selected_indices), False)
+            self._selected_indices = np.array([], dtype=np.int32)
+        else:
+            item = self.tree.currentItem()
+            if isinstance(item, PathNodeItem):
+                self._controller.update_path(np.array([item.index]), False)
+            elif isinstance(item, VertexNodeItem):
+                self._controller.update_path(np.array([item.parent_index]), False)
 
     @Slot(bool, name='expand_items')
     def expand_items(self, state):
@@ -184,14 +193,6 @@ class ViewRenderData(QWidget):
         """
         self._controller = controller
 
-    def init_data(self, render_data):
-        """
-        Saves a reference to the models render data
-        :param render_data: DataView
-        :return:
-        """
-        self._render_data = render_data
-
     def select_path(self, index):
         """
         Select/Highlight a path node depending on the input index
@@ -226,19 +227,6 @@ class ViewRenderData(QWidget):
                                 break
                     break
         self.tree.blockSignals(False)
-
-    def display_traced_path_data(self, indices):
-        """
-        Display the data of all paths that are in the list indices
-        :param indices: numpy array containing path indices
-        :return:
-        """
-        self.tree.clear()
-        path_data_dict = self._render_data.dict_paths
-        for i in indices:
-            self.add_path_data_node(path_data_dict[i])
-        if self.cbExpand.isChecked():
-            self.expand_items(True)
 
     def add_path_data_node(self, path_data):
         """
@@ -340,4 +328,3 @@ class ViewRenderData(QWidget):
         :return:
         """
         self.tree.clear()
-        self._render_data = None

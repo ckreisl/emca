@@ -22,26 +22,54 @@
     SOFTWARE.
 """
 
+from Renderer.shape import Shape
+import vtk
 import logging
 
 
-class RenderInterface(object):
+class Triangle(Shape):
 
-    def __init__(self):
-        self.view_render_scene = None
-        self.view_render_scene_options = None
+    """
+        Triangle
+        Represents a vtk Triangle object within the 3D scene
+    """
 
-    def set_view_render_scene(self, view_render_scene):
-        self.view_render_scene = view_render_scene
+    def __init__(self, p1, p2, p3):
 
-    def set_view_render_scene_options(self, view_render_scene_options):
-        self.view_render_scene_options = view_render_scene_options
+        self._p1 = p1
+        self._p2 = p2
+        self._p3 = p3
 
-    def send_update_path(self, indices, add_item):
-        self.view_render_scene.send_update_path(indices, add_item)
+        # create points
+        points = vtk.vtkPoints()
+        points.InsertNextPoint(p1.x, p1.y, p1.z)
+        points.InsertNextPoint(p2.x, p2.y, p2.z)
+        points.InsertNextPoint(p3.x, p3.y, p3.z)
 
-    def send_select_path(self, index):
-        self.view_render_scene.send_select_path(index)
+        triangle = vtk.vtkTriangle()
+        triangle.GetPointIds().SetId(0, 0)
+        triangle.GetPointIds().SetId(1, 1)
+        triangle.GetPointIds().SetId(2, 2)
 
-    def send_select_vertex(self, tpl):
-        self.view_render_scene.send_select_vertex(tpl)
+        triangles = vtk.vtkCellArray()
+        triangles.InsertNextCell(triangle)
+
+        # polydata object
+        triangle_poly_data = vtk.vtkPolyData()
+        triangle_poly_data.SetPoints(points)
+        triangle_poly_data.SetPolys(triangles)
+
+        super().__init__(triangle_poly_data)
+
+    @property
+    def p1(self):
+        return self._p1
+
+    @property
+    def p2(self):
+        return self._p2
+
+    @property
+    def p3(self):
+        return self._p3
+

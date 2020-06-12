@@ -27,25 +27,47 @@ import vtk
 import logging
 
 
-class Vertex(Shape):
+class Line(Shape):
 
-    def __init__(self, pos):
-        self._pos = pos
+    def __init__(self, start_pos, end_pos):
+        self._start_pos = start_pos
+        self._end_pos = end_pos
+
         pts = vtk.vtkPoints()
-        pts.InsertNextPoint(pos.x, pos.y, pos.z)
-        verts = vtk.vtkCellArray()
-        vertex = vtk.vtkVertex()
-        vertex.GetPointIds().SetId(0, 0)
-        verts.InsertNextCell(vertex)
+        pts.InsertNextPoint(start_pos.x, start_pos.y, start_pos.z)
+        pts.InsertNextPoint(end_pos.x, end_pos.y, end_pos.z)
+        line = vtk.vtkLine()
+        line.GetPointIds().SetId(0, 0)
+        line.GetPointIds().SetId(1, 1)
+        segment = vtk.vtkCellArray()
+        segment.InsertNextCell(line)
         poly_data = vtk.vtkPolyData()
         poly_data.SetPoints(pts)
-        poly_data.SetVerts(verts)
+        poly_data.SetLines(segment)
+
         super().__init__(poly_data)
 
     @property
-    def pos(self):
-        """
-        Returns the position of the vertex
-        :return: Point3f
-        """
-        return self._pos
+    def start_pos(self):
+        return self._start_pos
+
+    @property
+    def end_pos(self):
+        return self._end_pos
+
+    @property
+    def size(self):
+        return self.GetProperty().GetLineWidth()
+
+    @size.setter
+    def size(self, size):
+        self.GetProperty().SetLineWidth(size)
+
+    def reset_size(self):
+        self.GetProperty().SetLineWidth(self._default_size)
+
+    def reset_all(self):
+        self.reset_size()
+        self.reset_color()
+        self.reset_color_diffuse()
+        self.reset_color_specular()

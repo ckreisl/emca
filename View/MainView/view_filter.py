@@ -277,7 +277,7 @@ class ViewFilter(QWidget):
         :param clicked: boolean
         :return:
         """
-        self._controller.clear_filter()
+        self._controller.filter.clear_filter()
 
     @Slot(bool, name='delete_filter')
     def delete_filter(self, clicked):
@@ -289,7 +289,7 @@ class ViewFilter(QWidget):
         if self.filterList.count() > 0:
             item = self.filterList.currentItem()
             if item:
-                self._controller.delete_filter(item)
+                self._controller.filter.delete_filter(item)
 
     @Slot(int, name='state_changed')
     def state_changed(self, state):
@@ -315,7 +315,7 @@ class ViewFilter(QWidget):
         idx = self.stackedWidget.currentIndex()
         if not self.is_line_edit_empty(idx):
             fs = FilterSettings(self)
-            self._controller.add_filter(fs)
+            self._controller.filter.add_filter(fs)
 
     @Slot(bool, name='apply_filters')
     def apply_filters(self, clicked):
@@ -325,7 +325,7 @@ class ViewFilter(QWidget):
         :return:
         """
         if self.filterList.count() > 0:
-            self._controller.apply_filters()
+            self._controller.filter.apply_filters()
 
     def add_filter_to_view(self, filter_settings):
         """

@@ -29,7 +29,7 @@ class Intersection(object):
 
     """
         Intersection
-        Represents a intersection.
+        Represents an intersection.
         Holding render information for the 3D view for every vertex,
         such as incoming, outgoing, next event estimation vector, opacity and size
     """
@@ -307,9 +307,9 @@ class Intersection(object):
         :return:
         """
         if self._wi:
-            self._wi.set_selected(selected)
+            self._wi.selected = selected
         if self._its:
-            self._its.set_selected(selected)
+            self._its.selected = selected
 
     def set_color_wi(self, color):
         """
@@ -345,8 +345,7 @@ class Intersection(object):
         :return:
         """
         self._opacity = value
-        if self._its:
-            self._its.set_opacity(value)
+        self._its.opacity = value
 
     def set_vertex_size(self, value):
         """
@@ -355,7 +354,7 @@ class Intersection(object):
         :return:
         """
         self._size = value
-        self._its.set_size(value)
+        self._its.size = value
 
     def reset_vertex(self):
         """
@@ -364,18 +363,8 @@ class Intersection(object):
         """
         self._opacity = self.default_opacity
         self._size = self.default_size
-        self._its.set_opacity(self.default_opacity)
-        self._its.set_size(self.default_size)
-
-    def set_opacity(self, value):
-        """
-        Sets the opacity of the path and vertex
-        :param value:
-        :return:
-        """
-        self._opacity = value
-        self.set_path_opacity(value)
-        self.set_vertex_opacity(value)
+        self._its.opacity = self.default_opacity
+        self._its.size = self.default_size
 
     def set_path_size(self, value):
         """
@@ -384,10 +373,10 @@ class Intersection(object):
         :return:
         """
         if self._wi:
-            self._wi.set_size(value)
+            self._wi.size = value
         if self._wo:
             if self._wo.is_envmap:
-                self._wo.set_size(value)
+                self._wo.size = value
 
     def set_path_opacity(self, value):
         """
@@ -396,11 +385,11 @@ class Intersection(object):
         :return:
         """
         if self._wi:
-            self._wi.set_opacity(value)
+            self._wi.opacity = value
         if self._wo:
-            self._wo.set_opacity(value)
+            self._wo.opacity = value
         if self._ne:
-            self._ne.set_opacity(value)
+            self._ne.opacity = value
 
     def reset_path_opacity(self):
         """
@@ -409,6 +398,13 @@ class Intersection(object):
         """
         self._opacity = self.default_opacity
         self.set_path_opacity(self.default_opacity)
+        
+    def reset_path_size(self):
+        """
+        Resets the path size
+        """
+        self._size = self.default_size
+        self.set_path_size(self.default_size)
 
     def reset_vertex_opacity(self):
         """
@@ -417,6 +413,13 @@ class Intersection(object):
         """
         self._opacity = self.default_opacity
         self.set_vertex_opacity(self.default_opacity)
+        
+    def reset_vertex_size(self):
+        """
+        Resets the vertex size
+        """
+        self._size = self.default_size
+        self.set_vertex_size(self.default_size)
 
     def reset(self):
         """
@@ -425,7 +428,7 @@ class Intersection(object):
         """
         self._opacity = self.default_opacity
         self._size = self.default_size
-        self._its.reset()
+        self._its.reset_all()
         self._is_wi_visible = True
         self._is_wo_visible = False
         """
@@ -440,11 +443,11 @@ class Intersection(object):
         :return:
         """
         if self._wi:
-            self._wi.reset()
+            self._wi.reset_all()
         if self._wo:
-            self._wo.reset()
+            self._wo.reset_all()
         if self._ne:
-            self._ne.reset()
+            self._ne.reset_all()
 
     def clear_ne(self, renderer):
         """

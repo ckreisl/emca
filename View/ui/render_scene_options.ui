@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>345</width>
-    <height>644</height>
+    <width>958</width>
+    <height>404</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -28,224 +28,78 @@
   <property name="windowTitle">
    <string>Scene Options</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0">
    <property name="spacing">
     <number>0</number>
    </property>
    <property name="sizeConstraint">
-    <enum>QLayout::SetMinimumSize</enum>
+    <enum>QLayout::SetFixedSize</enum>
    </property>
    <property name="leftMargin">
-    <number>1</number>
+    <number>0</number>
    </property>
    <property name="topMargin">
-    <number>1</number>
+    <number>0</number>
    </property>
    <property name="rightMargin">
-    <number>1</number>
+    <number>0</number>
    </property>
    <property name="bottomMargin">
-    <number>1</number>
+    <number>5</number>
    </property>
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="scene_traced_paths">
       <attribute name="title">
-       <string>Path and Vertex</string>
+       <string>Traced Paths</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QWidget" name="widgetBtnsGeneral" native="true">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <layout class="QFormLayout" name="formLayout">
-          <item row="0" column="0">
-           <widget class="QLabel" name="labelGeneral">
-            <property name="text">
-             <string>General:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QCheckBox" name="cbShowAllNEEs">
-            <property name="text">
-             <string>show all next event estimations</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="cbShowAllPaths">
-            <property name="text">
-             <string>show all paths</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QCheckBox" name="cbShowAllVerts">
-            <property name="text">
-             <string>show all vertices</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="Line" name="line_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QWidget" name="widgetPath" native="true">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <layout class="QFormLayout" name="layoutPathSettings">
-          <property name="sizeConstraint">
-           <enum>QLayout::SetMinimumSize</enum>
-          </property>
-          <property name="verticalSpacing">
-           <number>3</number>
-          </property>
-          <property name="topMargin">
-           <number>6</number>
-          </property>
-          <property name="bottomMargin">
-           <number>2</number>
-          </property>
-          <item row="1" column="0">
-           <widget class="QLabel" name="labelPath">
-            <property name="text">
-             <string>Path:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLabel" name="labelPathIndex">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="cbShowPathRays">
-            <property name="text">
-             <string>show traced path</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QCheckBox" name="cbShowNEERays">
-            <property name="text">
-             <string>show next event estimation</string>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="labelPathOpacity">
-            <property name="text">
-             <string>Opacity:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QSlider" name="sliderPathOpacity">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimum">
-             <number>1</number>
-            </property>
-            <property name="maximum">
-             <number>100</number>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="labelSize">
-            <property name="text">
-             <string>Size:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QSlider" name="sliderPathSize">
-            <property name="minimum">
-             <number>1</number>
-            </property>
-            <property name="maximum">
-             <number>100</number>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QCheckBox" name="cbShowAllOtherPaths">
-            <property name="text">
-             <string>Show all other paths</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QWidget" name="widgetBtnsPath" native="true">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <property name="spacing">
-           <number>3</number>
-          </property>
-          <property name="sizeConstraint">
-           <enum>QLayout::SetMinimumSize</enum>
-          </property>
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbResetPath">
-            <property name="toolTip">
-             <string>Reset Path opacity and size</string>
-            </property>
-            <property name="text">
-             <string>Reset</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="labelGeneral">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>General Options:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="cbShowAllPaths">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Show all paths</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="cbShowAllNEEs">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Show all next event estimations</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="cbShowAllVerts">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Show all intersections</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="Line" name="line">
@@ -255,327 +109,511 @@
         </widget>
        </item>
        <item>
-        <widget class="QWidget" name="widgetVertex" native="true">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <layout class="QFormLayout" name="layoutVertexSettings">
-          <property name="verticalSpacing">
-           <number>3</number>
-          </property>
-          <property name="topMargin">
-           <number>6</number>
-          </property>
-          <property name="bottomMargin">
-           <number>3</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Vertex:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="cbShowOmegaO">
-            <property name="text">
-             <string>show ω_o</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QCheckBox" name="cbShowNEE">
-            <property name="text">
-             <string>show next event estimation</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="labelVertexOpacity">
-            <property name="text">
-             <string>Opacity:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QSlider" name="sliderVertexOpacity">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="labelVertexSize">
-            <property name="text">
-             <string>Size:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QSlider" name="sliderVertexSize">
-            <property name="minimum">
-             <number>1</number>
-            </property>
-            <property name="maximum">
-             <number>100</number>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QCheckBox" name="cbShowOmegaI">
-            <property name="text">
-             <string>show ω_i</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="labelVertexIndex">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QCheckBox" name="cbShowAllOtherVertices">
-            <property name="text">
-             <string>Show all other vertices</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="labelPathOptions">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Single Path Options</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelVertexOptions">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Single Vertex Options</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QWidget" name="widgetBtnsVertex" native="true">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <item>
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbResetVertex">
-            <property name="toolTip">
-             <string>Reset vertex opacity and size</string>
-            </property>
-            <property name="text">
-             <string>Reset</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QListWidget" name="listPaths">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <layout class="QFormLayout" name="formLayout">
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelShowPath">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Show Path</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QCheckBox" name="cbShowPathRays">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="labelShowPathNE">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Show Path NEEs</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QCheckBox" name="cbShowNEERays">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="labelPathOpacity">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Opacity</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QSlider" name="sliderPathOpacity">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="labelPathSize">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Size</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QSlider" name="sliderPathSize">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pbResetPath">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Reset Path</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QListWidget" name="listVertices">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <layout class="QFormLayout" name="formLayout_2">
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelShowOmegaI">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Show Omega_i</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="labelShowOmegaO">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Show Omega_o</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="labelShowNE">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Show NE</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="labelVertexOpacity">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Opacity</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="labelVertexSize">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Size</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QCheckBox" name="cbShowOmegaI">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QCheckBox" name="cbShowOmegaO">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QCheckBox" name="cbShowNEE">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QSlider" name="sliderVertexOpacity">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QSlider" name="sliderVertexSize">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pbResetVertex">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Reset Vertex</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QCheckBox" name="cbShowAllOtherPaths">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Show all not selected paths</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="cbShowAllOtherVertices">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Show all not selected vertices</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pbResetAll">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Reset All</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="scene_objects">
       <attribute name="title">
-       <string>Scene</string>
+       <string>Objects</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
+      <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
-        <widget class="QWidget" name="widgetCamera" native="true">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <layout class="QFormLayout" name="layoutCamera">
-          <property name="sizeConstraint">
-           <enum>QLayout::SetMinimumSize</enum>
-          </property>
-          <property name="verticalSpacing">
-           <number>3</number>
-          </property>
-          <property name="bottomMargin">
-           <number>3</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="labelCamera">
-            <property name="text">
-             <string>Camera</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="labelCameraSpeed">
-            <property name="text">
-             <string>Speed:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QSlider" name="sliderCameraSpeed">
-            <property name="minimum">
-             <number>1</number>
-            </property>
-            <property name="maximum">
-             <number>250</number>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="cbCameraClipping">
-            <property name="text">
-             <string>Clip to selected vertex</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QListWidget" name="listSceneObjects">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <layout class="QFormLayout" name="formLayout_3">
+             <item row="0" column="0">
+              <widget class="QLabel" name="labelMeshopacity">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Opacity</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QSlider" name="sliderMeshOpacity">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pbResetMesh">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Reset Mesh</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QWidget" name="widgetBtnsCamera" native="true">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <item>
-           <spacer name="horizontalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbResetCamera">
-            <property name="toolTip">
-             <string>Reset camera motion speed</string>
-            </property>
-            <property name="text">
-             <string>Reset</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
+        <layout class="QFormLayout" name="formLayout_4">
+         <item row="0" column="0">
+          <widget class="QLabel" name="labelSceneOpacity">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Scene Opacity</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QSlider" name="sliderSceneOpacity">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="Line" name="line_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QPushButton" name="pbResetScene">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Reset Scene Options</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="scene_camera">
+      <attribute name="title">
+       <string>Camera</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_8">
+       <item>
+        <layout class="QFormLayout" name="formLayout_5">
+         <item row="0" column="0">
+          <widget class="QLabel" name="labelMotionSpeed">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Motion Speed</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QSlider" name="sliderCameraSpeed">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="labelCameraClipping">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Clip To Selected Vertex</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QCheckBox" name="cbCameraClipping">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QWidget" name="widgetMesh" native="true">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <layout class="QFormLayout" name="layoutMesh">
-          <property name="sizeConstraint">
-           <enum>QLayout::SetMinimumSize</enum>
-          </property>
-          <property name="verticalSpacing">
-           <number>3</number>
-          </property>
-          <property name="bottomMargin">
-           <number>3</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="labelMesh">
-            <property name="text">
-             <string>Scene</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="labelMeshOpacity">
-            <property name="text">
-             <string>Opacity:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QSlider" name="sliderMeshOpacity">
-            <property name="minimum">
-             <number>0</number>
-            </property>
-            <property name="maximum">
-             <number>100</number>
-            </property>
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QWidget" name="widgetBtnsMesh" native="true">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <property name="spacing">
-           <number>3</number>
-          </property>
-          <item>
-           <spacer name="horizontalSpacer_4">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pbResetMesh">
-            <property name="toolTip">
-             <string>Reset scene object opacity</string>
-            </property>
-            <property name="text">
-             <string>Reset</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QPushButton" name="pbResetCamera">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Reset Camera Options</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="btnQuit">
+    <widget class="QPushButton" name="pbClose">
      <property name="text">
       <string>Close</string>
      </property>

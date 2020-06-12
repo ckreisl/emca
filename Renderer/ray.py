@@ -22,12 +22,15 @@
     SOFTWARE.
 """
 
+from Renderer.shape import Shape
+from Renderer.line import Line
+from Types.color3 import Color3f
 import vtk
 import random
 import logging
 
 
-class Ray(vtk.vtkActor):
+class Ray(Line):
 
     """
         Ray
@@ -38,11 +41,9 @@ class Ray(vtk.vtkActor):
     """
 
     def __init__(self, start_pos, end_pos, is_ne=False, is_ne_occluded=False, is_envmap=False):
-        vtk.vtkActor.__init__(self)
 
-        self._start_pos = start_pos
-        self._end_pos = end_pos
         self._is_ne = is_ne
+        self._is_ne_occluded = is_ne_occluded
         self._is_envmap = is_envmap
 
         pts = vtk.vtkPoints()
@@ -56,56 +57,26 @@ class Ray(vtk.vtkActor):
         poly_data = vtk.vtkPolyData()
         poly_data.SetPoints(pts)
         poly_data.SetLines(segment)
-        mapper = vtk.vtkPolyDataMapper()
-        if vtk.VTK_MAJOR_VERSION <= 5:
-            mapper.SetInput(poly_data)
-        else:
-            mapper.SetInputData(poly_data)
-        self.SetMapper(mapper)
 
         # normal color of ray is white
-        self._color = [1, 1, 1]
+        color = Color3f(1, 1, 1)
         # color if selected
-        self._selected_color = [0, 1, 0]
+        selected_color = Color3f(0, 1, 0)
         if is_ne:
             # mark rays which are next event estimations
             if is_ne_occluded:
                 # mark occluded as red
-                self._color = [1, 0, 0]
+                color = Color3f(1, 0, 0)
             else:
                 # mark not occluded as blue
-                self._color = [0, 0, 1]
+                color = Color3f(0, 0, 1)
         elif is_envmap:
             # mark rays which hit the envmap
-            self._color = [1, 1, 0]
+            color = Color3f(1, 1, 0)
 
-        self.GetProperty().SetColor(self._color)
-
-    @property
-    def color(self):
-        """
-        Returns the color of the ray
-        :return: vtkColor
-        """
-        return self.GetProperty().GetColor()
-
-    def set_color_list(self, color):
-        """
-        Sets the color of the ray
-        :param color: list[r,g,b]
-        :return:
-        """
-        self.GetProperty().SetColor(color)
-
-    def set_color_rgb(self, r, g, b):
-        """
-        Sets the color of the ray
-        :param r: red
-        :param g: green
-        :param b: blue
-        :return:
-        """
-        self.GetProperty().SetColor([r, g, b])
+        super().__init__(start_pos, end_pos)
+        self.selected_color = selected_color
+        self.color = color
 
     @property
     def is_ne(self):
@@ -124,85 +95,10 @@ class Ray(vtk.vtkActor):
         return self._is_envmap
 
     @property
-    def start_pos(self):
+    def is_ne_occluded(self):
         """
-        Returns the start position of the ray
-        :return: point3f
+        Returns if the next event estimation is occluded
+        :return: boolean
         """
-        return self._start_pos
+        return self._is_ne_occluded
 
-    @property
-    def end_pos(self):
-        """
-        Returns the end position of the ray
-        :return: point3f
-        """
-        return self._end_pos
-
-    @property
-    def opacity(self):
-        """
-        Returns the opacity of the ray
-        :return: float[0,1]
-        """
-        return self.GetProperty().GetOpacity()
-
-    @property
-    def thickness(self):
-        """
-        Returns the thickness of the ray
-        :return: float[0,1]
-        """
-        return self.GetProperty().GetLineWidth()
-
-    @property
-    def default_opacity(self):
-        """
-        Returns the default opacity 1.0
-        :return: float
-        """
-        return 1.0
-
-    @property
-    def default_size(self):
-        """
-        Returns the default size 1.0
-        :return: float
-        """
-        return 1.0
-
-    def set_size(self, value):
-        """
-        Sets the size of the ray
-        :param value: float[0,1]
-        :return:
-        """
-        self.GetProperty().SetLineWidth(value)
-
-    def set_opacity(self, value):
-        """
-        Sets the opacity of the ray
-        :param value: float[0,1]
-        :return:
-        """
-        self.GetProperty().SetOpacity(value)
-
-    def set_selected(self, selected):
-        """
-        Highlight the ray, depending on input selected
-        :param selected: boolean
-        :return:
-        """
-        if selected:
-            self.GetProperty().SetColor(self._selected_color)
-        else:
-            self.GetProperty().SetColor(self._color)
-
-    def reset(self):
-        """
-        Resets the ray, opacity, thickness and color
-        :return:
-        """
-        self.GetProperty().SetOpacity(self.default_opacity)
-        self.GetProperty().SetLineWidth(self.default_size)
-        self.GetProperty().SetColor(self._color)

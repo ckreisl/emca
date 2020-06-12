@@ -23,7 +23,7 @@
 """
 
 from Renderer.ray import Ray
-from Renderer.vertex import Vertex
+from Renderer.path_vertex import PathVertex
 from Renderer.intersection import Intersection
 import logging
 
@@ -35,15 +35,32 @@ class Path(object):
         Visualizes one path in the vtkRenderer (3D viewer)
     """
 
-    def __init__(self, idx, origin, path_data):
+    def __init__(self, idx, origin, path_data, default_opacity=1.0, default_size=1.0):
         self._path_idx = idx
         self._origin = origin
         self._its_dict = {}
 
-        self._opacity = 1.0
-        self._size = 1.0
+        self._default_opacity = default_opacity
+        self._opacity = default_opacity
+        self._default_size = default_size
+        self._size = default_size
+
         self._visible = True
         self._visible_ne = False
+
+        self.create_path(idx, origin, path_data)
+
+    def init_default_opacity_and_size(self, objects):
+        for obj in objects:
+            obj.default_opacity = self._default_opacity
+            obj.opacity = self._opacity
+            obj.default_size = self._default_size
+            obj.size = self._size
+
+    def create_path(self, idx, origin, path_data):
+        """
+        Initializes the path and sets inits each corresponding intersection point with its rays
+        """
 
         dict_vertices = path_data.dict_vertices
 
@@ -66,7 +83,7 @@ class Path(object):
                 if last_vertex:
                     wi = Ray(last_vertex.pos, vertex.pos)
 
-            its = Vertex(idx, key, vertex.pos)
+            its = PathVertex(idx, key, vertex.pos)
 
             wo = None
             next_vertex = dict_vertices.get(key+1, None)
@@ -83,6 +100,7 @@ class Path(object):
             if vertex.is_ne_set:
                 ne = Ray(vertex.pos, vertex.pos_ne, is_ne=True, is_ne_occluded=vertex.is_ne_occluded)
 
+            self.init_default_opacity_and_size([i for i in [its, wi, wo, ne] if i])
             self._its_dict[key] = Intersection(key, wi, its, wo, ne)
 
     @property
@@ -112,34 +130,32 @@ class Path(object):
     @property
     def opacity(self):
         """
-        Returns the path opacity
+        Returns the current path opacity
         :return: float[0,1]
         """
         return self._opacity
 
     @property
-    def size(self):
-        """
-        Returns the path size
-        :return: float[0,1]
-        """
-        return self._size
-
-    @property
     def default_opacity(self):
         """
-        Returns the default path opacity 1.0
-        :return: float
+        Returns the default opacity of the path
         """
-        return 1.0
+        return self._default_opacity
 
     @property
     def default_size(self):
         """
-        Returns the default path size 1.0
-        :return: float
+        Returns the default size of the path
         """
-        return 1.0
+        return self._default_size
+
+    @property
+    def size(self):
+        """
+        Returns the current path size
+        :return: float[0,1]
+        """
+        return self._size
 
     @property
     def is_visible(self):
@@ -185,7 +201,7 @@ class Path(object):
         :param renderer: vtkRenderer
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.draw_vert(renderer)
 
     def clear_verts(self, renderer):
@@ -194,7 +210,7 @@ class Path(object):
         :param renderer: vtkRenderer
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.clear_vert(renderer)
 
     def draw_all(self, renderer):
@@ -203,7 +219,7 @@ class Path(object):
         :param renderer: vtkRenderer
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.draw_all(renderer)
 
     def draw_path(self, renderer):
@@ -212,11 +228,12 @@ class Path(object):
         :param renderer: vtkRenderer
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.draw_wi(renderer)
             if its.is_wo_set:
                 if its.wo.is_envmap:
                     its.draw_wo(renderer)
+        self._visible = True
 
     def draw_ne(self, renderer):
         """
@@ -224,8 +241,9 @@ class Path(object):
         :param renderer: vtkRenderer
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.draw_ne(renderer)
+        self._visible_ne = True
 
     def clear_path(self, renderer):
         """
@@ -233,8 +251,9 @@ class Path(object):
         :param renderer: vtkRenderer
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.clear_path(renderer)
+        self._visible = False
 
     def clear_ne(self, renderer):
         """
@@ -242,8 +261,9 @@ class Path(object):
         :param renderer: vtkRenderer
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.clear_ne(renderer)
+        self._visible_ne = False
 
     def clear_envmap(self, renderer):
         """
@@ -251,7 +271,7 @@ class Path(object):
         :param renderer: vtkRenderer
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.clear_envmap(renderer)
 
     def clear_all(self, renderer):
@@ -260,8 +280,10 @@ class Path(object):
         :param renderer:
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.clear_all(renderer)
+        self._visible = False
+        self._visible_ne = False
 
     def draw_envmap(self, renderer):
         """
@@ -269,7 +291,7 @@ class Path(object):
         :param renderer:
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.draw_envmap(renderer)
 
     def set_selected(self, selected):
@@ -278,18 +300,8 @@ class Path(object):
         :param selected: boolean
         :return:
         """
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.set_selected(selected)
-
-    def set_opacity(self, value):
-        """
-        Sets the opacity of the path and its vertices
-        :param value: float[0,1]
-        :return:
-        """
-        self._opacity = value
-        for key, its in self._its_dict.items():
-            its.set_opacity(value)
 
     def set_path_opacity(self, value):
         """
@@ -298,7 +310,7 @@ class Path(object):
         :return:
         """
         self._opacity = value
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.set_path_opacity(value)
 
     def reset_path_opacity(self):
@@ -307,17 +319,33 @@ class Path(object):
         :return:
         """
         self._opacity = self.default_opacity
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.reset_path_opacity()
+
+    def reset_path_size(self):
+        """
+        Resets the path size (no vertices reset)
+        """
+        self._size = self.default_size
+        for _, its in self._its_dict.items():
+            its.reset_path_size()
 
     def reset_vertex_opacity(self):
         """
-        Resets the opacity of all path vertices
+        Resets the opacity of all path vertices / intersections
         :return:
         """
         self._opacity = self.default_opacity
-        for key, its in self._its_dict.items():
+        for _, its in self._its_dict.items():
             its.reset_vertex_opacity()
+
+    def reset_vertex_size(self):
+        """
+        Resets the size of all path vertices / intersections
+        """
+        self._size = self.default_size
+        for _, its in self._its_dict.items():
+            its.reset_vertex_size()
 
     def set_path_size(self, value):
         """

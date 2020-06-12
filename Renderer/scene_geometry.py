@@ -23,27 +23,29 @@
 """
 
 from Renderer.mesh import Mesh
+from Renderer.camera import Camera
 import logging
 
 
-class Meshes(object):
+class SceneGeometry(object):
 
     """
         Meshes
         Represents the list of vtkActors / Meshes within the scene
     """
 
-    def __init__(self):
+    def __init__(self, opacity):
+        self._camera = Camera()
         self._meshes = []
-        self._opacity = 0.25
+        self._default_scene_opacity = opacity
+        self._scene_opacity = opacity
 
     @property
-    def mesh_count(self):
+    def camera(self):
         """
-        Amount of meshes in the scene
-        :return: integer
+        Returns the camera object
         """
-        return len(self._meshes)
+        return self._camera
 
     @property
     def meshes(self):
@@ -54,38 +56,44 @@ class Meshes(object):
         return self._meshes
 
     @property
-    def opacity(self):
+    def scene_opacity(self):
         """
-        Returns the default opacity of all meshes 0.25
-        :return: float[0,1]
+        Returns the default opacity value which is applied to all objects
         """
-        return self._opacity
+        return self._scene_opacity
 
-    @opacity.setter
-    def opacity(self, new_opacity):
+    @property
+    def mesh_count(self):
         """
-        Sets the opacity
-        :param new_opacity: float[0,1]
-        :return:
+        Amount of meshes in the scene
+        :return: integer
         """
-        self._opacity = new_opacity
+        return len(self._meshes)
 
-    def set_opacity(self, opacity):
+    def create_mesh(self, mesh_data):
+        mesh = Mesh(mesh_data)
+        mesh.opacity = self._scene_opacity
+        mesh.default_opacity = self._default_scene_opacity
+        return mesh
+
+    def set_scene_opacity(self, opacity):
         """
         Sets the opacity of all meshes in the scene
         :param opacity: float[0,1]
         :return:
         """
         for mesh in self._meshes:
-            mesh.set_opacity(opacity)
+            mesh.opacity = opacity
+        self._scene_opacity = opacity
 
-    def reset_opacity(self):
+    def reset_scene_opacity(self):
         """
         Resets the opacity of all meshes to its default value (0.25)
         :return:
         """
         for mesh in self._meshes:
-            mesh.set_opacity(self._opacity)
+            mesh.opacity = self._default_scene_opacity
+        self._scene_opacity = self._default_scene_opacity
 
     def add_mesh(self, mesh_data):
         """
@@ -93,20 +101,30 @@ class Meshes(object):
         :param mesh_data: Mesh object
         :return:
         """
-        self._meshes.append(Mesh(mesh_data, self._opacity))
+        mesh = self.create_mesh(mesh_data)
+        self._meshes.append(mesh)
 
-    def load_from_mesh_data(self, meshes):
+    def load_camera_data(self, camera_data):
+        """
+        Initialises the camera settings with data from the model
+        :param: camera_data
+        :return:
+        """
+        self._camera.load_settings(camera_data)
+
+    def load_scene_geometry(self, meshes_data):
         """
         Initialises and appends vtkMeshes to the mesh list,
         the data is loaded from the model.
-        :param meshes: Mesh list from the model
+        :param meshes_data: MeshData list from the model
         :return:
         """
         self._meshes.clear()
-        for mesh_data in meshes.meshes:
-            self._meshes.append(Mesh(mesh_data, self._opacity))
+        for mesh_data in meshes_data.meshes:
+            mesh = self.create_mesh(mesh_data)
+            self._meshes.append(mesh)
 
-    def clear(self):
+    def clear_scene_objects(self):
         """
         Clears the list containing all meshes within the scene
         :return:

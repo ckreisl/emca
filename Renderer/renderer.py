@@ -22,22 +22,23 @@
     SOFTWARE.
 """
 
-from Core.render_interface import RenderInterface
-from Renderer.interactor_rubberband import RubberBandInteractor
+from Renderer.rubberband import RubberBandInteractor
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from Renderer.meshes import Meshes
-from Renderer.camera import Camera
 from Renderer.path import Path
-from Renderer.vertex import Vertex
+from Renderer.path_vertex import PathVertex
+from Renderer.line import Line
+from Renderer.sphere import Sphere
+from Renderer.triangle import Triangle
 from PySide2.QtWidgets import QFrame
 import vtk
 import time
 import logging
 import numpy as np
 import threading
+from autologging import traced
 
 
-class Renderer(RenderInterface):
+class Renderer(vtk.vtkRenderer):
 
     """
         SceneView
@@ -46,58 +47,36 @@ class Renderer(RenderInterface):
     """
 
     def __init__(self):
-        RenderInterface.__init__(self)
+        super().__init__()
         # widget
         self._frame = QFrame()
         self._vtkWidget = QVTKRenderWindowInteractor(self._frame)
 
-        # widget update timer
-        self._vtk_update_timer = None
-        self._vtk_update_timer_running = False
-
         # renderer
-        self._renderer = vtk.vtkRenderer()
-        self._renderer.SetBackground(0.7, 0.7, 0.7)
+        self.SetBackground(0.7, 0.7, 0.7)
 
         # Overall scene light
         light_kit = vtk.vtkLightKit()
         light_kit.SetKeyLightIntensity(1.0)
         light_kit.SetKeyLightWarmth(0.5)
-        light_kit.AddLightsToRenderer(self._renderer)
+        light_kit.AddLightsToRenderer(self)
 
-        self._vtkWidget.GetRenderWindow().AddRenderer(self._renderer)
+        self._vtkWidget.GetRenderWindow().AddRenderer(self)
         self._iren = self._vtkWidget.GetRenderWindow().GetInteractor()
 
         style = RubberBandInteractor(parent=self)
-        style.SetDefaultRenderer(self._renderer)
+        style.SetDefaultRenderer(self)
         self._iren.SetInteractorStyle(style)
 
         # set picket to allow rubber band picker (rectangle 3D selection)
         area_picker = vtk.vtkAreaPicker()
         area_picker.AddObserver(vtk.vtkCommand.EndPickEvent, self.area_picker_event)
+
+        self._rubber_band_callback = None
+
         self._iren.SetPicker(area_picker)
-
-        self._camera = Camera()
-        self._meshes = Meshes()
-
-        self._paths = {}
-        self._path_indices = np.array([], dtype=np.int32)
-        self._selected_path = False
-        self._selected_path_index = -1
-        self._selected_vertex = False
-        self._selected_vertex_tpl = ()
-
-        self._all_paths_visible = False
-        self._all_verts_visible = False
-
-        self._vtk_update_timer = threading.Timer(0.1, self.vtk_widget_update_from_timer)
-
         self._iren.Initialize()
         self._iren.Start()
-
-    def vtk_widget_update_from_timer(self):
-        self._vtkWidget.update()
-        self._vtk_update_timer_running = False
 
     @property
     def widget(self):
@@ -106,6 +85,14 @@ class Renderer(RenderInterface):
         :return: vtkWidget
         """
         return self._vtkWidget
+
+    def set_rubber_band_callback(self, callback):
+        """
+        Sets the rubber band callback function.
+        Informs the scene renderer about picked items
+        :param callback: function
+        """
+        self._rubber_band_callback = callback
 
     def area_picker_event(self, picker, event):
         """
@@ -120,62 +107,11 @@ class Renderer(RenderInterface):
         picked = props.GetNumberOfItems()
         for i in range(0, picked):
             prop = props.GetNextProp3D()
-            if isinstance(prop, Vertex):
+            if isinstance(prop, PathVertex):
                 tpl = prop.get_index_tpl()
-                if tpl[0] in self._path_indices:
-                    # same path select vertex
-                    if tpl[0] != self._selected_path_index:
-                        self.send_select_path(tpl[0])
-                    self.send_select_vertex(tpl)
-                    break
-                else:
-                    # some other path is selected update whole view
-                    self.send_update_path(np.array([tpl[0]]), False)
-                    self.send_select_path(tpl[0])
-                    self.send_select_vertex(tpl)
-                    break
-
-    def load_camera(self, camera_data):
-        """
-        Loads the camera data from the Model,
-        initialises the vtkCamera
-        :param camera_data: CameraData Model
-        :return:
-        """
-        self._camera.load_settings(camera_data)
-        self._renderer.SetActiveCamera(self._camera)
-        self._vtkWidget.update()
-
-    def load_mesh(self, mesh_data):
-        """
-        Loads a mesh from the models mesh data,
-        initialise a mesh as vtkActor for visualization
-        :param mesh_data: MeshData
-        :return:
-        """
-        self._meshes.add_mesh(mesh_data)
-        self._renderer.AddActor(self._meshes.meshes[-1])
-        # updating the QT widget is expensive, delay the update using a timer
-        if not self._vtk_update_timer_running:
-            self._vtk_update_timer_running = True
-            self._vtk_update_timer = threading.Timer(0.1, self.vtk_widget_update_from_timer)
-            self._vtk_update_timer.start()
-
-    def load_scene(self, camera_data, mesh_data):
-        """
-        Loads the whole scene with all meshes and camera information from the models data.
-        Visualizes all mesh objects within the scene.
-        :param camera_data: CameraData
-        :param mesh_data: MeshesData
-        :return:
-        """
-        self.clear_scene_objects()
-        self._camera.load_settings(camera_data)
-        self._meshes.load_from_mesh_data(mesh_data)
-        self._renderer.SetActiveCamera(self._camera)
-        for mesh in self._meshes.meshes:
-            self._renderer.AddActor(mesh)
-        self._vtkWidget.update()
+                # TODO check case if callback function is none
+                self._rubber_band_callback(tpl)
+                break
 
     def load_traced_paths(self, render_data):
         """
@@ -197,28 +133,12 @@ class Renderer(RenderInterface):
         logging.info("creating traced paths runtime: {}ms".format(time.time() - start))
         return True
 
-    def prepare_new_data(self):
-        """
-        Prepare render view for new incoming render data,
-        is called if a new pixel is clicked and its corresponding data is computed.
-        :return:
-        """
-        self.clear_paths()
-        self._paths.clear()
-        self._path_indices = np.array([], dtype=np.int32)
-        self._selected_path = False
-        self._selected_path_index = -1
-        self._selected_vertex = False
-        self._selected_vertex_tpl = ()
-        self._all_paths_visible = False
-        self._all_verts_visible = False
-
-    def reset_scene(self):
+    def reset_camera_position(self):
         """
         Resets the camera view to its default position and view
         :return:
         """
-        self._camera.reset()
+        self._scene.camera.reset()
         self._vtkWidget.update()
 
     def clear_scene_objects(self):
@@ -226,8 +146,8 @@ class Renderer(RenderInterface):
         Clears all scene / mesh objects within the scene view
         :return:
         """
-        for mesh in self._meshes.meshes:
-            self._renderer.RemoveActor(mesh)
+        for mesh in self._scene.meshes:
+            self.RemoveActor(mesh)
         self._vtkWidget.update()
 
     def clear_paths(self):
@@ -237,7 +157,7 @@ class Renderer(RenderInterface):
         """
         if self._paths:
             for key, path in self._paths.items():
-                path.clear_all(self._renderer)
+                path.clear_all(self)
             self._paths.clear()
             self._vtkWidget.update()
 
@@ -250,7 +170,7 @@ class Renderer(RenderInterface):
         """
         if self._paths:
             for i in indices:
-                self._paths[i].clear_path(self._renderer)
+                self._paths[i].clear_path(self)
             self._vtkWidget.update()
 
     def clear_verts_by_indices(self, indices):
@@ -262,7 +182,7 @@ class Renderer(RenderInterface):
         """
         if self._paths:
             for i in indices:
-                self._paths[i].clear_verts(self._renderer)
+                self._paths[i].clear_verts(self)
             self._vtkWidget.update()
 
     def set_camera_focus(self, pos):
@@ -272,7 +192,7 @@ class Renderer(RenderInterface):
         :param pos: point3f
         :return:
         """
-        self._camera.set_focal_point(pos)
+        self._scene.camera.set_focal_point(pos)
         self._vtkWidget.update()
 
     def display_traced_paths(self, indices):
@@ -301,8 +221,8 @@ class Renderer(RenderInterface):
         # draw selected paths with indices list
         if self._paths:
             for i in self._path_indices:
-                self._paths[i].draw_path(self._renderer)
-                self._paths[i].draw_verts(self._renderer)
+                self._paths[i].draw_path(self)
+                self._paths[i].draw_verts(self)
             self._vtkWidget.update()
 
     def display_traced_verts(self, indices):
@@ -324,7 +244,7 @@ class Renderer(RenderInterface):
         # draw selected paths with indices list
         if self._paths:
             for i in self._path_indices:
-                self._paths[i].draw_verts(self._renderer)
+                self._paths[i].draw_verts(self)
             self._vtkWidget.update()
 
     def select_path(self, index):
@@ -338,7 +258,7 @@ class Renderer(RenderInterface):
             if i == index:
                 path = self._paths[i]
                 if path.is_ne_visible:
-                    path.draw_ne(self._renderer)
+                    path.draw_ne(self)
                 if path.opacity == path.default_opacity:
                     continue
                 self._paths[i].set_path_opacity(path.default_opacity)
@@ -365,11 +285,11 @@ class Renderer(RenderInterface):
         path = self._paths[tpl[0]]
         vert = path.its_dict[tpl[1]]
         if vert.is_ne_visible:
-            vert.draw_ne(self._renderer)
+            vert.draw_ne(self)
         if vert.is_wi_visible:
-            vert.draw_wi(self._renderer)
+            vert.draw_wi(self)
         if vert.is_wo_visible:
-            vert.draw_wo(self._renderer)
+            vert.draw_wo(self)
         # check if clipping is enabled
         if self._camera.auto_clipping:
             self.set_camera_focus(vert.pos)
@@ -467,11 +387,11 @@ class Renderer(RenderInterface):
         """
         if state:
             for key, path in self._paths.items():
-                path.draw_ne(self._renderer)
+                path.draw_ne(self)
                 path.is_ne_visible = True
         else:
             for key, path in self._paths.items():
-                path.clear_ne(self._renderer)
+                path.clear_ne(self)
                 path.is_ne_visible = False
         self._vtkWidget.update()
 
@@ -483,12 +403,12 @@ class Renderer(RenderInterface):
         """
         if state:
             for key, path in self._paths.items():
-                path.draw_path(self._renderer)
+                path.draw_path(self)
                 path.is_visible = True
         else:
             for key, path in self._paths.items():
                 if key not in self._path_indices:
-                    path.clear_path(self._renderer)
+                    path.clear_path(self)
                     path.is_visible = False
         self._vtkWidget.update()
 
@@ -500,11 +420,11 @@ class Renderer(RenderInterface):
         """
         if state:
             for key, path in self._paths.items():
-                path.draw_verts(self._renderer)
+                path.draw_verts(self)
         else:
             for key, path in self._paths.items():
                 if key not in self._path_indices:
-                    path.clear_verts(self._renderer)
+                    path.clear_verts(self)
         self._vtkWidget.update()
 
     # Path settings
@@ -590,11 +510,11 @@ class Renderer(RenderInterface):
         path = self._paths[self._selected_path_index]
         if state:
             if not path.is_visible:
-                path.draw_path(self._renderer)
+                path.draw_path(self)
                 path.is_visible = True
         else:
             if path.is_visible:
-                path.clear_path(self._renderer)
+                path.clear_path(self)
                 path.is_visible = False
         self._vtkWidget.update()
 
@@ -609,11 +529,11 @@ class Renderer(RenderInterface):
             if path:
                 if state:
                     if not path.is_ne_visible:
-                        path.draw_ne(self._renderer)
+                        path.draw_ne(self)
                         path.is_ne_visible = True
                 else:
                     if path.is_ne_visible:
-                        path.clear_ne(self._renderer)
+                        path.clear_ne(self)
                         path.is_ne_visible = False
         self._vtkWidget.update()
 
@@ -627,13 +547,13 @@ class Renderer(RenderInterface):
             if not self._all_paths_visible:
                 for key, path in self._paths.items():
                     if key not in self._path_indices:
-                        path.draw_path(self._renderer)
+                        path.draw_path(self)
                 self._all_paths_visible = not self._all_paths_visible
         else:
             if self._all_paths_visible:
                 for key, path in self._paths.items():
                     if key not in self._path_indices:
-                        path.clear_path(self._renderer)
+                        path.clear_path(self)
                 self._all_paths_visible = not self._all_paths_visible
         self._vtkWidget.update()
 
@@ -730,9 +650,9 @@ class Renderer(RenderInterface):
         """
         vert = self.get_vertex_to_tpl(self._selected_vertex_tpl)
         if state:
-            vert.draw_wi(self._renderer)
+            vert.draw_wi(self)
         else:
-            vert.clear_wi(self._renderer)
+            vert.clear_wi(self)
         self._vtkWidget.update()
 
     def show_vertex_omega_o(self, state):
@@ -743,9 +663,9 @@ class Renderer(RenderInterface):
         """
         vert = self.get_vertex_to_tpl(self._selected_vertex_tpl)
         if state:
-            vert.draw_wo(self._renderer)
+            vert.draw_wo(self)
         else:
-            vert.clear_wo(self._renderer)
+            vert.clear_wo(self)
         self._vtkWidget.update()
 
     def show_vertex_nee(self, state):
@@ -756,9 +676,9 @@ class Renderer(RenderInterface):
         """
         vert = self.get_vertex_to_tpl(self._selected_vertex_tpl)
         if state:
-            vert.draw_ne(self._renderer)
+            vert.draw_ne(self)
         else:
-            vert.clear_ne(self._renderer)
+            vert.clear_ne(self)
         self._vtkWidget.update()
 
     def show_other_verts(self, state):
@@ -772,13 +692,65 @@ class Renderer(RenderInterface):
                 for path_idx, path in self._paths.items():
                     if path_idx not in self._path_indices:
                         for vert_idx, vert in path.its_dict.items():
-                            vert.draw_vert(self._renderer)
+                            vert.draw_vert(self)
                 self._all_verts_visible = not self._all_verts_visible
         else:
             if self._all_verts_visible:
                 for path_idx, path in self._paths.items():
                     if path_idx not in self._path_indices:
                         for vert_idx, vert in path.its_dict.items():
-                            vert.clear_vert(self._renderer)
+                            vert.clear_vert(self)
                 self._all_verts_visible = not self._all_verts_visible
+        self._vtkWidget.update()
+
+    # plugin functions
+    def draw_triangle(self, p1, p2, p3):
+        """
+        Draws a triangle in the 3D scene
+        :param p1: Point3f
+        :param p2: Point3f
+        :param p3: Point3f
+        :return: vtkActor
+        """
+        obj = Triangle(p1, p2, p3)
+        self.AddActor(obj)
+        self._vtkWidget.update()
+        return obj
+
+    def draw_sphere(self, center, radius):
+        """
+        Draws a sphere in the 3D scene with given radius
+        :param center: Point3f
+        :param radius: float
+        :return: vtkActor
+        """
+        obj = Sphere(center, radius)
+        self.AddActor(obj)
+        self._vtkWidget.update()
+        return obj
+
+    def draw_line(self, start_pos, end_pos):
+        """
+        Draws a line in the 3D scene
+        :param start_pos: Point3f
+        :param end_pos: Point3f
+        :return: vtkActor
+        """
+        obj = Line(start_pos, end_pos)
+        self.AddActor(obj)
+        self._vtkWidget.update()
+        return obj
+
+    def draw_point(self, pos):
+        """
+        Draws a point / vertex in the 3D scene
+        :param pos: Point3f
+        :return: vtkActor
+        """
+        pass
+
+    def update_widget(self):
+        """
+        Calls update method of widget to render latest added object
+        """
         self._vtkWidget.update()

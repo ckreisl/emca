@@ -24,39 +24,54 @@
 
 from Core.pyside2_uic import loadUi
 from PySide2.QtCore import Slot
+from PySide2.QtWidgets import QListWidgetItem
 from PySide2.QtWidgets import QWidget
 from PySide2.QtWidgets import QApplication
 import logging
 
 
-class SceneRenderSettings(object):
+class PathListItem(QListWidgetItem):
 
-    def __init__(self, view):
-        self._init(view)
+    def __init__(self, path_index):
+        super().__init__()
+        self._path_index = path_index
+        self.setText("Path ({})".format(path_index))
 
-    def update(self, view):
-        self._init(view)
+    @property
+    def path_index(self):
+        return self._path_index
 
-    def _init(self, view):
-        # Save general Scene options settings
-        self.is_all_nees_visible = view.cbShowAllNEEs.isChecked()
-        self.is_all_paths_visible = view.cbShowAllPaths.isChecked()
-        self.is_all_verts_visible = view.cbShowAllVerts.isChecked()
 
-        # Save path options settings
-        self.is_path_visible = view.cbShowPathRays.isChecked()
-        self.is_path_ne_visible = view.cbShowNEERays.isChecked()
-        self.path_opacity = view.sliderPathOpacity.value()
-        self.path_size = view.sliderPathSize.value()
-        self.is_show_all_other_paths = view.cbShowAllOtherPaths.isChecked()
+class VertexListItem(QListWidgetItem):
 
-        # Save vertex option settings
-        self.is_omega_i_visible = view.cbShowOmegaI.isChecked()
-        self.is_omega_o_visible = view.cbShowOmegaO.isChecked()
-        self.is_vertex_ne_visible = view.cbShowNEE.isChecked()
-        self.vert_opacity = view.sliderVertexOpacity.value()
-        self.vert_size = view.sliderVertexSize.value()
-        self.is_show_all_other_verts = view.cbShowAllOtherVertices.isChecked()
+    def __init__(self, tpl):
+        super().__init__()
+        self._tpl = tpl
+        self.setText("Vertex ({})".format(tpl[1]))
+
+    @property
+    def path_index(self):
+        """
+        Returns the index of the parent, representing the path index
+        :return: integer
+        """
+        return self._tpl[0]
+
+    @property
+    def vertex_index(self):
+        """
+        Returns the vertex index
+        :return: integer
+        """
+        return self._tpl[1]
+
+    @property
+    def index_tpl(self):
+        """
+        Returns a tuple containing path and vertex index
+        :return: tuple(path_index, vertex_index)
+        """
+        return self._tpl
 
 
 class ViewRenderSceneOptions(QWidget):
@@ -71,7 +86,8 @@ class ViewRenderSceneOptions(QWidget):
         QWidget.__init__(self, parent=None)
         loadUi('View/ui/render_scene_options.ui', self)
 
-        self._renderer = None
+        self._controller = None
+        self._scene_renderer = None
 
         # center widget depending on screen size
         desktop_widget = QApplication.desktop()
@@ -79,21 +95,23 @@ class ViewRenderSceneOptions(QWidget):
         self.move(screen_rect.center() - self.rect().center())
 
         # handle close btn
-        self.btnQuit.clicked.connect(self.close)
+        self.pbClose.clicked.connect(self.close)
 
         # handle general settings
-        self.cbShowAllNEEs.toggled.connect(self.show_all_nees)
-        self.cbShowAllPaths.toggled.connect(self.show_all_paths)
-        self.cbShowAllVerts.toggled.connect(self.show_all_verts)
+        self.cbShowAllNEEs.toggled.connect(self.show_all_traced_nees)
+        self.cbShowAllPaths.toggled.connect(self.show_all_traced_paths)
+        self.cbShowAllVerts.toggled.connect(self.show_all_traced_verts)
 
         # handle camera settings
         self.sliderCameraSpeed.valueChanged.connect(self.update_camera_motion_speed)
         self.cbCameraClipping.toggled.connect(self.update_camera_clipping)
-        self.pbResetCamera.clicked.connect(self.reset_camera_options)
+        self.pbResetCamera.clicked.connect(self.reset_camera_motion_speed)
 
         # handle scene settings
-        self.sliderMeshOpacity.valueChanged.connect(self.update_scene_opacity)
-        self.pbResetMesh.clicked.connect(self.reset_scene_opacity)
+        self.sliderMeshOpacity.valueChanged.connect(self.update_mesh_opacity)
+        self.sliderSceneOpacity.valueChanged.connect(self.update_scene_opacity)
+        self.pbResetMesh.clicked.connect(self.reset_mesh)
+        self.pbResetScene.clicked.connect(self.reset_scene)
 
         # handle path settings
         self.sliderPathOpacity.valueChanged.connect(self.update_path_opacity)
@@ -101,7 +119,7 @@ class ViewRenderSceneOptions(QWidget):
         self.pbResetPath.clicked.connect(self.reset_path)
         self.cbShowPathRays.toggled.connect(self.show_traced_path)
         self.cbShowNEERays.toggled.connect(self.show_traced_path_nee)
-        self.cbShowAllOtherPaths.toggled.connect(self.show_other_paths)
+        self.cbShowAllOtherPaths.toggled.connect(self.show_all_other_traced_paths)
 
         # handle vertex settings
         self.sliderVertexOpacity.valueChanged.connect(self.update_vertex_opacity)
@@ -110,12 +128,76 @@ class ViewRenderSceneOptions(QWidget):
         self.cbShowOmegaI.toggled.connect(self.show_vertex_omega_i)
         self.cbShowOmegaO.toggled.connect(self.show_vertex_omega_o)
         self.cbShowNEE.toggled.connect(self.show_vertex_nee)
-        self.cbShowAllOtherVertices.toggled.connect(self.show_other_verts)
+        self.cbShowAllOtherVertices.toggled.connect(self.show_all_other_traced_vertices)
 
-        self._settings = SceneRenderSettings(self)
+        # add connections to controller
+        self.listPaths.itemClicked.connect(self.send_select_path)
+        self.listVertices.itemClicked.connect(self.send_select_vertex)
 
-    def set_renderer(self, renderer):
-        self._renderer = renderer
+        self.pbResetAll.clicked.connect(self.reset_all_paths_vertices)
+
+    def set_controller(self, controller):
+        self._controller = controller
+
+    def init_scene_renderer(self, scene_renderer):
+        self._scene_renderer = scene_renderer
+
+    @property
+    def scene_renderer(self):
+        return self._scene_renderer
+
+    @Slot(QListWidgetItem, name='send_select_path')
+    def send_select_path(self, item):
+        if isinstance(item, PathListItem):
+            self._controller.select_path(item.path_index)
+
+    @Slot(QListWidgetItem, name='send_select_vertex')
+    def send_select_vertex(self, item):
+        if isinstance(item, VertexListItem):
+            self._controller.select_vertex(item.index_tpl)
+
+    def update_path_indices(self, indices):
+        self.listPaths.clear()
+        self.listVertices.clear()
+        for key in indices:
+            self.listPaths.addItem(PathListItem(key))
+        if not self.listPaths.isEnabled():
+            self.listPaths.setEnabled(True)
+        if not self.labelPathOptions.isEnabled():
+            self.labelPathOptions.setEnabled(True)
+        if not self.cbShowAllOtherPaths.isEnabled():
+            self.cbShowAllOtherPaths.setEnabled(True)
+        self.enable_general_settings(True)
+
+    def select_path(self, index):
+        path_option_settings = self._scene_renderer.get_path_option_settings(index)
+        self.load_path_settings(path_option_settings)
+        self.enable_path_settings(True)
+        self.labelVertexOptions.setEnabled(True)
+        self.listVertices.setEnabled(True)
+        self.cbShowAllOtherVertices.setEnabled(True)
+        # highlight selected path item in list.
+        for i in range(0, self.listPaths.count()):
+            item = self.listPaths.item(i)
+            if item.path_index == index:
+                item.setSelected(True)
+                break
+
+    def select_vertex(self, tpl):
+        vertex_option_settings = self._scene_renderer.get_vertex_option_settings(tpl)
+        self.load_vertex_settings(vertex_option_settings)
+        self.enable_vertex_settings(True)
+        # highlight selected vertex item in list.
+        for i in range(0, self.listVertices.count()):
+            item = self.listVertices.item(i)
+            if item.vertex_index == tpl[1]:
+                item.setSelected(True)
+                break
+
+    def update_vertex_list(self, path_data):
+        self.listVertices.clear()
+        for key, _ in path_data.dict_vertices.items():
+            self.listVertices.addItem(VertexListItem((path_data.sample_idx, key)))
 
     def prepare_new_data(self):
         """
@@ -123,173 +205,204 @@ class ViewRenderSceneOptions(QWidget):
         disables path and vertex settings
         :return:
         """
-        self.set_path_settings_enabled(False)
-        self.set_vertex_settings_enabled(False)
-        self.save_current_settings()
+        self.listPaths.clear()
+        self.listVertices.clear()
+        self.enable_path_settings(False)
+        self.enable_vertex_settings(False)
 
-    def save_current_settings(self):
-        """
-        Saves current scene option settings
-        :return:
-        """
-        self._settings.update(self)
-
-    def set_general_settings_enabled(self, enabled):
+    def enable_general_settings(self, enabled):
         """
         Depending on enabled, enables the general render scene settings
         :param enabled: boolean
         :return:
         """
-        self.widgetBtnsGeneral.setEnabled(enabled)
+        self.labelGeneral.setEnabled(enabled)
+        self.cbShowAllPaths.setEnabled(enabled)
+        self.cbShowAllNEEs.setEnabled(enabled)
+        self.cbShowAllVerts.setEnabled(enabled)
 
-    def set_camera_settings_enabled(self, enabled):
+    def enable_camera_settings(self, enabled):
         """
         Depending on enabled, enables the camera settings
         :param enabled:
         :return:
         """
-        self.widgetCamera.setEnabled(enabled)
-        self.widgetBtnsCamera.setEnabled(enabled)
+        self.labelMotionSpeed.setEnabled(enabled)
+        self.labelCameraClipping.setEnabled(enabled)
+        self.sliderCameraSpeed.setEnabled(enabled)
+        self.cbCameraClipping.setEnabled(enabled)
+        self.pbResetCamera.setEnabled(enabled)
 
-    def load_camera_settings(self):
-        """
-        Initialises the camera settings with data from the renderer
-        :return:
-        """
-        motion_speed = self._renderer.get_camera_motion_speed()
-        self.sliderCameraSpeed.blockSignals(True)
-        self.sliderCameraSpeed.setValue(motion_speed)
-        self.sliderCameraSpeed.blockSignals(False)
-        camera_clipping = self._renderer.camera_clipping()
-        self.cbCameraClipping.blockSignals(True)
-        self.cbCameraClipping.setChecked(camera_clipping)
-        self.cbCameraClipping.blockSignals(False)
-
-    def set_scene_settings_enabled(self, enabled):
+    def enable_scene_settings(self, enabled):
         """
         Depending on enabled, enables the scene settings
         :param enabled: boolean
         :return:
         """
-        self.widgetMesh.setEnabled(enabled)
-        self.widgetBtnsMesh.setEnabled(enabled)
+        # TODO scene mesh list feature
+        # self.listSceneObjects.setEnabled(enabled)
+        # self.labelMeshOpacity.setEnabled(enabled)
+        # self.sliderMeshOpacity.setEnabled(enabled)
+        # self.pbMeshOpacity.setEnabled(enabled)
+        # self.pbResetMesh.setEnabled(enabled)
+        self.labelSceneOpacity.setEnabled(enabled)
+        self.sliderSceneOpacity.setEnabled(enabled)
+        self.pbResetScene.setEnabled(enabled)
 
-    def load_scene_settings(self):
-        """
-        Initializes the scene settings with data from the renderer
-        :return:
-        """
-        opacity = self._renderer.get_scene_opacity()
-        max_value = self.sliderMeshOpacity.maximum()
-        self.sliderMeshOpacity.blockSignals(True)
-        self.sliderMeshOpacity.setValue(int(opacity * max_value))
-        self.sliderMeshOpacity.blockSignals(False)
-
-    def set_path_settings_enabled(self, enabled):
+    def enable_path_settings(self, enabled):
         """
         Depending on enabled, enables the path settings
         :param enabled: boolean
         :return:
         """
-        self.widgetPath.setEnabled(enabled)
-        self.widgetBtnsPath.setEnabled(enabled)
+        self.labelPathOptions.setEnabled(enabled)
+        self.listPaths.setEnabled(enabled)
+        self.labelShowPath.setEnabled(enabled)
+        self.cbShowPathRays.setEnabled(enabled)
+        self.labelShowPathNE.setEnabled(enabled)
+        self.cbShowNEERays.setEnabled(enabled)
+        self.labelPathOpacity.setEnabled(enabled)
+        self.sliderPathOpacity.setEnabled(enabled)
+        self.labelPathSize.setEnabled(enabled)
+        self.sliderPathSize.setEnabled(enabled)
+        self.pbResetPath.setEnabled(enabled)
+        self.cbShowAllOtherPaths.setEnabled(enabled)
+        self.pbResetAll.setEnabled(enabled)
 
-    def load_path_settings(self):
-        """
-        Loads the path settings loaded from the renderer
-        :return:
-        """
-        index = self._renderer.get_selected_path_index()
-        self.labelPathIndex.setText("({})".format(index))
-        opacity = self._renderer.get_path_opacity(index)
-        max_value = self.sliderPathOpacity.maximum()
-        self.sliderPathOpacity.blockSignals(True)
-        self.sliderPathOpacity.setValue(int(opacity * max_value))
-        self.sliderPathOpacity.blockSignals(False)
-        size = self._renderer.get_path_size(index)
-        self.sliderPathSize.blockSignals(True)
-        self.sliderPathSize.setValue(size)
-        self.sliderPathSize.blockSignals(False)
-        show_path = self._renderer.get_is_visible_path(index)
-        self.cbShowPathRays.blockSignals(True)
-        self.cbShowPathRays.setChecked(show_path)
-        self.cbShowPathRays.blockSignals(False)
-        show_path_ne = self._renderer.get_is_ne_visible_path(index)
-        self.cbShowNEERays.blockSignals(True)
-        self.cbShowNEERays.setChecked(show_path_ne)
-        self.cbShowNEERays.blockSignals(False)
-
-    def set_vertex_settings_enabled(self, enabled):
+    def enable_vertex_settings(self, enabled):
         """
         Depending on enabled, enables the vertex settings
         :param enabled:
         :return: boolean
         """
-        self.widgetVertex.setEnabled(enabled)
-        self.widgetBtnsVertex.setEnabled(enabled)
+        self.labelVertexOptions.setEnabled(enabled)
+        self.listVertices.setEnabled(enabled)
+        self.labelShowOmegaI.setEnabled(enabled)
+        self.cbShowOmegaI.setEnabled(enabled)
+        self.labelShowOmegaO.setEnabled(enabled)
+        self.cbShowOmegaO.setEnabled(enabled)
+        self.labelShowNE.setEnabled(enabled)
+        self.cbShowNEE.setEnabled(enabled)
+        self.labelVertexOpacity.setEnabled(enabled)
+        self.sliderVertexOpacity.setEnabled(enabled)
+        self.labelVertexSize.setEnabled(enabled)
+        self.sliderVertexSize.setEnabled(enabled)
+        self.cbShowAllOtherVertices.setEnabled(enabled)
+        self.pbResetVertex.setEnabled(enabled)
 
-    def load_vertex_settings(self):
+    def load_camera_settings(self, camera_settings):
         """
-        Loads the vertex settings loaded from the renderer
+        Initialises the camera settings with data from the renderer
         :return:
         """
-        tpl = self._renderer.get_selected_vertex_tpl()
-        self.labelVertexIndex.setText("{}".format(tpl))
-        is_wi_visible = self._renderer.is_wi_visible(tpl)
+        self.sliderCameraSpeed.blockSignals(True)
+        self.sliderCameraSpeed.setValue(camera_settings.get('motion_speed', 1.0))
+        self.sliderCameraSpeed.blockSignals(False)
+        self.cbCameraClipping.blockSignals(True)
+        self.cbCameraClipping.setChecked(camera_settings.get('auto_clipping', True))
+        self.cbCameraClipping.blockSignals(False)
+
+    def load_scene_settings(self, scene_settings):
+        """
+        Initializes the scene settings with data from the renderer
+        :return:
+        """
+        opacity = scene_settings.get('scene_opacity', 1.0)
+        max_value = self.sliderMeshOpacity.maximum()
+        self.sliderMeshOpacity.blockSignals(True)
+        self.sliderMeshOpacity.setValue(int(opacity * max_value))
+        self.sliderMeshOpacity.blockSignals(False)
+        max_value = self.sliderSceneOpacity.maximum()
+        self.sliderSceneOpacity.blockSignals(True)
+        self.sliderSceneOpacity.setValue(int(opacity * max_value))
+        self.sliderSceneOpacity.blockSignals(False)
+
+    def load_path_settings(self, path_option_settings):
+        """
+        Loads the path settings loaded from the renderer
+        :param path_option_settings: dict
+        :return:
+        """
+        opacity = path_option_settings.get('opacity', 1.0)
+        max_value = self.sliderPathOpacity.maximum()
+        self.sliderPathOpacity.blockSignals(True)
+        self.sliderPathOpacity.setValue(int(opacity * max_value))
+        self.sliderPathOpacity.blockSignals(False)
+
+        size = path_option_settings.get('size', 1.0)
+        self.sliderPathSize.blockSignals(True)
+        self.sliderPathSize.setValue(size)
+        self.sliderPathSize.blockSignals(False)
+
+        show_path = path_option_settings.get('is_visible', True)
+        self.cbShowPathRays.blockSignals(True)
+        self.cbShowPathRays.setChecked(show_path)
+        self.cbShowPathRays.blockSignals(False)
+
+        show_path_ne = path_option_settings.get('is_ne_visible', False)
+        self.cbShowNEERays.blockSignals(True)
+        self.cbShowNEERays.setChecked(show_path_ne)
+        self.cbShowNEERays.blockSignals(False)
+
+    def load_vertex_settings(self, vertex_option_settings):
+        """
+        Loads the vertex settings loaded from the renderer
+        :param vertex_option_settings: dict
+        :return:
+        """
+
+        is_wi_visible = vertex_option_settings.get('is_wi_visible', True)
         self.cbShowOmegaI.blockSignals(True)
         self.cbShowOmegaI.setChecked(is_wi_visible)
         self.cbShowOmegaI.blockSignals(False)
-        is_wo_visible = self._renderer.is_wo_visible(tpl)
+
+        is_wo_visible = vertex_option_settings.get('is_wo_visible', False)
         self.cbShowOmegaO.blockSignals(True)
         self.cbShowOmegaO.setChecked(is_wo_visible)
         self.cbShowOmegaO.blockSignals(False)
-        is_ne_visible = self._renderer.is_ne_visible(tpl)
+
+        is_ne_visible = vertex_option_settings.get('is_ne_visible', False)
         self.cbShowNEE.blockSignals(True)
         self.cbShowNEE.setChecked(is_ne_visible)
         self.cbShowNEE.blockSignals(False)
-        opacity = self._renderer.get_vertex_opacity(tpl)
+
+        opacity = vertex_option_settings.get('opacity', 1.0)
         max_value = self.sliderVertexOpacity.maximum()
         self.sliderVertexOpacity.blockSignals(True)
         self.sliderVertexOpacity.setValue(int(opacity * max_value))
         self.sliderVertexOpacity.blockSignals(False)
-        size = self._renderer.get_vertex_size(tpl)
+
+        size = vertex_option_settings.get('size', 1.0)
         self.sliderVertexSize.blockSignals(True)
         self.sliderVertexSize.setValue(size)
         self.sliderVertexSize.blockSignals(False)
 
-    @Slot(bool, name='show_all_nees')
-    def show_all_nees(self, state):
+    @Slot(bool, name='show_all_traced_nees')
+    def show_all_traced_nees(self, state):
         """
         Informs the renderer to show all next event estimations
         :param state:
         :return:
         """
-        self.cbShowNEERays.blockSignals(True)
-        self.cbShowNEERays.setChecked(state)
-        self.cbShowNEERays.blockSignals(False)
-        self._renderer.show_all_nees(state)
+        self._controller.scene.show_all_traced_nees(state)
 
-    @Slot(bool, name='show_all_paths')
-    def show_all_paths(self, state):
+    @Slot(bool, name='show_all_traced_paths')
+    def show_all_traced_paths(self, state):
         """
         Informs the renderer to show all traced paths
         :param state:
         :return:
         """
-        if state:
-            self.cbShowPathRays.blockSignals(True)
-            self.cbShowPathRays.setChecked(state)
-            self.cbShowPathRays.blockSignals(False)
-        self._renderer.show_all_paths(state)
+        self._controller.show_all_traced_paths(state)
 
-    @Slot(bool, name='show_all_verts')
-    def show_all_verts(self, state):
+    @Slot(bool, name='show_all_traced_verts')
+    def show_all_traced_verts(self, state):
         """
         Informs the renderer to show all vertices
         :param state:
         :return:
         """
-        self._renderer.show_all_verts(state)
+        self._controller.scene.show_all_traced_vertices(state)
 
     @Slot(int, name='update_camera_motion_speed')
     def update_camera_motion_speed(self, speed):
@@ -298,7 +411,7 @@ class ViewRenderSceneOptions(QWidget):
         :param speed: float
         :return:
         """
-        self._renderer.update_camera_motion_speed(speed)
+        self._scene_renderer.apply_camera_option_settings({'motion_speed': speed})
 
     @Slot(bool, name='update_camera_clipping')
     def update_camera_clipping(self, state):
@@ -307,17 +420,22 @@ class ViewRenderSceneOptions(QWidget):
         :param state: boolean
         :return:
         """
-        self._renderer.update_camera_clipping(state)
+        self._scene_renderer.apply_camera_option_settings({'auto_clipping': state})
 
-    @Slot(bool, name='reset_camera_options')
-    def reset_camera_options(self, clicked):
+    @Slot(bool, name='reset_camera_motion_speed')
+    def reset_camera_motion_speed(self, clicked):
         """
         Inform the renderer to reset the camera settings
         :param clicked: boolean
         :return:
         """
-        self._renderer.reset_camera_motion_speed()
-        self.load_camera_settings()
+        self._scene_renderer.reset_camera_option_settings()
+        camera_settings = self._scene_renderer.get_camera_option_settings()
+        self.load_camera_settings(camera_settings)
+
+    @Slot(int, name='updateMeshOpacity')
+    def update_mesh_opacity(self, opacity):
+        pass
 
     @Slot(int, name='update_scene_opacity')
     def update_scene_opacity(self, opacity):
@@ -327,17 +445,22 @@ class ViewRenderSceneOptions(QWidget):
         :return:
         """
         max_value = self.sliderMeshOpacity.maximum()
-        self._renderer.update_scene_opacity(float(opacity / max_value))
+        self._scene_renderer.apply_scene_option_settings({'scene_opacity': float(opacity / max_value)})
 
-    @Slot(bool, name='reset_scene_opacity')
-    def reset_scene_opacity(self, clicked):
+    @Slot(bool, name='reset_mesh')
+    def reset_mesh(self, clicked):
+        pass
+
+    @Slot(bool, name='reset_scene')
+    def reset_scene(self, clicked):
         """
         Informs the renderer to reset the scenes opacity
         :param clicked: boolean
         :return:
         """
-        self._renderer.reset_scene_opacity()
-        self.load_scene_settings()
+        self._scene_renderer.reset_scene_option_settings()
+        scene_settings = self._scene_renderer.get_scene_option_settings()
+        self.load_scene_settings(scene_settings)
 
     @Slot(int, name='update_path_opacity')
     def update_path_opacity(self, opacity):
@@ -347,7 +470,7 @@ class ViewRenderSceneOptions(QWidget):
         :return:
         """
         max_value = self.sliderPathOpacity.maximum()
-        self._renderer.update_path_opacity(float(opacity / max_value))
+        self._scene_renderer.update_path_opacity(float(opacity / max_value))
 
     @Slot(int, name='update_path_size')
     def update_path_size(self, size):
@@ -356,7 +479,7 @@ class ViewRenderSceneOptions(QWidget):
         :param size: float[0,1]
         :return:
         """
-        self._renderer.update_path_size(size)
+        self._scene_renderer.update_path_size(size)
 
     @Slot(bool, name='reset_path')
     def reset_path(self, clicked):
@@ -365,8 +488,10 @@ class ViewRenderSceneOptions(QWidget):
         :param clicked: boolean
         :return:
         """
-        self._renderer.reset_path()
-        self.load_path_settings()
+        self._scene_renderer.reset_path()
+        index = self._controller.path_index
+        path_settings = self._scene_renderer.get_path_option_settings(index)
+        self.load_path_settings(path_settings)
 
     @Slot(bool, name='show_traced_path')
     def show_traced_path(self, state):
@@ -375,7 +500,7 @@ class ViewRenderSceneOptions(QWidget):
         :param state: boolean
         :return:
         """
-        self._renderer.show_traced_path(state)
+        self._scene_renderer.show_traced_path(state)
         # toggle also vertex omega_i checkbox
         self.cbShowOmegaI.blockSignals(True)
         self.cbShowOmegaI.setChecked(state)
@@ -388,20 +513,16 @@ class ViewRenderSceneOptions(QWidget):
         :param state: boolean
         :return:
         """
-        self._renderer.show_traced_path_nee(state)
-        # toggle also vertex nee checkbox
-        self.cbShowNEE.blockSignals(True)
-        self.cbShowNEE.setChecked(state)
-        self.cbShowNEE.blockSignals(False)
+        self._controller.scene.show_traced_path_nee(state)
 
-    @Slot(bool, name='show_other_paths')
-    def show_other_paths(self, state):
+    @Slot(bool, name='show_all_other_traced_paths')
+    def show_all_other_traced_paths(self, state):
         """
         Informs the renderer to show all other traced paths besides the current selected one
         :param state: boolean
         :return:
         """
-        self._renderer.show_other_paths(state)
+        self._scene_renderer.show_all_other_traced_paths(state)
 
     @Slot(int, name='update_vertex_opacity')
     def update_vertex_opacity(self, opacity):
@@ -411,7 +532,7 @@ class ViewRenderSceneOptions(QWidget):
         :return:
         """
         max_value = self.sliderVertexOpacity.maximum()
-        self._renderer.update_vertex_opacity(float(opacity / max_value))
+        self._scene_renderer.update_vertex_opacity(float(opacity / max_value))
 
     @Slot(int, name='update_vertex_size')
     def update_vertex_size(self, size):
@@ -420,7 +541,7 @@ class ViewRenderSceneOptions(QWidget):
         :param size: float[0,1]
         :return:
         """
-        self._renderer.update_vertex_size(size)
+        self._scene_renderer.update_vertex_size(size)
 
     @Slot(bool, name='reset_vertex')
     def reset_vertex(self, clicked):
@@ -429,8 +550,9 @@ class ViewRenderSceneOptions(QWidget):
         :param clicked: boolean
         :return:
         """
-        self._renderer.reset_vertex()
-        self.load_vertex_settings()
+        self._scene_renderer.reset_vertex()
+        vertex_option_settings = self._scene_renderer.get_vertex_option_settings(self._controller.vertex_index)
+        self.load_vertex_settings(vertex_option_settings)
 
     @Slot(bool, name='show_vertex_omega_i')
     def show_vertex_omega_i(self, state):
@@ -440,7 +562,7 @@ class ViewRenderSceneOptions(QWidget):
         :param state: boolean
         :return:
         """
-        self._renderer.show_vertex_omega_i(state)
+        self._controller.scene.show_vertex_omega_i(state)
 
     @Slot(bool, name='show_vertex_omega_o')
     def show_vertex_omega_o(self, state):
@@ -450,7 +572,7 @@ class ViewRenderSceneOptions(QWidget):
         :param state: boolean
         :return:
         """
-        self._renderer.show_vertex_omega_o(state)
+        self._controller.scene.show_vertex_omega_o(state)
 
     @Slot(bool, name='show_vertex_nee')
     def show_vertex_nee(self, state):
@@ -460,14 +582,18 @@ class ViewRenderSceneOptions(QWidget):
         :param state: boolean
         :return:
         """
-        self._renderer.show_vertex_nee(state)
+        self._controller.scene.show_vertex_nee(state)
 
-    @Slot(bool, name='show_other_verts')
-    def show_other_verts(self, state):
+    @Slot(bool, name='show_all_other_traced_vertices')
+    def show_all_other_traced_vertices(self, state):
         """
         Informs the renderer to visualize all other vertices besides the current visible ones,
         depending on state
         :param state: boolean
         :return:
         """
-        self._renderer.show_other_verts(state)
+        self._controller.scene.show_all_other_traced_vertices(state)
+
+    @Slot(bool, name='reset_all_paths_vertices')
+    def reset_all_paths_vertices(self, clicked):
+        self._controller.scene.reset_all_paths_vertices(clicked)

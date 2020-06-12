@@ -34,10 +34,10 @@ class Camera(vtk.vtkCamera):
     """
 
     def __init__(self):
-        vtk.vtkCamera.__init__(self)
+        super().__init__()
         # boolean to check if camera should always set the viewing direction to selected vertex
         self._auto_clipping = True
-        self._speed = 1.0
+        self._motion_speed = 1.0
 
         self._origin = None
         self._focal_point = None
@@ -96,16 +96,16 @@ class Camera(vtk.vtkCamera):
         Returns the camera motion speed
         :return:
         """
-        return self._speed
+        return self._motion_speed
 
     @motion_speed.setter
-    def motion_speed(self, new_value):
+    def motion_speed(self, speed):
         """
         Setter function, sets the camera motion speed
-        :param new_value:
+        :param speed:
         :return:
         """
-        self._speed = new_value
+        self._motion_speed = speed
 
     def set_focal_point(self, focal_p):
         """
@@ -120,63 +120,63 @@ class Camera(vtk.vtkCamera):
         Resets the camera motion speed to 1.0
         :return:
         """
-        self._speed = 1.0
+        self._motion_speed = 1.0
 
     def pan_left(self):
         """
         Pan camera to the left
         :return:
         """
-        self.Yaw(self._speed)
+        self.Yaw(self._motion_speed)
 
     def pan_right(self):
         """
         Pan camera to the right
         :return:
         """
-        self.Yaw(-self._speed)
+        self.Yaw(-self._motion_speed)
 
     def move_up(self):
         """
         Move camera up
         :return:
         """
-        self._motion_along_vector(self.GetViewUp(), -self._speed)
+        self._motion_along_vector(self.GetViewUp(), -self._motion_speed)
 
     def move_down(self):
         """
         Move camera down
         :return:
         """
-        self._motion_along_vector(self.GetViewUp(), self._speed)
+        self._motion_along_vector(self.GetViewUp(), self._motion_speed)
 
     def move_right(self):
         """
         Move camera right
         :return:
         """
-        self._motion_along_vector(self._get_rl_vector(), -self._speed)
+        self._motion_along_vector(self._get_rl_vector(), -self._motion_speed)
 
     def move_left(self):
         """
         Move camera left
         :return:
         """
-        self._motion_along_vector(self._get_rl_vector(), self._speed)
+        self._motion_along_vector(self._get_rl_vector(), self._motion_speed)
 
     def move_forward(self):
         """
         Move camera forward
         :return:
         """
-        self._motion_along_vector(self.GetDirectionOfProjection(), -self._speed)
+        self._motion_along_vector(self.GetDirectionOfProjection(), -self._motion_speed)
 
     def move_backward(self):
         """
         Move camera backward
         :return:
         """
-        self._motion_along_vector(self.GetDirectionOfProjection(), self._speed)
+        self._motion_along_vector(self.GetDirectionOfProjection(), self._motion_speed)
 
     def _get_rl_vector(self):
         """

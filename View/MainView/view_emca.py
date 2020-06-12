@@ -84,8 +84,6 @@ class ViewEMCA(QWidget):
         self._stacked_widget_right.addWidget(self._view_render_data)
         self.right.addWidget(self._stacked_widget_right)
 
-        self._pixel_info = QPixmap(16, 16)
-
         # connect signals
         self.btnConnect.clicked.connect(self.open_connect_view)
         self.btnDetector.clicked.connect(self.open_detector_view)
@@ -106,6 +104,7 @@ class ViewEMCA(QWidget):
         self._view_options.set_controller(controller)
         self._view_plot.set_controller(controller)
         self._view_render_scene.set_controller(controller)
+        self.view_render_scene_options.set_controller(controller)
         self._view_render_data.set_controller(controller)
         self._view_render_image.set_controller(controller)
         self._view_render_info.set_controller(controller)
@@ -285,6 +284,14 @@ class ViewEMCA(QWidget):
         return self._view_render_scene
 
     @property
+    def view_render_scene_options(self):
+        """
+        Returns the 3D Scene options
+        :return: QWidget
+        """
+        return self._view_render_scene.view_render_scene_options
+
+    @property
     def view_options(self):
         """
         Returns the options widget
@@ -303,10 +310,10 @@ class ViewEMCA(QWidget):
             if enabled:
                 self.btnConnect.setText('Disconnect')
                 self.btnConnect.clicked.disconnect(self.open_connect_view)
-                self.btnConnect.clicked.connect(self._controller.disconnect_socket_stream)
+                self.btnConnect.clicked.connect(self._controller.stream.disconnect_socket_stream)
             else:
                 self.btnConnect.setText('Connect')
-                self.btnConnect.clicked.disconnect(self._controller.disconnect_socket_stream)
+                self.btnConnect.clicked.disconnect(self._controller.stream.disconnect_socket_stream)
                 self.btnConnect.clicked.connect(self.open_connect_view)
                 self.btnFilter.setEnabled(enabled)
 
