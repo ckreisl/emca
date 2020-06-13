@@ -29,11 +29,11 @@ from PySide2.QtCore import Slot
 from PySide2.QtCore import QPoint
 from Core.pyside2_uic import loadUi
 
-from View.MainView.view_options import ViewOptions
+from View.MainView.view_options_settings import ViewOptions
 from View.MainView.view_connect_settings import ViewConnectSettings
-from View.MainView.view_filter import ViewFilter
+from View.MainView.view_filter_settings import ViewFilterSettings
 from View.MainView.view_detector_settings import ViewDetectorSettings
-from View.MainView.view_render_info import ViewRenderInfo
+from View.MainView.view_render_settings import ViewRenderSettings
 
 from View.DataView.view_render_data import ViewRenderData
 from View.SceneView.view_render_scene import ViewRenderScene
@@ -66,8 +66,8 @@ class ViewEMCA(QWidget):
         self._view_options = ViewOptions(parent=parent)
         self._view_connect = ViewConnectSettings(parent=parent)
         self._view_detector = ViewDetectorSettings(parent=parent)
-        self._view_filter = ViewFilter(parent=parent)
-        self._view_render_info = ViewRenderInfo(parent=parent)
+        self._view_filter = ViewFilterSettings(parent=parent)
+        self._view_render_info = ViewRenderSettings(parent=parent)
         self._view_render_image = ViewRenderImage(parent=self)
         self._view_plot = ViewScatterPlot(parent=self)
         self._view_render_data = ViewRenderData(parent=self)

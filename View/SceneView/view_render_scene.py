@@ -23,8 +23,6 @@
 """
 
 from Core.messages import ViewMode
-from View.SceneView.view_render_scene_options import ViewRenderSceneOptions
-from PySide2.QtCore import Slot
 from PySide2.QtWidgets import QWidget
 from Core.pyside2_uic import loadUi
 import os
@@ -47,10 +45,6 @@ class ViewRenderScene(QWidget):
         self._scene_renderer = None
         self._scene_loaded = False
 
-        self.btnSceneOptions.clicked.connect(self.open_view_render_scene_options)
-        self.btnLoadScene.clicked.connect(self.request_scene)
-        self.btnReset.clicked.connect(self.reset_camera_position)
-
     def set_controller(self, controller):
         """
         Sets the connection to the controller
@@ -58,6 +52,9 @@ class ViewRenderScene(QWidget):
         :return:
         """
         self._controller = controller
+        self.btnSceneOptions.clicked.connect(controller.display_view_render_scene_options)
+        self.btnLoadScene.clicked.connect(controller.stream.request_scene_data)
+        self.btnReset.clicked.connect(controller.scene.reset_camera_position)
 
     def init_scene_renderer(self, scene_renderer):
         """
@@ -91,33 +88,6 @@ class ViewRenderScene(QWidget):
         :param is_loaded: boolean
         """
         self._scene_loaded = is_loaded
-
-    @Slot(bool, name='open_view_render_scene_options')
-    def open_view_render_scene_options(self, clicked):
-        """
-        Opens the view render options
-        :param clicked: boolean
-        :return: boolean
-        """
-        self._controller.display_view_render_scene_options(clicked)
-
-    @Slot(bool, name='request_scene')
-    def request_scene(self, clicked):
-        """
-        Informs the controller to request the 3D scene data from the server
-        :param clicked: boolean
-        :return:
-        """
-        self._controller.stream.request_scene_data()
-
-    @Slot(bool, name='reset_camera_position')
-    def reset_camera_position(self, clicked):
-        """
-        Informs the renderer to reset the scenes camera view
-        :param clicked: boolean
-        :return:
-        """
-        self._controller.scene.reset_camera_position(clicked)
 
     def enable_view(self, enabled, mode=ViewMode.CONNECTED):
         """
@@ -186,31 +156,6 @@ class ViewRenderScene(QWidget):
         :return:
         """
         self._scene_renderer.clear_traced_paths()
-
-    def send_update_path(self, indices, add_item):
-        """
-        Informs the controller to visualize or add the path depending on add_item value
-        :param indices: numpy array containing path indices
-        :param add_item: boolean
-        :return:
-        """
-        self._controller.update_path(indices, add_item)
-
-    def send_select_path(self, index):
-        """
-        Informs the controller to select the path with index: index
-        :param index: integer
-        :return:
-        """
-        self._controller.select_path(index)
-
-    def send_select_vertex(self, tpl):
-        """
-        Informs the controller to select the vertex with tuple tpl
-        :param tpl: tuple(path_index, vertex_index)
-        :return:
-        """
-        self._controller.select_vertex(tpl)
 
     def update_path_indices(self, indices):
         """

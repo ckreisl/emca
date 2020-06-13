@@ -53,17 +53,9 @@ class Detector(object):
         # default outlier settings
         self._m = 2
 
-        # path outlier key list
-        self._path_outlier_key_list = np.array([], dtype=np.int32)
-
-        # list of outliers as tupel (path_key, vertex_key)
-        self._outlier_tpls_list = []
-
+    @property
     def is_default_active(self):
         return self._default
-
-    def set_default_active(self, enable):
-        self._default = enable
 
     @property
     def is_active(self):
@@ -123,49 +115,6 @@ class Detector(object):
         self._default = is_default
         self._active = is_active
 
-    @property
-    def path_outlier_key_list(self):
-        return self._path_outlier_key_list
-
-    @property
-    def outliers_tpls_list(self):
-        return self._outlier_tpls_list
-
-    def soft_detection(self, path_key_list, render_data):
-        """
-        Soft detection, finds the first path vertex where the contribution gets high
-        (CURRENTLY NOT USED)
-        :param path_key_list:
-        :param render_data:
-        :return:
-        """
-        # test just first index
-
-        if not len(path_key_list) > 0:
-            return []
-
-        outliers_tpl_list = []
-        for path_idx in path_key_list:
-            # get path
-            path_data = render_data.dict_paths.get(path_idx, None)
-            verts_dict = path_data.dict_vertices
-
-            # soft detection find index with largest gradient to previous value
-            detection_vert_key = -1
-            diff_prev = 0
-            for key, vert in verts_dict.items():
-                v_prev = verts_dict.get(key-1, None)
-                if v_prev:
-                    if v_prev.is_li_set and vert.is_li_set:
-                        diff = abs(v_prev.li.mean - vert.li.mean)
-                        if diff > diff_prev:
-                            diff_prev = diff
-                            detection_vert_key = key
-
-            outliers_tpl_list.append((path_idx, detection_vert_key))
-
-        return outliers_tpl_list
-
     def run_outlier_detection(self, data):
         """
         Runs the outlier detection on the given data set
@@ -173,13 +122,13 @@ class Detector(object):
         :return:
         """
         if not self._active:
-            return np.array([], dtype=np.int32)
-
-        if self._default:
-            self._path_outlier_key_list = self.default_outlier_detection(data)
+            path_outliers = np.array([], dtype=np.int32)
+        elif self._default:
+            path_outliers = self.default_outlier_detection(data)
         else:
-            self._path_outlier_key_list = self.esd_outlier_detection(data)
-        logging.info("Outliers keys={}".format(self._path_outlier_key_list))
+            path_outliers = self.esd_outlier_detection(data)
+        logging.info("Outliers keys={}".format(path_outliers))
+        return path_outliers
 
     def default_outlier_detection(self, data):
         """

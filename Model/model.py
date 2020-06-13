@@ -32,6 +32,8 @@ from Model.contribution_data import SampleContributionData
 from PySide2.QtCore import Signal
 from PySide2.QtCore import QObject
 from Core.messages import StateMsg
+from Filter.filter import Filter
+from Detector.detector import Detector
 import numpy as np
 import time
 import logging
@@ -59,6 +61,10 @@ class Model(QObject):
         self._render_data = RenderData()
         self._final_estimate_data = SampleContributionData()
 
+        # Model also holds refs to filter and detector
+        self._filter = Filter()
+        self._detector = Detector()
+
         # model keeps track of current selected path indices
         self._current_path_indices = np.array([], dtype=np.int32)
         self._current_path_index = -1
@@ -80,6 +86,14 @@ class Model(QObject):
         """
         self._controller = controller
         self._plugins_handler.set_controller(controller)
+
+    @property
+    def filter(self):
+        return self._filter
+
+    @property
+    def detector(self):
+        return self._detector
 
     @property
     def current_path_indices(self):

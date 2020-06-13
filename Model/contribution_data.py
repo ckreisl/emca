@@ -91,7 +91,7 @@ class SampleContributionData(object):
         Returns true if a set of data is loaded
         :return: boolean
         """
-        self._data_loaded
+        return self._data_loaded
 
     @property
     def plot_data_x(self):
@@ -146,7 +146,6 @@ class SampleContributionData(object):
         Clears all data sets
         :return:
         """
-        self._data_loaded = False
         self._x_list = None
         self._y_list = None
         self._mean = None

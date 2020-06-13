@@ -46,19 +46,19 @@ class Controller(QObject):
         self._model = model
         self._view = view
 
-        # set connection between views and controller
-        self._view.set_controller(self)
-
-        # set connection between model and controller
-        self._model.set_controller(self)
-        self._model.set_callback(self.handle_state_msg)
-
         # init sub controllers
         self._controller_detector = ControllerDetector(self, model, view)
         self._controller_filter = ControllerFilter(self, model, view)
         self._controller_stream = ControllerSocketStream(self, model, view)
         self._controller_scene = ControllerRenderScene(self, model, view)
         self._controller_options = ControllerOptions(self, model, view)
+
+        # set connection between views and controller
+        self._view.set_controller(self)
+
+        # set connection between model and controller
+        self._model.set_controller(self)
+        self._model.set_callback(self.handle_state_msg)
 
         self.init_plugins()
 
@@ -143,9 +143,19 @@ class Controller(QObject):
         self._controller_filter.handle_state_msg(tpl)
         self._controller_detector.handle_state_msg(tpl)
 
+    @Slot(bool, name='display_view_render_scene_options')
+    def display_view_render_scene_options(self, clicked):
+        if self._view.view_render_scene_options.isVisible():
+            self._view.view_render_scene_options.activateWindow()
+        else:
+            self._view.view_render_scene_options.show()
+
+    @Slot(bool, name='show_all_traced_paths')
     def show_all_traced_paths(self, enabled):
         """
-        Called from view render data
+        Informs the renderer to show all traced paths
+        :param enabled:
+        :return:
         """
         indices = np.array([])
         if enabled:
@@ -259,12 +269,6 @@ class Controller(QObject):
         self._model.plugins_handler.select_vertex(tpl)
         # save current tpl (path_index, vertex_index)
         self._model.current_vertex_tpl = tpl
-
-    def display_view_render_scene_options(self, clicked):
-        if self._view.view_render_scene_options.isVisible():
-            self._view.view_render_scene_options.activateWindow()
-        else:
-            self._view.view_render_scene_options.show()
 
     def display_view(self):
         """

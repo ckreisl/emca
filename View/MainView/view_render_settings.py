@@ -30,7 +30,7 @@ from PySide2.QtCore import Qt
 import os
 
 
-class ViewRenderInfo(QWidget):
+class ViewRenderSettings(QWidget):
 
     """
         ViewRenderInfo

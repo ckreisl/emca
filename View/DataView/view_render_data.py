@@ -57,14 +57,20 @@ class ViewRenderData(QWidget):
         self.tree.setSelectionMode(QAbstractItemView.SingleSelection)
 
         # connect buttons
-        self.btnShowAll.clicked.connect(self.show_all_traced_paths)
         self.btnInspect.clicked.connect(self.inspect_selected_paths)
         self.cbExpand.toggled.connect(self.expand_items)
 
         self._shift_is_pressed = False
         self._selected_indices = np.array([], dtype=np.int32)
 
-        self._handling_selection_signal = False
+    def set_controller(self, controller):
+        """
+        Sets the connection to the controller
+        :param controller: Controller
+        :return:
+        """
+        self._controller = controller
+        self.btnShowAll.clicked.connect(controller.show_all_traced_paths)
 
     def enable_view(self, enabled):
         self.btnShowAll.setEnabled(enabled)
@@ -89,8 +95,7 @@ class ViewRenderData(QWidget):
         self.tree.clear()
         for i in indices:
             self.add_path_data_node(render_data.dict_paths[i])
-        if self.cbExpand.isChecked():
-            self.expand_items(True)
+        self.expand_items(self.cbExpand.isChecked())
 
     @Slot(QTreeWidgetItem, QTreeWidgetItem, name='select_tree_item')
     def select_tree_item(self, item, previous):
@@ -99,9 +104,6 @@ class ViewRenderData(QWidget):
         :param item: QTreeWidgetItem
         :return:
         """
-
-        self._handling_selection_signal = True
-
         # select path or vertex of parent nodes
         while isinstance(item, QTreeWidgetItem):
             if isinstance(item, PathNodeItem) or isinstance(item, VertexNodeItem):
@@ -122,18 +124,6 @@ class ViewRenderData(QWidget):
                 self._controller.select_vertex((item.index, 1))
         elif isinstance(item, VertexNodeItem):
             self._controller.select_vertex(item.index_tpl())
-
-        self._handling_selection_signal = True
-
-    @Slot(bool, name='show_all_traced_paths')
-    def show_all_traced_paths(self, clicked):
-        """
-        Handles the button input of show all data,
-        shows all paths traced through the selected pixel.
-        :param clicked: boolean
-        :return:
-        """
-        self._controller.show_all_traced_paths(True)
 
     @Slot(bool, name='inspect_selected_paths')
     def inspect_selected_paths(self, clicked):
@@ -184,14 +174,6 @@ class ViewRenderData(QWidget):
         if key_event.key() == Qt.Key_Shift:
             self._shift_is_pressed = False
             self.tree.setSelectionMode(QAbstractItemView.SingleSelection)
-
-    def set_controller(self, controller):
-        """
-        Sets the connection to the controller
-        :param controller: Controller
-        :return:
-        """
-        self._controller = controller
 
     def select_path(self, index):
         """
@@ -275,11 +257,10 @@ class ViewRenderData(QWidget):
         """
         path_vertex = VertexNodeItem(parent.index, vert.depth_idx)
         path_vertex.setText(0, "Vertex ({})".format(vert.depth_idx))
-        #self.add_child_item_node(path_vertex, "Index", str(vert.depth_idx))
         self.add_child_item_node(path_vertex, "Position", str(vert.pos))
-        if not vert.pos_ne is None:
+        if vert.pos_ne is not None:
             self.add_child_item_node(path_vertex, "Pos. NEE", str(vert.pos_ne))
-        if not vert.pos_envmap is None:
+        if vert.pos_envmap is not None:
             self.add_child_item_node(path_vertex, "Pos. Envmap", str(vert.pos_envmap))
         self.add_child_item_node(path_vertex, "Estimate", str(vert.li))
         self.add_user_data_to_node(path_vertex, vert)

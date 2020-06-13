@@ -23,7 +23,6 @@
 """
 
 from Core.pyside2_uic import loadUi
-from Filter.filter_settings import FilterSettings
 from Filter.filter_list_item import FilterListItem
 from PySide2.QtCore import Slot
 from PySide2.QtWidgets import QWidget
@@ -39,7 +38,7 @@ import os
 import logging
 
 
-class ViewFilter(QWidget):
+class ViewFilterSettings(QWidget):
 
     """
         ViewFilter
@@ -62,10 +61,6 @@ class ViewFilter(QWidget):
 
         self.combItems.currentTextChanged.connect(self.update_stacked_widget)
         self.btnClose.clicked.connect(self.close)
-        self.btnAddFilter.clicked.connect(self.add_filter)
-        self.btnApplyFilter.clicked.connect(self.apply_filters)
-        self.btnDeleteFilter.clicked.connect(self.delete_filter)
-        self.btnClearAll.clicked.connect(self.clear_filter)
 
         self.cbPoint2.stateChanged.connect(self.state_changed)
         self.cbPoint3.stateChanged.connect(self.state_changed)
@@ -89,6 +84,10 @@ class ViewFilter(QWidget):
         :return:
         """
         self._controller = controller
+        self.btnClearAll.clicked.connect(controller.filter.clear_filter)
+        self.btnApplyFilter.clicked.connect(controller.filter.apply_filters)
+        self.btnDeleteFilter.clicked.connect(controller.filter.delete_filter)
+        self.btnAddFilter.clicked.connect(controller.filter.add_filter)
 
     def prepare_new_data(self):
         """
@@ -99,13 +98,11 @@ class ViewFilter(QWidget):
         self.combItems.clear()
 
     def init_data(self, render_data):
-
         """
         Initialise the view
         :param render_data:
         :return:
         """
-
         # iterate through all paths and their vertices
         for key, path in render_data.dict_paths.items():
 
@@ -169,7 +166,7 @@ class ViewFilter(QWidget):
         :return:
         """
         if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
-            self.add_filter(True)
+            self._controller.filter.add_filter(True)
 
     @Slot(str, name='update_stacked_widget')
     def update_stacked_widget(self, text):
@@ -270,27 +267,6 @@ class ViewFilter(QWidget):
             self.leExpR.blockSignals(False)
             self.leExpG.blockSignals(False)
 
-    @Slot(bool, name='clear_filter')
-    def clear_filter(self, clicked):
-        """
-        Informs the controller to clear all filters
-        :param clicked: boolean
-        :return:
-        """
-        self._controller.filter.clear_filter()
-
-    @Slot(bool, name='delete_filter')
-    def delete_filter(self, clicked):
-        """
-        Deletes a filter from the view and informs the controller to delete the filter
-        :param clicked: boolean
-        :return:
-        """
-        if self.filterList.count() > 0:
-            item = self.filterList.currentItem()
-            if item:
-                self._controller.filter.delete_filter(item)
-
     @Slot(int, name='state_changed')
     def state_changed(self, state):
         if state != Qt.Checked:
@@ -304,28 +280,6 @@ class ViewFilter(QWidget):
         elif idx == 3:
             self.leExpG.setText(self.leExpR.text())
             self.leExpB.setText(self.leExpR.text())
-
-    @Slot(bool, name='add_filter')
-    def add_filter(self, clicked):
-        """
-        Informs the controller to add a filter to the filter list view
-        :param clicked: boolean
-        :return:
-        """
-        idx = self.stackedWidget.currentIndex()
-        if not self.is_line_edit_empty(idx):
-            fs = FilterSettings(self)
-            self._controller.filter.add_filter(fs)
-
-    @Slot(bool, name='apply_filters')
-    def apply_filters(self, clicked):
-        """
-        Informs the controller to apply the filter
-        :param clicked: boolean
-        :return:
-        """
-        if self.filterList.count() > 0:
-            self._controller.filter.apply_filters()
 
     def add_filter_to_view(self, filter_settings):
         """

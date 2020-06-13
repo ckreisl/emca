@@ -73,7 +73,7 @@ class ViewDetectorSettings(QWidget):
         self.dsb_alpha.setValue(detector.alpha)
         self.dsb_k.setValue(detector.k)
         self.dsb_pre_filter.setValue(detector.pre_filter)
-        self.cb_default.setChecked(detector.is_default_active())
+        self.cb_default.setChecked(detector.is_default_active)
 
     @Slot(bool, name='toggle_esd')
     def toggle_esd(self, clicked):
@@ -112,8 +112,7 @@ class ViewDetectorSettings(QWidget):
             self.dsb_k.value(),
             self.dsb_pre_filter.value(),
             self.cb_default.isChecked(),
-            self.cb_is_active.isChecked()
-        )
+            self.cb_is_active.isChecked())
 
     @Slot(bool, name='apply_close')
     def apply_close(self, clicked):

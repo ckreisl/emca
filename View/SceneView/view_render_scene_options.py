@@ -23,56 +23,13 @@
 """
 
 from Core.pyside2_uic import loadUi
+from Core.list_items import PathListItem
+from Core.list_items import VertexListItem
 from PySide2.QtCore import Slot
 from PySide2.QtWidgets import QListWidgetItem
 from PySide2.QtWidgets import QWidget
 from PySide2.QtWidgets import QApplication
-import numpy as np
 import logging
-
-
-class PathListItem(QListWidgetItem):
-
-    def __init__(self, path_index):
-        super().__init__()
-        self._path_index = path_index
-        self.setText("Path ({})".format(path_index))
-
-    @property
-    def path_index(self):
-        return self._path_index
-
-
-class VertexListItem(QListWidgetItem):
-
-    def __init__(self, tpl):
-        super().__init__()
-        self._tpl = tpl
-        self.setText("Vertex ({})".format(tpl[1]))
-
-    @property
-    def path_index(self):
-        """
-        Returns the index of the parent, representing the path index
-        :return: integer
-        """
-        return self._tpl[0]
-
-    @property
-    def vertex_index(self):
-        """
-        Returns the vertex index
-        :return: integer
-        """
-        return self._tpl[1]
-
-    @property
-    def index_tpl(self):
-        """
-        Returns a tuple containing path and vertex index
-        :return: tuple(path_index, vertex_index)
-        """
-        return self._tpl
 
 
 class ViewRenderSceneOptions(QWidget):
@@ -97,48 +54,47 @@ class ViewRenderSceneOptions(QWidget):
         # handle close btn
         self.pbClose.clicked.connect(self.close)
 
-        # handle general settings
-        self.cbShowAllNEEs.toggled.connect(self.show_all_traced_nees)
-        self.cbShowAllPaths.toggled.connect(self.show_all_traced_paths)
-        self.cbShowAllVerts.toggled.connect(self.show_all_traced_verts)
-
-        # handle camera settings
-        self.sliderCameraSpeed.valueChanged.connect(self.update_camera_motion_speed)
-        self.cbCameraClipping.toggled.connect(self.update_camera_clipping)
-        self.pbResetCamera.clicked.connect(self.reset_camera_motion_speed)
-
-        # handle scene settings
-        self.sliderMeshOpacity.valueChanged.connect(self.update_mesh_opacity)
-        self.sliderSceneOpacity.valueChanged.connect(self.update_scene_opacity)
-        self.pbResetMesh.clicked.connect(self.reset_mesh)
-        self.pbResetScene.clicked.connect(self.reset_scene)
-
-        # handle path settings
-        self.sliderPathOpacity.valueChanged.connect(self.update_path_opacity)
-        self.sliderPathSize.valueChanged.connect(self.update_path_size)
-        self.pbResetPath.clicked.connect(self.reset_path)
-        self.cbShowPathRays.toggled.connect(self.show_traced_path)
-        self.cbShowNEERays.toggled.connect(self.show_traced_path_nee)
-        self.cbShowAllOtherPaths.toggled.connect(self.show_all_other_traced_paths)
-
-        # handle vertex settings
-        self.sliderVertexOpacity.valueChanged.connect(self.update_vertex_opacity)
-        self.sliderVertexSize.valueChanged.connect(self.update_vertex_size)
-        self.pbResetVertex.clicked.connect(self.reset_vertex)
-        self.cbShowOmegaI.toggled.connect(self.show_vertex_omega_i)
-        self.cbShowOmegaO.toggled.connect(self.show_vertex_omega_o)
-        self.cbShowNEE.toggled.connect(self.show_vertex_nee)
-        self.cbShowAllOtherVertices.toggled.connect(self.show_all_other_traced_vertices)
-
         # add connections to controller
         self.listPaths.itemClicked.connect(self.send_select_path)
         self.listVertices.itemClicked.connect(self.send_select_vertex)
 
-        self.pbResetAll.clicked.connect(self.reset_all_paths_vertices)
-        self.pbInspectSelectedPath.clicked.connect(self.inspect_selected_path)
-
     def set_controller(self, controller):
         self._controller = controller
+        # handle general settings
+        self.cbShowAllNEEs.toggled.connect(controller.scene.show_all_traced_nees)
+        self.cbShowAllVerts.toggled.connect(controller.scene.show_all_traced_vertices)
+        self.cbShowAllPaths.toggled.connect(controller.show_all_traced_paths)
+
+        # handle camera settings
+        self.sliderCameraSpeed.valueChanged.connect(controller.scene.update_camera_motion_speed)
+        self.cbCameraClipping.toggled.connect(controller.scene.update_camera_clipping)
+        self.pbResetCamera.clicked.connect(controller.scene.reset_camera_motion_speed)
+
+        # handle scene settings
+        self.sliderMeshOpacity.valueChanged.connect(controller.scene.update_mesh_opacity)
+        self.sliderSceneOpacity.valueChanged.connect(controller.scene.update_scene_opacity)
+        self.pbResetMesh.clicked.connect(controller.scene.reset_mesh)
+        self.pbResetScene.clicked.connect(controller.scene.reset_scene)
+
+        # handle path settings
+        self.sliderPathOpacity.valueChanged.connect(controller.scene.update_path_opacity)
+        self.sliderPathSize.valueChanged.connect(controller.scene.update_path_size)
+        self.pbResetPath.clicked.connect(controller.scene.reset_path)
+        self.cbShowPathRays.toggled.connect(controller.scene.show_traced_path)
+        self.cbShowNEERays.toggled.connect(controller.scene.show_traced_path_nee)
+        self.cbShowAllOtherPaths.toggled.connect(controller.scene.show_all_other_traced_paths)
+
+        # handle vertex settings
+        self.sliderVertexOpacity.valueChanged.connect(controller.scene.update_vertex_opacity)
+        self.sliderVertexSize.valueChanged.connect(controller.scene.update_vertex_size)
+        self.pbResetVertex.clicked.connect(controller.scene.reset_vertex)
+        self.cbShowOmegaI.toggled.connect(controller.scene.show_vertex_omega_i)
+        self.cbShowOmegaO.toggled.connect(controller.scene.show_vertex_omega_o)
+        self.cbShowNEE.toggled.connect(controller.scene.show_vertex_nee)
+        self.cbShowAllOtherVertices.toggled.connect(controller.scene.show_all_other_traced_vertices)
+
+        self.pbInspectSelectedPath.clicked.connect(controller.scene.inspect_selected_path)
+        self.pbResetAll.clicked.connect(controller.scene.reset_all_paths_vertices)
 
     @Slot(QListWidgetItem, name='send_select_path')
     def send_select_path(self, item):
@@ -372,222 +328,3 @@ class ViewRenderSceneOptions(QWidget):
         self.sliderVertexSize.blockSignals(True)
         self.sliderVertexSize.setValue(size)
         self.sliderVertexSize.blockSignals(False)
-
-    @Slot(bool, name='show_all_traced_nees')
-    def show_all_traced_nees(self, state):
-        """
-        Informs the renderer to show all next event estimations
-        :param state:
-        :return:
-        """
-        self._controller.scene.show_all_traced_nees(state)
-
-    @Slot(bool, name='show_all_traced_paths')
-    def show_all_traced_paths(self, state):
-        """
-        Informs the renderer to show all traced paths
-        :param state:
-        :return:
-        """
-        self._controller.show_all_traced_paths(state)
-
-    @Slot(bool, name='show_all_traced_verts')
-    def show_all_traced_verts(self, state):
-        """
-        Informs the renderer to show all vertices
-        :param state:
-        :return:
-        """
-        self._controller.scene.show_all_traced_vertices(state)
-
-    @Slot(int, name='update_camera_motion_speed')
-    def update_camera_motion_speed(self, speed):
-        """
-        Informs the renderer to update the camera motion speed
-        :param speed: float
-        :return:
-        """
-        self._controller.scene.update_camera_motion_speed(speed)
-
-    @Slot(bool, name='update_camera_clipping')
-    def update_camera_clipping(self, state):
-        """
-        Informs the renderer to update camera clipping
-        :param state: boolean
-        :return:
-        """
-        self._controller.scene.update_camera_clipping(state)
-
-    @Slot(bool, name='reset_camera_motion_speed')
-    def reset_camera_motion_speed(self, clicked):
-        """
-        Inform the renderer to reset the camera settings
-        :param clicked: boolean
-        :return:
-        """
-        self._controller.scene.reset_camera_motion_speed(clicked)
-
-    @Slot(int, name='updateMeshOpacity')
-    def update_mesh_opacity(self, opacity):
-        """
-        Informs the renderer about opacity update of the current selected mesh object
-        :param opacity: float
-        :return:
-        """
-        self._controller.scene.update_mesh_opacity(opacity)
-
-    @Slot(int, name='update_scene_opacity')
-    def update_scene_opacity(self, opacity):
-        """
-        Informs the renderer to update the scene opacity
-        :param opacity: float[0,1]
-        :return:
-        """
-        self._controller.scene.update_scene_opacity(opacity)
-
-    @Slot(bool, name='reset_mesh')
-    def reset_mesh(self, clicked):
-        """
-        Informs the renderer to reset the current selected mesh object
-        :param clicked: boolean
-        """
-        self._controller.scene.reset_mesh(clicked)
-
-    @Slot(bool, name='reset_scene')
-    def reset_scene(self, clicked):
-        """
-        Informs the renderer to reset the scenes opacity
-        :param clicked: boolean
-        :return:
-        """
-        self._controller.scene.reset_scene(clicked)
-
-    @Slot(int, name='update_path_opacity')
-    def update_path_opacity(self, opacity):
-        """
-        Informs the renderer to update the path opacity
-        :param opacity: float[0,1]
-        :return:
-        """
-        self._controller.scene.update_path_opacity(opacity)
-
-    @Slot(int, name='update_path_size')
-    def update_path_size(self, size):
-        """
-        Informs the renderer to update the path size
-        :param size: float[0,1]
-        :return:
-        """
-        self._controller.scene.update_path_size(size)
-
-    @Slot(bool, name='reset_path')
-    def reset_path(self, clicked):
-        """
-        Informs the renderer to reset the paths size and opacity
-        :param clicked: boolean
-        :return:
-        """
-        self._controller.scene.reset_path(clicked)
-
-    @Slot(bool, name='show_traced_path')
-    def show_traced_path(self, state):
-        """
-        Informs the renderer to show all traced paths
-        :param state: boolean
-        :return:
-        """
-        self._controller.scene.show_traced_path(state)
-
-    @Slot(bool, name='show_traced_path_nee')
-    def show_traced_path_nee(self, state):
-        """
-        Informs the renderer to show paths next event estimations
-        :param state: boolean
-        :return:
-        """
-        self._controller.scene.show_traced_path_nee(state)
-
-    @Slot(bool, name='show_all_other_traced_paths')
-    def show_all_other_traced_paths(self, state):
-        """
-        Informs the renderer to show all other traced paths besides the current selected one
-        :param state: boolean
-        :return:
-        """
-        self._controller.scene.show_all_other_traced_paths(state)
-
-    @Slot(int, name='update_vertex_opacity')
-    def update_vertex_opacity(self, opacity):
-        """
-        Informs the renderer to update the vertex opacity of the current selected vertex
-        :param opacity: float[0,1]
-        :return:
-        """
-        self._controller.scene.update_vertex_opacity(opacity)
-
-    @Slot(int, name='update_vertex_size')
-    def update_vertex_size(self, size):
-        """
-        Informs the renderer to update the vertex size of the current selected vertex
-        :param size: float[0,1]
-        :return:
-        """
-        self._controller.scene.update_vertex_size(size)
-
-    @Slot(bool, name='reset_vertex')
-    def reset_vertex(self, clicked):
-        """
-        Informs the renderer to reset the vertex opacity and size
-        :param clicked: boolean
-        :return:
-        """
-        self._controller.scene.reset_vertex(clicked)
-
-    @Slot(bool, name='show_vertex_omega_i')
-    def show_vertex_omega_i(self, state):
-        """
-        Informs the renderer to visualize the incoming ray of the current selected vertex,
-        depending on state
-        :param state: boolean
-        :return:
-        """
-        self._controller.scene.show_vertex_omega_i(state)
-
-    @Slot(bool, name='show_vertex_omega_o')
-    def show_vertex_omega_o(self, state):
-        """
-        Informs the renderer to visualize the outgoing ray of the current selected vertex,
-        depending on state
-        :param state: boolean
-        :return:
-        """
-        self._controller.scene.show_vertex_omega_o(state)
-
-    @Slot(bool, name='show_vertex_nee')
-    def show_vertex_nee(self, state):
-        """
-        Informs the renderer to visualize the next event estimation of the current selected vertex,
-        depending on state
-        :param state: boolean
-        :return:
-        """
-        self._controller.scene.show_vertex_nee(state)
-
-    @Slot(bool, name='show_all_other_traced_vertices')
-    def show_all_other_traced_vertices(self, state):
-        """
-        Informs the renderer to visualize all other vertices besides the current visible ones,
-        depending on state
-        :param state: boolean
-        :return:
-        """
-        self._controller.scene.show_all_other_traced_vertices(state)
-
-    @Slot(bool, name='reset_all_paths_vertices')
-    def reset_all_paths_vertices(self, clicked):
-        """
-        Informs the renderer to reset all path vertices
-        :param clicked: boolean
-        :return:
-        """
-        self._controller.scene.reset_all_paths_vertices(clicked)

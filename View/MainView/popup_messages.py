@@ -158,8 +158,23 @@ class PopupMessages(QObject):
         self._msgBox.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         return self._msgBox.exec_()
 
+    def error_outlier_detector_no_outliers_detected(self, msg):
+        self._msgBox.setIcon(QMessageBox.Warning)
+        self._msgBox.setWindowTitle("No Outliers Detected")
+        self._msgBox.setText("No outliers detected. Try to adapt your outlier detector settings.")
+        self._msgBox.setInformativeText("Outlier algorithm could not find any outliers in given data")
+        self._msgBox.setDetailedText(msg)
+        self._msgBox.setStandardButtons(QMessageBox.Ok)
+        self._msgBox.exec_()
 
-
+    def error_detector_not_enabled(self, msg):
+        self._msgBox.setIcon(QMessageBox.Information)
+        self._msgBox.setWindowTitle("Error Outlier Detector is not enabled yet")
+        self._msgBox.setText("Checkbox for Outlier Detection is not checked.")
+        self._msgBox.setInformativeText("Select and enable the checkbox for outlier detections.")
+        self._msgBox.setDetailedText(msg)
+        self._msgBox.setStandardButtons(QMessageBox.Ok)
+        self._msgBox.exec_()
 
 
 
