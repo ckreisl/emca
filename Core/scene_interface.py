@@ -350,3 +350,53 @@ class SceneInterface(object):
         Resets the opacity and size of all paths and its intersections
         :return:
         """
+
+    # BASIC SHAPES
+
+    @abc.abstractmethod
+    def draw_triangle(self, p1, p2, p3):
+        """
+        Draws a triangle in the 3d scene.
+        Users has to take care of object
+        :param p1: Point3f
+        :param p2: Point3f
+        :param p3: Point3f
+        :return: SceneObject
+        """
+
+    @abc.abstractmethod
+    def draw_sphere(self, center, radius):
+        """
+        Draws a triangle in the 3d scene.
+        Users has to take care of object
+        :param center: Point3f
+        :param radius: float
+        :return: SceneObject
+        """
+
+    @abc.abstractmethod
+    def draw_line(self, p1, p2):
+        """
+        Draws a triangle in the 3d scene.
+        Users has to take care of object
+        :param p1: Point3f
+        :param p2: Point3f
+        :return: SceneObject
+        """
+
+    @abc.abstractmethod
+    def draw_point(self, p1):
+        """
+        Draws a triangle in the 3d scene.
+        Users has to take care of object
+        :param p1: Point3f
+        :return: SceneObject
+        """
+
+    @abc.abstractmethod
+    def remove_object(self, obj):
+        """
+        Removed the object from the scene renderer
+        :param obj: SceneObject
+        :return: boolean
+        """

@@ -57,7 +57,6 @@ class ViewRenderImage(QWidget):
         self.layoutView.addWidget(self._graphics_view)
 
         # connect signals
-        self.btnLoadImage.clicked.connect(self.load_image_dialog)
         self.btnReset.clicked.connect(self.reset)
         self.hsExposure.valueChanged.connect(self.set_spin_value)
         self.dsbExposure.valueChanged.connect(self.set_slider_value)
@@ -116,6 +115,7 @@ class ViewRenderImage(QWidget):
         :return:
         """
         self._controller = controller
+        self.btnLoadImage.clicked.connect(controller.options.load_image_dialog)
 
     def enable_view(self, enable):
         """
@@ -158,12 +158,3 @@ class ViewRenderImage(QWidget):
         """
         self._graphics_view.reset()
         self.hsExposure.setValue(0)
-
-    @Slot(bool, name='load_image_dialog')
-    def load_image_dialog(self, clicked):
-        """
-        Informs the controller to open a dialog to load an image from a given filepath
-        :param clicked: boolean
-        :return:
-        """
-        self._controller.options.load_image_dialog(clicked)

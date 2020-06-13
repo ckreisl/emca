@@ -50,9 +50,9 @@ class VertexDataPlot2D(ScatterPlot2DBase):
     def select_vertex(self, tpl):
         try:
             line_ax1 = self.axes.lines[0]
-        except IndexError as e:
-            logging.error("No data available: {}".format(e))
-            return None
+        except IndexError:
+            return
+
         x_data_ax1 = line_ax1.get_xdata()
         y_data_ax1 = line_ax1.get_ydata()
 

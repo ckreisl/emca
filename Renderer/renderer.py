@@ -28,6 +28,7 @@ from Renderer.path_vertex import PathVertex
 from Renderer.line import Line
 from Renderer.sphere import Sphere
 from Renderer.triangle import Triangle
+from Renderer.vertex import Vertex
 from PySide2.QtWidgets import QFrame
 import vtk
 import logging
@@ -153,4 +154,21 @@ class Renderer(vtk.vtkRenderer):
         :param pos: Point3f
         :return: vtkActor
         """
-        pass
+        obj = Vertex(pos)
+        self.AddActor(obj)
+        self._vtkWidget.update()
+        return obj
+
+    def remove_object(self, obj):
+        """
+        Removed a vtkActor from the vtkRenderer
+        :param obj: vtkActor
+        :return: boolean
+        """
+        try:
+            self.RemoveActor(obj)
+        except Exception as e:
+            logging.error(str(e))
+            return False
+        self._vtkWidget.update()
+        return True

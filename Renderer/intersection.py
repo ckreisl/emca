@@ -421,34 +421,6 @@ class Intersection(object):
         self._size = self.default_size
         self.set_vertex_size(self.default_size)
 
-    def reset(self):
-        """
-        Reset everything to its default values
-        :return:
-        """
-        self._opacity = self.default_opacity
-        self._size = self.default_size
-        self._its.reset_all()
-        self._is_wi_visible = True
-        self._is_wo_visible = False
-        """
-        if self._wo.is_envmap:
-            self._is_wo_visible = True
-        self._is_ne_visible = False
-        """
-
-    def reset_rays(self):
-        """
-        Reset all rays (incoming, outgoing, nee)
-        :return:
-        """
-        if self._wi:
-            self._wi.reset_all()
-        if self._wo:
-            self._wo.reset_all()
-        if self._ne:
-            self._ne.reset_all()
-
     def clear_ne(self, renderer):
         """
         Clear next event estimation ray
@@ -503,7 +475,6 @@ class Intersection(object):
         renderer.RemoveActor(self._wi)
         renderer.RemoveActor(self._wo)
         renderer.RemoveActor(self._ne)
-        #self.set_visibility(False, False, False)
 
     def clear_all(self, renderer):
         """
@@ -515,4 +486,3 @@ class Intersection(object):
         renderer.RemoveActor(self._wo)
         renderer.RemoveActor(self._ne)
         renderer.RemoveActor(self._its)
-        #self.set_visibility(False, False, False)

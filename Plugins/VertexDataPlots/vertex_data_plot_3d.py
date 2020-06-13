@@ -49,9 +49,8 @@ class VertexDataPlot3D(ScatterPlot3DBase):
     def select_vertex(self, tpl):
         try:
             line_ax1 = self.axes.lines[0]
-        except IndexError as e:
-            logging.error("No data available: {}".format(e))
-            return None
+        except IndexError:
+            return
 
         x_data, y_data, z_data = line_ax1.get_data_3d()
         idx = np.where(x_data == tpl[1])[0]

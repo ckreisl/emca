@@ -378,5 +378,17 @@ class SceneRenderer(SceneInterface):
             path.reset_vertex_size()
         self.widget.update()
 
+    def draw_triangle(self, p1, p2, p3):
+        return self._renderer.draw_triangle(p1, p2, p3)
 
+    def draw_sphere(self, center, radius):
+        return self._renderer.draw_sphere(center, radius)
 
+    def draw_line(self, p1, p2):
+        return self._renderer.draw_line(p1, p2)
+
+    def draw_point(self, p1):
+        return self._renderer.draw_point(p1)
+
+    def remove_object(self, obj):
+        return self._renderer.remove_object(obj)
