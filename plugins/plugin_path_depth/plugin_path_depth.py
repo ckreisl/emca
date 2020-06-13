@@ -32,7 +32,7 @@ class PathDepth(Plugin):
     def __init__(self):
         Plugin.__init__(
             self,
-            name='Path Depth',
+            name='PathDepth',
             flag=28)
 
         self.plot_path_depth = PlotPathDepth(self.send_update_path_indices_callback)

@@ -104,7 +104,7 @@ class ControllerRenderScene(object):
         :return:
         """
         max_value = self._view.view_render_scene_options.sliderMeshOpacity.maximum()
-        self._view.view_render_scene.apply_scene_option_settings({'scene_opacity': float(opacity / max_value)})
+        self._view.view_render_scene.scene_renderer.apply_scene_option_settings({'scene_opacity': float(opacity / max_value)})
 
     @Slot(bool, name='reset_scene')
     def reset_scene(self, clicked):

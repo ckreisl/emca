@@ -171,7 +171,7 @@
             <string>Toggle view between render image and 3D preview</string>
            </property>
            <property name="text">
-            <string>Scene View</string>
+            <string>Render Scene View</string>
            </property>
           </widget>
          </item>
@@ -195,7 +195,7 @@
             <string>Toggle view between plot and render data</string>
            </property>
            <property name="text">
-            <string>Data View</string>
+            <string>Render Data View</string>
            </property>
           </widget>
          </item>

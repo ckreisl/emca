@@ -180,11 +180,11 @@ class ViewEMCA(QWidget):
         idx = self._stacked_widget_left.currentIndex()
         if idx == 0:
             # change view to 2D
-            self.btn2D3DView.setText('Render View')
+            self.btn2D3DView.setText('Render Image View')
             self._stacked_widget_left.setCurrentIndex(1)
         elif idx == 1:
             # change view to 3D
-            self.btn2D3DView.setText('Scene View')
+            self.btn2D3DView.setText('Render Scene View')
             self._stacked_widget_left.setCurrentIndex(0)
 
     @Slot(bool, name='toggle_view_right')
@@ -201,7 +201,7 @@ class ViewEMCA(QWidget):
             self._stacked_widget_right.setCurrentIndex(1)
         elif idx == 1:
             # change view to histogram
-            self.btnHistRenderDataView.setText("Data View")
+            self.btnHistRenderDataView.setText("Render Data View")
             self._stacked_widget_right.setCurrentIndex(0)
 
     @property
