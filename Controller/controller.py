@@ -245,6 +245,9 @@ class Controller(QObject):
         self._model.plugins_handler.update_path_indices(self._indices)
         # update render data view
         self._view.view_render_data.show_path_data(self._indices, self._model.render_data)
+        # select path if only one item
+        if len(self._indices) == 1:
+            self.select_path(self._indices[0])
 
     def select_path(self, index):
         """

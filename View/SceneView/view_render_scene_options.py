@@ -27,6 +27,7 @@ from PySide2.QtCore import Slot
 from PySide2.QtWidgets import QListWidgetItem
 from PySide2.QtWidgets import QWidget
 from PySide2.QtWidgets import QApplication
+import numpy as np
 import logging
 
 
@@ -135,6 +136,7 @@ class ViewRenderSceneOptions(QWidget):
         self.listVertices.itemClicked.connect(self.send_select_vertex)
 
         self.pbResetAll.clicked.connect(self.reset_all_paths_vertices)
+        self.pbInspectSelectedPath.clicked.connect(self.inspect_selected_path)
 
     def set_controller(self, controller):
         self._controller = controller
@@ -156,6 +158,10 @@ class ViewRenderSceneOptions(QWidget):
         if isinstance(item, VertexListItem):
             self._controller.select_vertex(item.index_tpl)
 
+    @Slot(bool, name='inspect_selected_path')
+    def inspect_selected_path(self, clicked):
+        self._controller.scene.inspect_selected_path(clicked)
+        
     def update_path_indices(self, indices):
         self.listPaths.clear()
         self.listVertices.clear()
@@ -268,6 +274,7 @@ class ViewRenderSceneOptions(QWidget):
         self.pbResetPath.setEnabled(enabled)
         self.cbShowAllOtherPaths.setEnabled(enabled)
         self.pbResetAll.setEnabled(enabled)
+        self.pbInspectSelectedPath.setEnabled(enabled)
 
     def enable_vertex_settings(self, enabled):
         """

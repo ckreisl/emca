@@ -51,6 +51,11 @@ class Path(object):
         self.create_path(idx, origin, path_data)
 
     def init_default_opacity_and_size(self, objects):
+        """
+        Initialises the vtk 3d actor with its default size and opacity
+        :param objects: list
+        :return:
+        """
         for obj in objects:
             obj.default_opacity = self._default_opacity
             obj.opacity = self._opacity
@@ -59,7 +64,11 @@ class Path(object):
 
     def create_path(self, idx, origin, path_data):
         """
-        Initializes the path and sets inits each corresponding intersection point with its rays
+        Initializes the path and sets each corresponding intersection point with its rays
+        :param idx: sample_index/path_index integer
+        :param origin: Point3f
+        :param path_data: PathData
+        :return:
         """
 
         dict_vertices = path_data.dict_vertices
@@ -356,24 +365,3 @@ class Path(object):
         self._size = value
         for key, its in self._its_dict.items():
             its.set_path_size(value)
-
-    def reset_path(self):
-        """
-        Resets the path opacity and size (no vertices)
-        :return:
-        """
-        self._opacity = self.default_opacity
-        self._size = self.default_size
-        for key, its in self._its_dict.items():
-            its.reset_rays()
-
-    def reset(self):
-        """
-        Resets the whole path and its vertices
-        :return:
-        """
-        self._opacity = self.default_opacity
-        self._size = self.default_size
-        for key, its in self._its_dict.items():
-            its.reset()
-

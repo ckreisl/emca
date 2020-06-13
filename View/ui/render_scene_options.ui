@@ -425,6 +425,16 @@
           </spacer>
          </item>
          <item>
+          <widget class="QPushButton" name="pbInspectSelectedPath">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Inspect Selected Path</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="pbResetAll">
            <property name="enabled">
             <bool>false</bool>

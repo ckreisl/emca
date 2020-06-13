@@ -94,7 +94,7 @@ class SceneRenderer(SceneInterface):
     def update_path_indices(self, indices):
         current_indices = self._scene_traced_paths.path_indices
         # reset low opacity paths
-        if len(current_indices) > 1:
+        if len(current_indices) > 0:
             for key in current_indices:
                 self._scene_traced_paths.paths[key].reset_path_opacity()
         self.remove_traced_paths_by_indices(self._scene_traced_paths.path_indices)

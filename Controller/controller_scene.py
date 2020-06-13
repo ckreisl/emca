@@ -30,6 +30,10 @@ class ControllerRenderScene(object):
             # TODO check comment above
             self._view.view_render_scene.load_mesh(tpl[1])
 
+    def inspect_selected_path(self, clicked):
+        index = np.array([self._controller_main.path_index])
+        self._controller_main.update_path(index, False)
+
     def show_all_traced_vertices(self, enabled):
         self._view.view_render_scene.scene_renderer.show_all_traced_vertices(enabled)
 
