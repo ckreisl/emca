@@ -36,7 +36,7 @@ class ControllerDetector(object):
 
         self._detector.update_values(m, alpha, k, pre_filter, is_default, is_active)
         # run detector if sample contribution data is available
-        if self._model.li_plot_data:
+        if self._model.final_estimate_data.data_loaded:
             self.run_detector(self._detector)
 
     def run_detector(self, detector):
@@ -47,8 +47,8 @@ class ControllerDetector(object):
         :return:
         """
         if detector.is_active:
-            if self._model.li_plot_data:
-                data = self._model.li_plot_data.mean
+            if self._model.final_estimate_data.data_loaded:
+                data = self._model.final_estimate_data.mean
                 detector.run_outlier_detection(data=data)
                 self._controller_main.update_path(detector.path_outlier_key_list, False)
             else:

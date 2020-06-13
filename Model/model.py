@@ -28,7 +28,7 @@ from Model.render_info import RenderInfo
 from Model.camera_data import CameraData
 from Model.mesh_data import MeshData
 from Model.render_data import RenderData
-from Model.plot_data import FinalEstimate
+from Model.contribution_data import SampleContributionData
 from PySide2.QtCore import Signal
 from PySide2.QtCore import QObject
 from Core.messages import StateMsg
@@ -57,7 +57,7 @@ class Model(QObject):
         self._mesh_data = MeshData()
         self._render_data = RenderData()
 
-        self._li_plot_data = None
+        self._final_estimate_data = SampleContributionData()
         self._controller = None
 
     def set_callback(self, callback):
@@ -117,12 +117,12 @@ class Model(QObject):
         return self._render_data
 
     @property
-    def li_plot_data(self):
+    def final_estimate_data(self):
         """
         Returns the Final Estimate Plot Data
         :return:
         """
-        return self._li_plot_data
+        return self._final_estimate_data
 
     @property
     def options_data(self):
@@ -232,16 +232,9 @@ class Model(QObject):
         logging.info('deserialize render data in: {:.3}s'.format(time.time() - start))
         self.sendStateMsgSig.emit((StateMsg.DATA_RENDER, self._render_data))
 
-    def create_sample_contribution_data(self):
+    def load_sample_contribution_data(self, dict_paths):
         """
         Return the Final Estimate data and informs the controller about it
         :return:
         """
-        start = time.time()
-        try:
-            self._li_plot_data = FinalEstimate(self._render_data.dict_paths)
-        except Exception as e:
-            logging.error("Error generation sample contribution data: {}".format(e))
-            return False
-        logging.info('time to create scatter plot data runtime: {:.3}s'.format(time.time() - start))
-        return True
+        return self._final_estimate_data.load_final_estimate_from_data(dict_paths)

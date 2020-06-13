@@ -158,8 +158,8 @@ class Controller(QObject):
             self._view.enable_filter(True)
             self._view.view_render_data.enable_view(True)
             self._model.plugins_handler.init_data(tpl[1])
-            if self._model.create_sample_contribution_data():
-                self._view.view_plot.plot_final_estimate(self._model.li_plot_data)
+            if self._model.load_sample_contribution_data(self._model.render_data.dict_paths):
+                self._view.view_plot.plot_final_estimate(self._model.final_estimate_data)
         elif msg is StateMsg.DATA_NOT_VALID:
             logging.error("Data is not valid!")
             # todo handle
