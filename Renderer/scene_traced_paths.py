@@ -37,11 +37,9 @@ class SceneTracedPaths(object):
 
         self._paths = {}
         self._path_indices = np.array([], dtype=np.int32)
+        self._prev_path = None
+        self._prev_intersection = None
         self._is_path_selected = False
-        self._selected_path_index = -1
-        self._is_vertex_selected = False
-        self._selected_vertex_tpl = ()
-
         self._all_paths_visible = False
         self._all_nees_visible = False
         self._all_vertices_visible = False
@@ -52,30 +50,6 @@ class SceneTracedPaths(object):
         Returns all traced paths within the scene
         """
         return self._paths
-
-    @property
-    def current_path(self):
-        """
-        Returns the current selected path if there is one otherwise None
-        :return: Path or None
-        """
-        if self._selected_path_index < 0:
-            return None
-        else:
-            return self._paths[self._selected_path_index]
-
-    @property
-    def current_vertex(self):
-        """
-        Returns the current vertex / intersection object
-        :return: Intersection or None
-        """
-        if not self._selected_vertex_tpl:
-            return None
-        else:
-            path_index, vertex_index = self._selected_vertex_tpl
-            path = self._paths[path_index]
-            return path.its_dict[vertex_index]
 
     @property
     def path_indices(self):
@@ -94,18 +68,6 @@ class SceneTracedPaths(object):
     @property
     def is_path_selected(self):
         return self._is_path_selected
-
-    @property
-    def selected_path_index(self):
-        return self._selected_path_index
-
-    @property
-    def is_vertex_selected(self):
-        return self._is_vertex_selected
-
-    @property
-    def selected_vertex_tpl(self):
-        return self._selected_vertex_tpl
 
     @property
     def all_paths_visible(self):
@@ -131,27 +93,35 @@ class SceneTracedPaths(object):
     def all_vertices_visible(self, visible):
         self._all_vertices_visible = visible
 
+    def get_path(self, path_index):
+        return self._paths.get(path_index, None)
+
+    def get_intersection(self, vertex_tpl):
+        path = self.get_path(vertex_tpl[0])
+        return path.its_dict.get(vertex_tpl[1], None)
+
+    def get_path_and_intersection(self, tpl):
+        path = self._paths[tpl[0]]
+        intersection = path.its_dict[tpl[1]]
+        return path, intersection
+
     def select_path(self, index):
+        if self._prev_path is None:
+            self._prev_path = self._paths.get(index, None)
+        if self._prev_path is not None:
+            self._prev_path.is_path_selected = False
+            self._prev_path = self._paths.get(index, None)
         self._is_path_selected = True
-        self._selected_path_index = index
 
     def select_vertex(self, tpl):
         # tpl = (path_idx, vertex_idx)
-        if not self._is_vertex_selected:
-            self._is_vertex_selected = True
-        if self._selected_vertex_tpl:
-            path = self._paths[self._selected_vertex_tpl[0]]
-            vertex = path.its_dict[self._selected_vertex_tpl[1]]
-            vertex.set_selected(False)
-        self._selected_vertex_tpl = tpl
-        path = self._paths[tpl[0]]
-        vertex = path.its_dict[tpl[1]]
-        vertex.set_selected(True)
-
-    def get_path_and_vertex(self, tpl):
-        path = self._paths[tpl[0]]
-        vertex = path.its_dict[tpl[1]]
-        return path, vertex
+        intersection = self.get_intersection(tpl)
+        if self._prev_intersection is None:
+            self._prev_intersection = intersection
+        if self._prev_intersection is not None:
+            self._prev_intersection.set_selected(False)
+            self._prev_intersection = intersection
+        intersection.set_selected(True)
 
     def load_traced_paths(self, render_data):
         """
@@ -178,10 +148,9 @@ class SceneTracedPaths(object):
         """
         self._paths.clear()
         self._path_indices = np.array([], dtype=np.int32)
+        self._prev_path = None
+        self._prev_intersection = None
         self._is_path_selected = False
-        self._selected_path_index = -1
-        self._is_vertex_selected = False
-        self._selected_vertex_tpl = ()
         self._all_paths_visible = False
         self._all_vertices_visible = False
         self._all_nees_visible = False

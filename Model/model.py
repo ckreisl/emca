@@ -32,6 +32,7 @@ from Model.contribution_data import SampleContributionData
 from PySide2.QtCore import Signal
 from PySide2.QtCore import QObject
 from Core.messages import StateMsg
+import numpy as np
 import time
 import logging
 
@@ -56,8 +57,13 @@ class Model(QObject):
         self._camera_data = CameraData()
         self._mesh_data = MeshData()
         self._render_data = RenderData()
-
         self._final_estimate_data = SampleContributionData()
+
+        # model keeps track of current selected path indices
+        self._current_path_indices = np.array([], dtype=np.int32)
+        self._current_path_index = -1
+        self._current_vertex_tpl = ()
+
         self._controller = None
 
     def set_callback(self, callback):
@@ -74,6 +80,30 @@ class Model(QObject):
         """
         self._controller = controller
         self._plugins_handler.set_controller(controller)
+
+    @property
+    def current_path_indices(self):
+        return self._current_path_indices
+
+    @current_path_indices.setter
+    def current_path_indices(self, indices):
+        self._current_path_indices = indices
+
+    @property
+    def current_path_index(self):
+        return self._current_path_index
+
+    @current_path_index.setter
+    def current_path_index(self, path_index):
+        self._current_path_index = path_index
+
+    @property
+    def current_vertex_tpl(self):
+        return self._current_vertex_tpl
+
+    @current_vertex_tpl.setter
+    def current_vertex_tpl(self, tpl):
+        self._current_vertex_tpl = tpl
 
     @property
     def plugins_handler(self):
@@ -170,11 +200,14 @@ class Model(QObject):
 
     def prepare_new_data(self):
         """
-        Calls the Plugins Handler prepare_new_data function.
-        Informs Plugins about new incoming Render data
+        Resets the current selected path|vertex|indices and
+        calls the PluginsHandler prepare_new_data function.
         :return:
         """
         self._plugins_handler.prepare_new_data()
+        self._current_path_indices = np.array([], dtype=np.int32)
+        self._current_path_index = -1
+        self._current_vertex_tpl = ()
 
     def serialize_render_info(self, stream):
         """

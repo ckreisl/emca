@@ -232,33 +232,37 @@ class SceneInterface(object):
         """
 
     @abc.abstractmethod
-    def show_traced_path(self, enable):
+    def show_traced_path(self, path_index, enable):
         """
         Depending on input enable or disable current select path
+        :param path_index: integer
         :param enable: boolean
         :return:
         """
 
     @abc.abstractmethod
-    def update_path_opacity(self, opacity):
+    def update_path_opacity(self, path_index, opacity):
         """
         Updated the current selected path opacity
+        :param path_index: integer
         :param opacity: float
         :return:
         """
 
     @abc.abstractmethod
-    def update_path_size(self, size):
+    def update_path_size(self, path_index, size):
         """
         Updated the current selected path size
+        :param path_index: integer
         :param size: float
         :return:
         """
 
     @abc.abstractmethod
-    def reset_path(self):
+    def reset_path(self, path_index):
         """
         Resets opacity and size of the selected path
+        :param path_index: integer
         :return:
         """
 
@@ -271,25 +275,28 @@ class SceneInterface(object):
         """
 
     @abc.abstractmethod
-    def update_vertex_opacity(self, opacity):
+    def update_vertex_opacity(self, vertex_tpl, opacity):
         """
         Updates the vertex opacity
+        :param vertex_tpl: (path_index, vertex_index)
         :param opacity: float
         :return:
         """
 
     @abc.abstractmethod
-    def update_vertex_size(self, size):
+    def update_vertex_size(self, vertex_tpl, size):
         """
         Updates the vertex size
+        :param vertex_tpl: (path_index, vertex_index)
         :param size: float
         :return:
         """
 
     @abc.abstractmethod
-    def reset_vertex(self):
+    def reset_vertex(self, vertex_tpl):
         """
         Resets opacity and size of the selected vertex
+        :param vertex_tpl: (path_index, vertex_index)
         :return:
         """
 
@@ -302,33 +309,37 @@ class SceneInterface(object):
         """
 
     @abc.abstractmethod
-    def show_traced_path_nee(self, enabled):
+    def show_traced_path_nee(self, path_index, enabled):
         """
         Displays the next event estimations rays of the current selected path
+        :param path_index: integer
         :param enabled: boolean
         :return:
         """
 
     @abc.abstractmethod
-    def show_vertex_omega_o(self, enabled):
+    def show_vertex_omega_o(self, vertex_tpl, enabled):
         """
         Displays the outgoing ray of the current selected vertex / intersection
+        :param vertex_tpl: (path_index, vertex_index)
         :param enabled: boolean
         :return:
         """
 
     @abc.abstractmethod
-    def show_vertex_omega_i(self, enabled):
+    def show_vertex_omega_i(self, vertex_tpl, enabled):
         """
         Displays the incoming ray of the current selected vertex / intersection
+        :param vertex_tpl: (path_index, vertex_index)
         :param enabled: boolean
         :return:
         """
 
     @abc.abstractmethod
-    def show_vertex_nee(self, enabled):
+    def show_vertex_nee(self, vertex_tpl, enabled):
         """
         Displays the next event estimation ray of the current selected vertex / intersection
+        :param vertex_tpl: (path_index, vertex_index)
         :param enabled: boolean
         :return:
         """

@@ -60,12 +60,6 @@ class Controller(QObject):
         self._controller_scene = ControllerRenderScene(self, model, view)
         self._controller_options = ControllerOptions(self, model, view)
 
-        # controller keeps track of current selected path indices
-        self._indices = np.array([], dtype=np.int32)
-
-        self._path_index = None
-        self._vertex_index = None
-
         self.init_plugins()
 
     @property
@@ -87,30 +81,6 @@ class Controller(QObject):
     @property
     def options(self):
         return self._controller_options
-
-    @property
-    def indices(self):
-        """
-        Returns all current selected path indices
-        :return: numpy array
-        """
-        return self._indices
-
-    @property
-    def path_index(self):
-        """
-        Returns current selected path index
-        :return: integer
-        """
-        return self._path_index
-
-    @property
-    def vertex_index(self):
-        """
-        Returns path|vertex tuple indices (path_index, vertex_index)
-        :return: tuple (path_index, vertex_index)
-        """
-        return self._vertex_index
 
     def init_plugins(self):
         """
@@ -210,9 +180,6 @@ class Controller(QObject):
         self._view.view_render_data.prepare_new_data()
         self._view.view_filter.prepare_new_data()
         self._model.prepare_new_data()
-        self._indices = np.array([], dtype=np.int32)
-        self._path_index = None
-        self._vertex_index = None
 
     def update_path(self, indices, add_item):
         """
@@ -226,28 +193,29 @@ class Controller(QObject):
 
         if add_item:
             # add item to current indices array and update
-            self._indices = np.unique(np.append(self._indices, indices))
+            new_indices = np.unique(np.append(self._model.current_path_indices, indices))
         else:
             # just update whole indices array
-            self._indices = indices
+            new_indices = indices
 
         # mark scatter plot
-        self._view.view_plot.update_path_indices(self._indices)
+        self._view.view_plot.update_path_indices(new_indices)
         # draw 3d paths
-        self._view.view_render_scene.update_path_indices(self._indices)
+        self._view.view_render_scene.update_path_indices(new_indices)
         # update 3d scene options
-        self._view.view_render_scene_options.update_path_indices(self._indices)
-        if len(self._model.render_data.get_indices()) != len(self._indices):
+        self._view.view_render_scene_options.update_path_indices(new_indices)
+        if len(self._model.render_data.get_indices()) != len(new_indices):
             self._view.view_render_scene_options.cbShowAllPaths.blockSignals(True)
             self._view.view_render_scene_options.cbShowAllPaths.setChecked(False)
             self._view.view_render_scene_options.cbShowAllPaths.blockSignals(False)
         # update all plugins
-        self._model.plugins_handler.update_path_indices(self._indices)
+        self._model.plugins_handler.update_path_indices(new_indices)
         # update render data view
-        self._view.view_render_data.show_path_data(self._indices, self._model.render_data)
+        self._view.view_render_data.show_path_data(new_indices, self._model.render_data)
         # select path if only one item
-        if len(self._indices) == 1:
-            self.select_path(self._indices[0])
+        if len(new_indices) == 1:
+            self.select_path(new_indices[0])
+        self._model.current_path_indices = new_indices
 
     def select_path(self, index):
         """
@@ -259,6 +227,8 @@ class Controller(QObject):
         # this index must be an element of indices
         self._view.view_render_scene.select_path(index)
         # update 3d scene options
+        path_option_settings = self._view.view_render_scene.scene_renderer.get_path_option_settings(index)
+        self._view.view_render_scene_options.load_path_settings(path_option_settings)
         path_data = self._model.render_data.dict_paths[index]
         self._view.view_render_scene_options.select_path(index)
         self._view.view_render_scene_options.update_vertex_list(path_data)
@@ -267,7 +237,7 @@ class Controller(QObject):
         # send path index, update plugins
         self._model.plugins_handler.select_path(index)
         # save current path_index
-        self._path_index = index
+        self._model.current_path_index = index
 
     def select_vertex(self, tpl):
         """
@@ -281,12 +251,20 @@ class Controller(QObject):
         self._view.view_render_scene.select_vertex(tpl)
         # update 3d scene options
         self._view.view_render_scene_options.select_vertex(tpl)
+        vertex_option_settings = self._view.view_render_scene.scene_renderer.get_vertex_option_settings(tpl)
+        self._view.view_render_scene_options.load_vertex_settings(vertex_option_settings)
         # select vertex in render data view
         self._view.view_render_data.select_vertex(tpl)
         # send vertex index, update plugins
         self._model.plugins_handler.select_vertex(tpl)
         # save current tpl (path_index, vertex_index)
-        self._vertex_index = tpl
+        self._model.current_vertex_tpl = tpl
+
+    def display_view_render_scene_options(self, clicked):
+        if self._view.view_render_scene_options.isVisible():
+            self._view.view_render_scene_options.activateWindow()
+        else:
+            self._view.view_render_scene_options.show()
 
     def display_view(self):
         """
@@ -309,5 +287,6 @@ class Controller(QObject):
         self._view.view_detector.close()
         self._view.view_connect.close()
         self._view.view_render_scene.close()
+        self._view.view_render_scene_options.close()
         self._view.view_filter.close()
         self._view.close()

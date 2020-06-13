@@ -45,11 +45,9 @@ class ViewRenderScene(QWidget):
 
         self._controller = None
         self._scene_renderer = None
-        self._view_render_options = ViewRenderSceneOptions()
-
         self._scene_loaded = False
 
-        self.btnSceneOptions.clicked.connect(self.open_view_render_options)
+        self.btnSceneOptions.clicked.connect(self.open_view_render_scene_options)
         self.btnLoadScene.clicked.connect(self.request_scene)
         self.btnReset.clicked.connect(self.reset_camera_position)
 
@@ -65,30 +63,43 @@ class ViewRenderScene(QWidget):
         """
         Initializes the scene renderer in this view render scene and view render scene options
         :param scene_renderer: SceneRenderer
+        :return:
         """
         self._scene_renderer = scene_renderer
-        self._view_render_options.init_scene_renderer(scene_renderer)
         self.sceneLayout.addWidget(scene_renderer.widget)
 
     @property
     def scene_renderer(self):
+        """
+        Returns the SceneRender object
+        :return: SceneRenderer
+        """
         return self._scene_renderer
 
     @property
-    def view_render_scene_options(self):
-        return self._view_render_options
+    def scene_loaded(self):
+        """
+        Returns true if 3d scene was loaded
+        :return: boolean
+        """
+        return self._scene_loaded
 
-    @Slot(bool, name='open_view_render_options')
-    def open_view_render_options(self, clicked):
+    @scene_loaded.setter
+    def scene_loaded(self, is_loaded):
+        """
+        Sets the scene loaded value
+        :param is_loaded: boolean
+        """
+        self._scene_loaded = is_loaded
+
+    @Slot(bool, name='open_view_render_scene_options')
+    def open_view_render_scene_options(self, clicked):
         """
         Opens the view render options
         :param clicked: boolean
         :return: boolean
         """
-        if self._view_render_options.isVisible():
-            self._view_render_options.activateWindow()
-        else:
-            self._view_render_options.show()
+        self._controller.display_view_render_scene_options(clicked)
 
     @Slot(bool, name='request_scene')
     def request_scene(self, clicked):
@@ -106,7 +117,7 @@ class ViewRenderScene(QWidget):
         :param clicked: boolean
         :return:
         """
-        self._scene_renderer.reset_camera_position()
+        self._controller.scene.reset_camera_position(clicked)
 
     def enable_view(self, enabled, mode=ViewMode.CONNECTED):
         """
@@ -143,9 +154,6 @@ class ViewRenderScene(QWidget):
         :return:
         """
         self._scene_renderer.load_camera(camera_data)
-        camera_settings = self._scene_renderer.get_camera_option_settings()
-        self._view_render_options.load_camera_settings(camera_settings)
-        self._view_render_options.enable_camera_settings(True)
 
     def load_mesh(self, mesh_data):
         """
@@ -155,11 +163,6 @@ class ViewRenderScene(QWidget):
         :return:
         """
         self._scene_renderer.load_mesh(mesh_data)
-        if not self._scene_loaded:
-            self._scene_loaded = True
-            scene_settings = self._scene_renderer.get_scene_option_settings()
-            self._view_render_options.load_scene_settings(scene_settings)
-            self._view_render_options.enable_scene_settings(True)
 
     def load_traced_paths(self, render_data):
         """
@@ -230,10 +233,3 @@ class ViewRenderScene(QWidget):
         :return:
         """
         self._scene_renderer.select_vertex(tpl)
-
-    def close(self):
-        """
-        Closes the view render scene options
-        :return:
-        """
-        self._view_render_options.close()

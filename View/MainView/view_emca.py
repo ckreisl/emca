@@ -27,7 +27,6 @@ from PySide2.QtWidgets import QWidget
 from PySide2.QtWidgets import QStackedWidget
 from PySide2.QtCore import Slot
 from PySide2.QtCore import QPoint
-from PySide2.QtGui import QPixmap
 from Core.pyside2_uic import loadUi
 
 from View.MainView.view_options import ViewOptions
@@ -38,6 +37,7 @@ from View.MainView.view_render_info import ViewRenderInfo
 
 from View.DataView.view_render_data import ViewRenderData
 from View.SceneView.view_render_scene import ViewRenderScene
+from View.SceneView.view_render_scene_options import ViewRenderSceneOptions
 from View.RenderView.view_render_image import ViewRenderImage
 from View.SampleContributionView.view_sample_contribution_plot import ViewScatterPlot
 import os
@@ -69,9 +69,10 @@ class ViewEMCA(QWidget):
         self._view_filter = ViewFilter(parent=parent)
         self._view_render_info = ViewRenderInfo(parent=parent)
         self._view_render_image = ViewRenderImage(parent=self)
-        self._view_render_scene = ViewRenderScene(parent=self)
         self._view_plot = ViewScatterPlot(parent=self)
         self._view_render_data = ViewRenderData(parent=self)
+        self._view_render_scene = ViewRenderScene(parent=self)
+        self._view_render_scene_options = ViewRenderSceneOptions(parent=self)
 
         # stacked widget
         self._stacked_widget_left = QStackedWidget()
@@ -104,7 +105,7 @@ class ViewEMCA(QWidget):
         self._view_options.set_controller(controller)
         self._view_plot.set_controller(controller)
         self._view_render_scene.set_controller(controller)
-        self.view_render_scene_options.set_controller(controller)
+        self._view_render_scene_options.set_controller(controller)
         self._view_render_data.set_controller(controller)
         self._view_render_image.set_controller(controller)
         self._view_render_info.set_controller(controller)
@@ -289,7 +290,7 @@ class ViewEMCA(QWidget):
         Returns the 3D Scene options
         :return: QWidget
         """
-        return self._view_render_scene.view_render_scene_options
+        return self._view_render_scene_options
 
     @property
     def view_options(self):

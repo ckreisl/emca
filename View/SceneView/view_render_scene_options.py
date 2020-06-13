@@ -83,12 +83,11 @@ class ViewRenderSceneOptions(QWidget):
         Informs the render interface about view changes
     """
 
-    def __init__(self):
+    def __init__(self, parent):
         QWidget.__init__(self, parent=None)
         loadUi('View/ui/render_scene_options.ui', self)
 
         self._controller = None
-        self._scene_renderer = None
 
         # center widget depending on screen size
         desktop_widget = QApplication.desktop()
@@ -141,13 +140,6 @@ class ViewRenderSceneOptions(QWidget):
     def set_controller(self, controller):
         self._controller = controller
 
-    def init_scene_renderer(self, scene_renderer):
-        self._scene_renderer = scene_renderer
-
-    @property
-    def scene_renderer(self):
-        return self._scene_renderer
-
     @Slot(QListWidgetItem, name='send_select_path')
     def send_select_path(self, item):
         if isinstance(item, PathListItem):
@@ -176,8 +168,6 @@ class ViewRenderSceneOptions(QWidget):
         self.enable_general_settings(True)
 
     def select_path(self, index):
-        path_option_settings = self._scene_renderer.get_path_option_settings(index)
-        self.load_path_settings(path_option_settings)
         self.enable_path_settings(True)
         self.labelVertexOptions.setEnabled(True)
         self.listVertices.setEnabled(True)
@@ -190,8 +180,6 @@ class ViewRenderSceneOptions(QWidget):
                 break
 
     def select_vertex(self, tpl):
-        vertex_option_settings = self._scene_renderer.get_vertex_option_settings(tpl)
-        self.load_vertex_settings(vertex_option_settings)
         self.enable_vertex_settings(True)
         # highlight selected vertex item in list.
         for i in range(0, self.listVertices.count()):
@@ -280,7 +268,7 @@ class ViewRenderSceneOptions(QWidget):
         """
         Depending on enabled, enables the vertex settings
         :param enabled:
-        :return: boolean
+        :return:
         """
         self.labelVertexOptions.setEnabled(enabled)
         self.listVertices.setEnabled(enabled)
@@ -300,6 +288,7 @@ class ViewRenderSceneOptions(QWidget):
     def load_camera_settings(self, camera_settings):
         """
         Initialises the camera settings with data from the renderer
+        :param camera_settings: dict
         :return:
         """
         self.sliderCameraSpeed.blockSignals(True)
@@ -312,6 +301,7 @@ class ViewRenderSceneOptions(QWidget):
     def load_scene_settings(self, scene_settings):
         """
         Initializes the scene settings with data from the renderer
+        :param scene_settings: dict
         :return:
         """
         opacity = scene_settings.get('scene_opacity', 1.0)
@@ -357,7 +347,6 @@ class ViewRenderSceneOptions(QWidget):
         :param vertex_option_settings: dict
         :return:
         """
-
         is_wi_visible = vertex_option_settings.get('is_wi_visible', True)
         self.cbShowOmegaI.blockSignals(True)
         self.cbShowOmegaI.setChecked(is_wi_visible)
@@ -418,7 +407,7 @@ class ViewRenderSceneOptions(QWidget):
         :param speed: float
         :return:
         """
-        self._scene_renderer.apply_camera_option_settings({'motion_speed': speed})
+        self._controller.scene.update_camera_motion_speed(speed)
 
     @Slot(bool, name='update_camera_clipping')
     def update_camera_clipping(self, state):
@@ -427,7 +416,7 @@ class ViewRenderSceneOptions(QWidget):
         :param state: boolean
         :return:
         """
-        self._scene_renderer.apply_camera_option_settings({'auto_clipping': state})
+        self._controller.scene.update_camera_clipping(state)
 
     @Slot(bool, name='reset_camera_motion_speed')
     def reset_camera_motion_speed(self, clicked):
@@ -436,13 +425,16 @@ class ViewRenderSceneOptions(QWidget):
         :param clicked: boolean
         :return:
         """
-        self._scene_renderer.reset_camera_option_settings()
-        camera_settings = self._scene_renderer.get_camera_option_settings()
-        self.load_camera_settings(camera_settings)
+        self._controller.scene.reset_camera_motion_speed(clicked)
 
     @Slot(int, name='updateMeshOpacity')
     def update_mesh_opacity(self, opacity):
-        pass
+        """
+        Informs the renderer about opacity update of the current selected mesh object
+        :param opacity: float
+        :return:
+        """
+        self._controller.scene.update_mesh_opacity(opacity)
 
     @Slot(int, name='update_scene_opacity')
     def update_scene_opacity(self, opacity):
@@ -451,12 +443,15 @@ class ViewRenderSceneOptions(QWidget):
         :param opacity: float[0,1]
         :return:
         """
-        max_value = self.sliderMeshOpacity.maximum()
-        self._scene_renderer.apply_scene_option_settings({'scene_opacity': float(opacity / max_value)})
+        self._controller.scene.update_scene_opacity(opacity)
 
     @Slot(bool, name='reset_mesh')
     def reset_mesh(self, clicked):
-        pass
+        """
+        Informs the renderer to reset the current selected mesh object
+        :param clicked: boolean
+        """
+        self._controller.scene.reset_mesh(clicked)
 
     @Slot(bool, name='reset_scene')
     def reset_scene(self, clicked):
@@ -465,9 +460,7 @@ class ViewRenderSceneOptions(QWidget):
         :param clicked: boolean
         :return:
         """
-        self._scene_renderer.reset_scene_option_settings()
-        scene_settings = self._scene_renderer.get_scene_option_settings()
-        self.load_scene_settings(scene_settings)
+        self._controller.scene.reset_scene(clicked)
 
     @Slot(int, name='update_path_opacity')
     def update_path_opacity(self, opacity):
@@ -476,8 +469,7 @@ class ViewRenderSceneOptions(QWidget):
         :param opacity: float[0,1]
         :return:
         """
-        max_value = self.sliderPathOpacity.maximum()
-        self._scene_renderer.update_path_opacity(float(opacity / max_value))
+        self._controller.scene.update_path_opacity(opacity)
 
     @Slot(int, name='update_path_size')
     def update_path_size(self, size):
@@ -486,7 +478,7 @@ class ViewRenderSceneOptions(QWidget):
         :param size: float[0,1]
         :return:
         """
-        self._scene_renderer.update_path_size(size)
+        self._controller.scene.update_path_size(size)
 
     @Slot(bool, name='reset_path')
     def reset_path(self, clicked):
@@ -495,10 +487,7 @@ class ViewRenderSceneOptions(QWidget):
         :param clicked: boolean
         :return:
         """
-        self._scene_renderer.reset_path()
-        index = self._controller.path_index
-        path_settings = self._scene_renderer.get_path_option_settings(index)
-        self.load_path_settings(path_settings)
+        self._controller.scene.reset_path(clicked)
 
     @Slot(bool, name='show_traced_path')
     def show_traced_path(self, state):
@@ -507,11 +496,7 @@ class ViewRenderSceneOptions(QWidget):
         :param state: boolean
         :return:
         """
-        self._scene_renderer.show_traced_path(state)
-        # toggle also vertex omega_i checkbox
-        self.cbShowOmegaI.blockSignals(True)
-        self.cbShowOmegaI.setChecked(state)
-        self.cbShowOmegaI.blockSignals(False)
+        self._controller.scene.show_traced_path(state)
 
     @Slot(bool, name='show_traced_path_nee')
     def show_traced_path_nee(self, state):
@@ -529,7 +514,7 @@ class ViewRenderSceneOptions(QWidget):
         :param state: boolean
         :return:
         """
-        self._scene_renderer.show_all_other_traced_paths(state)
+        self._controller.scene.show_all_other_traced_paths(state)
 
     @Slot(int, name='update_vertex_opacity')
     def update_vertex_opacity(self, opacity):
@@ -538,8 +523,7 @@ class ViewRenderSceneOptions(QWidget):
         :param opacity: float[0,1]
         :return:
         """
-        max_value = self.sliderVertexOpacity.maximum()
-        self._scene_renderer.update_vertex_opacity(float(opacity / max_value))
+        self._controller.scene.update_vertex_opacity(opacity)
 
     @Slot(int, name='update_vertex_size')
     def update_vertex_size(self, size):
@@ -548,7 +532,7 @@ class ViewRenderSceneOptions(QWidget):
         :param size: float[0,1]
         :return:
         """
-        self._scene_renderer.update_vertex_size(size)
+        self._controller.scene.update_vertex_size(size)
 
     @Slot(bool, name='reset_vertex')
     def reset_vertex(self, clicked):
@@ -557,9 +541,7 @@ class ViewRenderSceneOptions(QWidget):
         :param clicked: boolean
         :return:
         """
-        self._scene_renderer.reset_vertex()
-        vertex_option_settings = self._scene_renderer.get_vertex_option_settings(self._controller.vertex_index)
-        self.load_vertex_settings(vertex_option_settings)
+        self._controller.scene.reset_vertex(clicked)
 
     @Slot(bool, name='show_vertex_omega_i')
     def show_vertex_omega_i(self, state):
@@ -603,4 +585,9 @@ class ViewRenderSceneOptions(QWidget):
 
     @Slot(bool, name='reset_all_paths_vertices')
     def reset_all_paths_vertices(self, clicked):
+        """
+        Informs the renderer to reset all path vertices
+        :param clicked: boolean
+        :return:
+        """
         self._controller.scene.reset_all_paths_vertices(clicked)
