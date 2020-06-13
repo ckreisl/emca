@@ -165,13 +165,13 @@ class PluginsViewContainer(QWidget):
         """
         self._controller = controller
 
-    def set_renderer(self, renderer):
+    def set_scene_renderer(self, scene_renderer):
         """
         Set the renderer
         :param: renderer
         :return:
         """
-        self._plugin.renderer = renderer
+        self._plugin.scene_renderer = scene_renderer
 
     def init_render_data(self, render_data):
         """

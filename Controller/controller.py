@@ -90,11 +90,8 @@ class Controller(QObject):
         # set plugin btn
         plugins = self._model.plugins_handler.plugins
         self._view.view_emca.add_plugins(plugins)
-        """
-        # set renderer to plugins
-        self._model.plugins_handler.set_renderer(
-            self._view.view_render_scene.scene_renderer)
-        """
+        # set scene renderer to plugins
+        self._model.plugins_handler.set_scene_renderer(self._view.view_render_scene.scene_renderer)
 
     @Slot(tuple, name='handle_state_msg')
     def handle_state_msg(self, tpl):

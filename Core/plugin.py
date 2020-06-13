@@ -42,7 +42,7 @@ class Plugin(QWidget):
         QWidget.__init__(self, parent=None)
         self._name = name
         self._flag = flag
-        self._renderer = None
+        self._scene_renderer = None
 
     @property
     def flag(self):
@@ -61,22 +61,22 @@ class Plugin(QWidget):
         return self._name
 
     @property
-    def renderer(self):
+    def scene_renderer(self):
         """
         Return the renderer
         Allows plugin full control of renderer
         Plugin itself has to handle add / remove of items
         """
-        return self._renderer
+        return self._scene_renderer
 
-    @renderer.setter
-    def renderer(self, renderer):
+    @scene_renderer.setter
+    def scene_renderer(self, scene_renderer):
         """
         Sets the renderer
         Allows plugin full control of renderer
         Plugin itself has to handle add / remove of items
         """
-        self._renderer = renderer
+        self._scene_renderer = scene_renderer
 
     def send_update_path_indices(self, indices, add_item):
         """
