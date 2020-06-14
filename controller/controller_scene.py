@@ -39,11 +39,6 @@ class ControllerRenderScene(object):
         self._model = model
         self._view = view
 
-    def init_scene_renderer(self, scene_renderer):
-        scene_renderer.set_view_render_scene(self._view.view_render_scene)
-        scene_renderer.set_view_render_scene_options(self._view.view_render_scene_options)
-        self._view.view_render_scene.init_scene_renderer(scene_renderer)
-
     def handle_state_msg(self, tpl):
         """
         Handle current state, messages mostly received from thread,

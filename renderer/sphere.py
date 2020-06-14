@@ -38,7 +38,7 @@ class Sphere(Shape):
 
         sphere = vtk.vtkSphereSource()
         # center (x,y,z)
-        sphere.SetCenter(center)
+        sphere.SetCenter(list(center))
         sphere.SetRadius(radius)
 
         # get poly data

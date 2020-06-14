@@ -50,7 +50,10 @@ class Shape(vtk.vtkActor):
         if vtk.VTK_MAJOR_VERSION <= 5:
             mapper.SetInput(mesh_poly_data)
         else:
-            mapper.SetInputData(mesh_poly_data)
+            if isinstance(mesh_poly_data, vtk.vtkAlgorithmOutput):
+                mapper.SetInputConnection(mesh_poly_data)
+            else:
+                mapper.SetInputData(mesh_poly_data)
 
         self.SetMapper(mapper)
         self.init_default_properties()

@@ -99,6 +99,13 @@ class Controller(QObject):
         """
         return self._controller_options
 
+    def init_scene_renderer(self, scene_renderer):
+        scene_renderer.set_view_render_scene(self._view.view_render_scene)
+        scene_renderer.set_view_render_scene_options(self._view.view_render_scene_options)
+        self._view.view_render_scene.init_scene_renderer(scene_renderer)
+        # set scene renderer to plugins
+        self._model.plugins_handler.set_scene_renderer(self._view.view_render_scene.scene_renderer)
+
     def init_plugins(self):
         """
         Init all views with parameters from the model (dataset)
@@ -107,8 +114,6 @@ class Controller(QObject):
         # set plugin btn
         plugins = self._model.plugins_handler.plugins
         self._view.view_emca.add_plugins(plugins)
-        # set scene renderer to plugins
-        self._model.plugins_handler.set_scene_renderer(self._view.view_render_scene.scene_renderer)
 
     @Slot(tuple, name='handle_state_msg')
     def handle_state_msg(self, tpl):

@@ -57,6 +57,7 @@ class ViewRenderData(QWidget):
         self.tree.setSelectionMode(QAbstractItemView.SingleSelection)
 
         # connect buttons
+        self.btnShowAll.clicked.connect(self.show_all_traced_paths)
         self.btnInspect.clicked.connect(self.inspect_selected_paths)
         self.cbExpand.toggled.connect(self.expand_items)
 
@@ -70,7 +71,6 @@ class ViewRenderData(QWidget):
         :return:
         """
         self._controller = controller
-        self.btnShowAll.clicked.connect(controller.show_all_traced_paths)
 
     def enable_view(self, enabled):
         self.btnShowAll.setEnabled(enabled)
@@ -96,6 +96,10 @@ class ViewRenderData(QWidget):
         for i in indices:
             self.add_path_data_node(render_data.dict_paths[i])
         self.expand_items(self.cbExpand.isChecked())
+
+    @Slot(bool, name='show_all_traced_paths')
+    def show_all_traced_paths(self, clicked):
+        self._controller.show_all_traced_paths(True)
 
     @Slot(QTreeWidgetItem, QTreeWidgetItem, name='select_tree_item')
     def select_tree_item(self, item, previous):

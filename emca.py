@@ -43,7 +43,7 @@ class EMCAClient(object):
 
     def __init__(self):
         self.controller = Controller(Model(), MainView())
-        self.controller.scene.init_scene_renderer(SceneRenderer())
+        self.controller.init_scene_renderer(SceneRenderer())
 
     def load_theme(self, qt_app):
         theme = self.controller.options.get_theme()
