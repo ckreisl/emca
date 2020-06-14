@@ -53,10 +53,15 @@ class SocketStreamClient(QThread):
     def set_model(self, model):
         """
         Set Model / Dataset
+        :param model: Model
         """
         self._model = model
 
     def set_callback(self, callback):
+        """
+        Connects Qt Signal to a Qt Slot callback function
+        :param callback: QtSlot callback function
+        """
         # callback function (QtSlot) to controller msg handler
         self._sendStateMsgSig.connect(callback)
 
@@ -64,6 +69,7 @@ class SocketStreamClient(QThread):
     def stream(self):
         """
         Return socket stream connection
+        :return: Stream
         """
         return self._stream
 
@@ -111,6 +117,7 @@ class SocketStreamClient(QThread):
     def is_connected(self):
         """
         Returns true when there is a open socket connection
+        :return: boolean
         """
         return self._stream.is_connected()
 

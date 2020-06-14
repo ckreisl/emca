@@ -47,7 +47,7 @@ class SocketStream(Stream):
     def port(self):
         """
         Returns the port of the socket stream connection
-        :return:
+        :return: str|int
         """
         return self._port
 
@@ -55,6 +55,7 @@ class SocketStream(Stream):
     def port(self, port):
         """
         Sets the port of the socket stream connection
+        :param port: str|int
         """
         self._port = port
 
@@ -62,7 +63,7 @@ class SocketStream(Stream):
     def hostname(self):
         """
         Returns the hostname of the socket stream connection
-        :return:
+        :return: str
         """
         return self._hostname
 
@@ -70,6 +71,7 @@ class SocketStream(Stream):
     def hostname(self, hostname):
         """
         Sets the hostname of the socket stream connection
+        :param hostname: str
         """
         self._hostname = hostname
 
@@ -77,19 +79,21 @@ class SocketStream(Stream):
     def socket(self):
         """
         Returns the socket
-        :return:
+        :return: Socket
         """
         return self._socket
 
     def is_connected(self):
         """
         Holds a boolean about whether the a socket connection is open or not
+        :return: boolean
         """
         return self._is_connected
 
     def connect(self):
         """
         Connect to host:port
+        :return: True|False, ErrorMsg|None
         """
         logging.info("Connecting to {}:{}".format(self._hostname, self._port))
         try:
@@ -106,7 +110,7 @@ class SocketStream(Stream):
     def disconnect(self):
         """
         Closes the socket and disconnects from the server
-        :return:
+        :return: True|False, ErrorMsg|None
         """
         logging.info('Disconnecting from {} with port: {}'.format(self._hostname, self._port))
         try:
@@ -137,12 +141,13 @@ class SocketStream(Stream):
             return data
         except ConnectionResetError as e:
             logging.error(e)
+            raise ConnectionResetError(e)
 
     def write(self, data, size):
         """
         Writes data onto the socket stream
-        :param data:
-        :param size:
+        :param data: bytestream
+        :param size: integer
         :return:
         """
         try:
@@ -154,3 +159,4 @@ class SocketStream(Stream):
                 total_sent += sent
         except BrokenPipeError as e:
             logging.error(e)
+            raise BrokenPipeError(e)

@@ -151,6 +151,11 @@ class Stream(object):
         data = struct.pack(Format.DOUBLE.value, value)
         self.write(data, SizeOf.DOUBLE.value)
 
+    def write_string(self, value):
+        raw_value = bytes(value, "utf-8")
+        data = raw_value+bytes(1)
+        self.write(data, len(raw_value)+1)
+
     """ Read operations """
 
     def read_char(self):
@@ -206,11 +211,6 @@ class Stream(object):
         string_len = self.read_int()
         data = self.read(string_len)
         return data.decode("utf-8")
-
-    def write_string(self, value):
-        raw_value = bytes(value, "utf-8")
-        data = raw_value+bytes(1)
-        self.write(data, len(raw_value)+1)
 
     def read_float_array(self, size):
         data = self.read(size * SizeOf.FLOAT.value)
