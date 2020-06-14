@@ -36,10 +36,10 @@ class Mesh(object):
     """
 
     def __init__(self):
-        self._vertex_count = None
+        self._vertex_count = 0
         self._vertices = np.array([], 'f')
 
-        self._triangle_count = None
+        self._triangle_count = 0
         self._triangles = np.array([], 'q')
 
         self._specular_color = Color3f()
@@ -56,8 +56,9 @@ class Mesh(object):
         self._vertices = np.array(stream.read_float_array(self._vertex_count*3), 'f')
 
         self._triangle_count = stream.read_uint()
-        triangleIndices = np.array(stream.read_int_array(self._triangle_count*3), 'q')
-        self._triangles = np.concatenate([np.full([self._triangle_count, 1], 3, 'q'), triangleIndices.reshape([self._triangle_count, 3])], axis=1).flatten()
+        triangle_indices = np.array(stream.read_int_array(self._triangle_count*3), 'q')
+        self._triangles = np.concatenate([np.full([self._triangle_count, 1], 3, 'q'),
+                                          triangle_indices.reshape([self._triangle_count, 3])], axis=1).flatten()
 
         # remember we got the alpha channel!
         self._specular_color = stream.read_color3f()
@@ -114,7 +115,7 @@ class Mesh(object):
     def to_string(self):
         """
         Returns a string containing all information about the Mesh object
-        :return:
+        :return: str
         """
         return 'vertexCount = {} \n' \
                'triangleCount = {} \n' \
@@ -164,7 +165,7 @@ class MeshData(object):
     def to_string(self):
         """
         Returns a string with information about all mesh objects
-        :return:
+        :return: str
         """
         oss = 'meshCount = {} \n'.format(len(self._meshes))
         for mesh in self._meshes:

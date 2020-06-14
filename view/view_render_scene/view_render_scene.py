@@ -171,10 +171,10 @@ class ViewRenderScene(QWidget):
         """
         self._scene_renderer.select_path(index)
 
-    def select_vertex(self, tpl):
+    def select_intersection(self, tpl):
         """
         Informs the renderer to select / highlight the vertex with tuple tpl
         :param tpl: tuple(path_index, vertex_index)
         :return:
         """
-        self._scene_renderer.select_vertex(tpl)
+        self._scene_renderer.select_intersection(tpl)

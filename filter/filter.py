@@ -121,7 +121,7 @@ class Filter(object):
                         else:
                             if self.compare(entry, filter_settings):
                                 xs.add(path_key)
-                for vert_key, vertex in path.dict_vertices.items():
+                for its_key, vertex in path.intersections.items():
                     for item in vertex.data_list:
                         entry = item.get(search_key, None)
                         if entry:

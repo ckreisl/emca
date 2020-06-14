@@ -68,7 +68,7 @@ class Model(QObject):
         # model keeps track of current selected path indices
         self._current_path_indices = np.array([], dtype=np.int32)
         self._current_path_index = -1
-        self._current_vertex_tpl = ()
+        self._current_intersection_tpl = ()
 
         self._controller = None
 
@@ -112,12 +112,12 @@ class Model(QObject):
         self._current_path_index = path_index
 
     @property
-    def current_vertex_tpl(self):
-        return self._current_vertex_tpl
+    def current_intersection_tpl(self):
+        return self._current_intersection_tpl
 
-    @current_vertex_tpl.setter
-    def current_vertex_tpl(self, tpl):
-        self._current_vertex_tpl = tpl
+    @current_intersection_tpl.setter
+    def current_intersection_tpl(self, tpl):
+        self._current_intersection_tpl = tpl
 
     @property
     def plugins_handler(self):

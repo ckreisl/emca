@@ -24,7 +24,7 @@
 
 from renderer.rubberband import RubberBandInteractor
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from renderer.path_vertex import PathVertex
+from renderer.intersection_vertex import IntersectionVertex
 from renderer.line import Line
 from renderer.sphere import Sphere
 from renderer.triangle import Triangle
@@ -104,7 +104,7 @@ class Renderer(vtk.vtkRenderer):
         picked = props.GetNumberOfItems()
         for i in range(0, picked):
             prop = props.GetNextProp3D()
-            if isinstance(prop, PathVertex):
+            if isinstance(prop, IntersectionVertex):
                 tpl = prop.get_index_tpl()
                 # TODO check case if callback function is none
                 self._rubber_band_callback(tpl)

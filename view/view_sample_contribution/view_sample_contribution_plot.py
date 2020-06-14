@@ -61,8 +61,8 @@ class ViewScatterPlot(QWidget):
 
     def plot_final_estimate(self, final_estimate):
         """
-        VertexDataPlots the final estimate data from the model
-        :param final_estimate: Final estimate data from model
+        Plot SampleContribution data with final estimate values from model
+        :param final_estimate: FinalEstimate
         :return:
         """
         self._sample_contribution_plot.clear()

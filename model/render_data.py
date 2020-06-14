@@ -30,7 +30,7 @@ import logging
 class RenderData(object):
 
     """
-        DataView
+        RenderData
         Represents information about one pixel.
         The data is computed on the server side in the pixel re-rendering step.
         Containing all information about all traced paths through this pixel with all user added information.
@@ -38,7 +38,7 @@ class RenderData(object):
 
     def __init__(self):
         # amount of used samples per pixel
-        self._sample_count = None
+        self._sample_count = -1
         # {sample_index / path_index : PathData}
         self._dict_paths = {}
 
@@ -79,7 +79,7 @@ class RenderData(object):
         Checks if the sample count is valid != 0
         :return:
         """
-        return self._sample_count != 0
+        return self._sample_count != -1
 
     def get_indices(self):
         """
@@ -101,5 +101,5 @@ class RenderData(object):
         Clears the data
         :return:
         """
-        self._sample_count = None
+        self._sample_count = -1
         self._dict_paths.clear()

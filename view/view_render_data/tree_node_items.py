@@ -47,10 +47,10 @@ class PathNodeItem(QTreeWidgetItem):
         return self._index
 
 
-class VertexNodeItem(QTreeWidgetItem):
+class IntersectionNodeItem(QTreeWidgetItem):
 
     """
-        VertexNodeItem
+        IntersectionNodeItem
         Represents a VertexNode within the tree view of the View Render Data
         Holds information about the parent index and the vertex index.
         Necessary to know which vertex and path item is selected by the user.

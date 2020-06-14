@@ -78,14 +78,14 @@ class SceneRenderer(SceneInterface):
     def rubber_band_selection(self, tpl):
         if tpl[0] in self._scene_traced_paths.paths:
             # same path select vertex
-            if tpl[0] != self._scene_traced_paths.selected_path_index:
+            if self._scene_traced_paths.prev_path.path_idx != tpl[0]:
                 self.send_select_path(tpl[0])
-            self.send_select_vertex(tpl)
+            self.send_select_intersection(tpl)
         else:
             # some other path is selected update whole view
             self.send_update_path(np.array([tpl[0]]), False)
             self.send_select_path(tpl[0])
-            self.send_select_vertex(tpl)
+            self.send_select_intersection(tpl)
 
     def widget_update_from_timer(self):
         self.widget.update()
@@ -113,8 +113,8 @@ class SceneRenderer(SceneInterface):
         self._scene_traced_paths.select_path(index)
         self.widget.update()
 
-    def select_vertex(self, tpl):
-        self._scene_traced_paths.select_vertex(tpl)
+    def select_intersection(self, tpl):
+        self._scene_traced_paths.select_intersection(tpl)
         path, intersection = self._scene_traced_paths.get_path_and_intersection(tpl)
         if intersection.is_ne_visible:
             intersection.draw_ne(self._renderer)

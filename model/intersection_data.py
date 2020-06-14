@@ -26,10 +26,10 @@ from model.user_data import UserData
 import logging
 
 
-class VertexData(UserData):
+class IntersectionData(UserData):
 
     """
-        VertexData
+        IntersectionData
         Represents one intersection point of a traced path through the scene.
         Holds information about the intersection, more precisely the vertex position, the vertex index,
         if a next event estimation was set, if a vertex position was set and current estimate information at this point.
@@ -51,7 +51,7 @@ class VertexData(UserData):
 
     def deserialize(self, stream):
         """
-        Deserialize a VertexData object from the socket stream
+        Deserialize a IntersectionData object from the socket stream
         :param stream:
         :return:
         """

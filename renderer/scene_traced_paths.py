@@ -45,6 +45,14 @@ class SceneTracedPaths(object):
         self._all_vertices_visible = False
 
     @property
+    def prev_path(self):
+        return self._prev_path
+
+    @property
+    def prev_intersection(self):
+        return self._prev_intersection
+
+    @property
     def paths(self):
         """
         Returns all traced paths within the scene
@@ -113,7 +121,7 @@ class SceneTracedPaths(object):
             self._prev_path = self._paths.get(index, None)
         self._is_path_selected = True
 
-    def select_vertex(self, tpl):
+    def select_intersection(self, tpl):
         # tpl = (path_idx, vertex_idx)
         intersection = self.get_intersection(tpl)
         if self._prev_intersection is None:

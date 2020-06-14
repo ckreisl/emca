@@ -133,15 +133,15 @@ class PluginsHandler(object):
         for _, value in self._plugins_view_container.items():
             value.select_path(index)
 
-    def select_vertex(self, tpl):
+    def select_intersection(self, tpl):
         """
-        Calls the Tool Container select_vertex function.
+        Calls the Plugin Container select_intersection function.
         Updates all tool views with the current selected vertex
         :param tpl: (path_index, vertex_index)
         :return:
         """
         for _, value in self._plugins_view_container.items():
-            value.select_vertex(tpl)
+            value.select_intersection(tpl)
 
     def get_plugin_by_flag(self, flag):
         """

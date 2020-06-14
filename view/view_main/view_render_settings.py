@@ -69,7 +69,7 @@ class ViewRenderSettings(QWidget):
         """
         self.labelSceneName.setText(render_info.scene_name)
         self.labelOutputName.setText(render_info.output_filepath)
-        self.labelExtensionName.setText(render_info.file_extension)
+        self.labelExtensionName.setText(render_info.extension)
         self.sbSampleCount.setValue(render_info.sample_count)
 
     def keyPressEvent(self, event):

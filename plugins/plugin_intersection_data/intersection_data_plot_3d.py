@@ -44,9 +44,9 @@ class IntersectionDataPlot3D(ScatterPlot3DBase):
         x_index = x[ind[0]]
 
         tpl = (path_idx, x_index)
-        self.parent.send_select_vertex(tpl)
+        self.parent.send_select_intersection(tpl)
 
-    def select_vertex(self, tpl):
+    def select_intersection(self, tpl):
         try:
             line_ax1 = self.axes.lines[0]
         except IndexError:

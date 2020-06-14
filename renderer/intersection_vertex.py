@@ -26,7 +26,7 @@ from renderer.vertex import Vertex
 from core.color3 import Color3f
 
 
-class PathVertex(Vertex):
+class IntersectionVertex(Vertex):
 
     """
         Vertex

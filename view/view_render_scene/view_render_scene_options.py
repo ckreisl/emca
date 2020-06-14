@@ -58,7 +58,7 @@ class ViewRenderSceneOptions(QWidget):
 
         # add connections to controller
         self.listPaths.itemClicked.connect(self.send_select_path)
-        self.listVertices.itemClicked.connect(self.send_select_vertex)
+        self.listVertices.itemClicked.connect(self.send_select_intersection)
 
     def set_controller(self, controller):
         self._controller = controller
@@ -103,10 +103,10 @@ class ViewRenderSceneOptions(QWidget):
         if isinstance(item, PathListItem):
             self._controller.select_path(item.path_index)
 
-    @Slot(QListWidgetItem, name='send_select_vertex')
-    def send_select_vertex(self, item):
+    @Slot(QListWidgetItem, name='send_select_intersection')
+    def send_select_intersection(self, item):
         if isinstance(item, VertexListItem):
-            self._controller.select_vertex(item.index_tpl)
+            self._controller.select_intersection(item.index_tpl)
 
     @Slot(bool, name='inspect_selected_path')
     def inspect_selected_path(self, clicked):
@@ -137,7 +137,7 @@ class ViewRenderSceneOptions(QWidget):
                 item.setSelected(True)
                 break
 
-    def select_vertex(self, tpl):
+    def select_intersection(self, tpl):
         self.enable_vertex_settings(True)
         # highlight selected vertex item in list.
         for i in range(0, self.listVertices.count()):
@@ -148,7 +148,7 @@ class ViewRenderSceneOptions(QWidget):
 
     def update_vertex_list(self, path_data):
         self.listVertices.clear()
-        for key, _ in path_data.dict_vertices.items():
+        for key, _ in path_data.intersections.items():
             self.listVertices.addItem(VertexListItem((path_data.sample_idx, key)))
 
     def prepare_new_data(self):

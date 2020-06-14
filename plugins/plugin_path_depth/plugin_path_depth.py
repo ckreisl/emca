@@ -69,7 +69,7 @@ class PathDepth(Plugin):
         # nothing to-do here
         pass
 
-    def select_vertex(self, tpl):
+    def select_intersection(self, tpl):
         # nothing to-do here
         pass
 

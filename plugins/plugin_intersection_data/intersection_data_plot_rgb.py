@@ -46,9 +46,9 @@ class IntersectionDataPlotRGB(RGBScatterPlotBase):
         x_data_ax1 = line_ax1.get_xdata()
 
         tpl = (path_idx, x_data_ax1[ind[0]])
-        self.parent.send_select_vertex(tpl)
+        self.parent.send_select_intersection(tpl)
 
-    def select_vertex(self, tpl):
+    def select_intersection(self, tpl):
         line_ax1 = self.axes[0].lines[0]
         line_ax2 = self.axes[1].lines[0]
         line_ax3 = self.axes[2].lines[0]

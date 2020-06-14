@@ -33,23 +33,19 @@ class SceneInterface(object):
     """
 
     def __init__(self):
-        self.view_render_scene = None
-        self.view_render_scene_options = None
+        # callback function set by controller
+        self.send_update_path = None            # Input: np.array, boolean - indices, add_item
+        self.send_select_path = None            # Input: integer - path_index
+        self.send_select_intersection = None          # Input: tuple - (path_index, intersection_index)
 
-    def set_view_render_scene(self, view_render_scene):
-        self.view_render_scene = view_render_scene
+    def set_update_path_callback(self, update_path_callback):
+        self.send_update_path = update_path_callback
 
-    def set_view_render_scene_options(self, view_render_scene_options):
-        self.view_render_scene_options = view_render_scene_options
+    def set_select_path_callback(self, select_path_callback):
+        self.send_select_path = select_path_callback
 
-    def send_update_path(self, indices, add_item):
-        self.view_render_scene.send_update_path(indices, add_item)
-
-    def send_select_path(self, index):
-        self.view_render_scene.send_select_path(index)
-
-    def send_select_vertex(self, tpl):
-        self.view_render_scene.send_select_vertex(tpl)
+    def set_select_intersection_callback(self, select_intersection_callback):
+        self.send_select_intersection = select_intersection_callback
 
     @property
     @abc.abstractmethod
@@ -106,7 +102,7 @@ class SceneInterface(object):
         """
 
     @abc.abstractmethod
-    def select_vertex(self, tpl):
+    def select_intersection(self, tpl):
         """
         Informs the renderer to select / highlight the vertex - Tuple (path_index, vertex_index)
         :param tpl: tuple(path_index, vertex_index)

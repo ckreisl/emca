@@ -29,7 +29,7 @@ from plugins.plugin_spherical_view.plugin_spherical_view import SphericalView
 # In order to initialize your plugin, import your plugin here and add it to __all__ list.
 
 __all__ = [
-    'VertexDataPlots',
+    'IntersectionData',
     'PathDepth',
     'SphericalView',
 ]

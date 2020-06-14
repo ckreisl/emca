@@ -35,18 +35,18 @@ class CameraData(object):
     """
 
     def __init__(self):
-        self._near_clip = None
-        self._far_clip = None
-        self._focus_dist = None
-        self._fov = None
-        self._up = Vec3f()
-        self._direction = Vec3f()
-        self._origin = Point3f()
+        self._near_clip = 5
+        self._far_clip = 15
+        self._focus_dist = 10
+        self._fov = 45
+        self._up = Vec3f(0, 0, 1)
+        self._direction = Vec3f(1, 0, 0)
+        self._origin = Point3f(0, 0, 0)
 
     def deserialize(self, stream):
         """
         Deserializes all camera information from the socket stream
-        :param stream:
+        :param stream: SocketStream
         :return:
         """
         self._near_clip = stream.read_float()

@@ -233,7 +233,7 @@ class ControllerRenderScene(object):
         :param enabled: boolean
         :return:
         """
-        vertex_tpl = self._model.current_vertex_tpl
+        vertex_tpl = self._model.current_intersection_tpl
         self._view.view_render_scene.scene_renderer.show_vertex_omega_o(vertex_tpl, enabled)
 
     @Slot(bool, name='show_vertex_omega_i')
@@ -244,7 +244,7 @@ class ControllerRenderScene(object):
         :param enabled: boolean
         :return:
         """
-        vertex_tpl = self._model.current_vertex_tpl
+        vertex_tpl = self._model.current_intersection_tpl
         self._view.view_render_scene.scene_renderer.show_vertex_omega_i(vertex_tpl, enabled)
 
     @Slot(bool, name='show_vertex_nee')
@@ -255,7 +255,7 @@ class ControllerRenderScene(object):
         :param enabled: boolean
         :return:
         """
-        vertex_tpl = self._model.current_vertex_tpl
+        vertex_tpl = self._model.current_intersection_tpl
         self._view.view_render_scene.scene_renderer.show_vertex_nee(vertex_tpl, enabled)
 
     @Slot(bool, name='reset_all_paths_vertices')
@@ -270,7 +270,7 @@ class ControllerRenderScene(object):
         path_index = self._model.current_path_index
         path_option_settings = scene_renderer.get_path_option_settings(path_index)
         self._view.view_render_scene_options.load_path_settings(path_option_settings)
-        tpl = self._model.current_vertex_tpl
+        tpl = self._model.current_intersection_tpl
         if tpl:
             vertex_option_settings = scene_renderer.get_vertex_option_settings(tpl)
             self._view.view_render_scene_options.load_vertex_settings(vertex_option_settings)
@@ -316,7 +316,7 @@ class ControllerRenderScene(object):
         :return:
         """
         max_value = self._view.view_render_scene_options.sliderVertexOpacity.maximum()
-        vertex_tpl = self._model.current_vertex_tpl
+        vertex_tpl = self._model.current_intersection_tpl
         self._view.view_render_scene.scene_renderer.update_vertex_opacity(vertex_tpl, float(opacity / max_value))
 
     @Slot(int, name='update_vertex_size')
@@ -326,7 +326,7 @@ class ControllerRenderScene(object):
         :param size: float[0,1]
         :return:
         """
-        vertex_tpl = self._model.current_vertex_tpl
+        vertex_tpl = self._model.current_intersection_tpl
         self._view.view_render_scene.scene_renderer.update_vertex_size(vertex_tpl, size)
 
     @Slot(bool, name='reset_vertex')
@@ -336,7 +336,7 @@ class ControllerRenderScene(object):
         :param clicked: boolean
         :return:
         """
-        vertex_tpl = self._model.current_vertex_tpl
+        vertex_tpl = self._model.current_intersection_tpl
         self._view.view_render_scene.scene_renderer.reset_vertex(vertex_tpl)
         vertex_option_settings = self._view.view_render_scene.scene_renderer.get_vertex_option_settings(vertex_tpl)
         self._view.view_render_scene_options.load_vertex_settings(vertex_option_settings)

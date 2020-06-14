@@ -100,8 +100,9 @@ class Controller(QObject):
         return self._controller_options
 
     def init_scene_renderer(self, scene_renderer):
-        scene_renderer.set_view_render_scene(self._view.view_render_scene)
-        scene_renderer.set_view_render_scene_options(self._view.view_render_scene_options)
+        scene_renderer.set_update_path_callback(self.update_path)
+        scene_renderer.set_select_path_callback(self.select_path)
+        scene_renderer.set_select_intersection_callback(self.select_intersection)
         self._view.view_render_scene.init_scene_renderer(scene_renderer)
         # set scene renderer to plugins
         self._model.plugins_handler.set_scene_renderer(self._view.view_render_scene.scene_renderer)
@@ -195,7 +196,7 @@ class Controller(QObject):
         :return:
         """
         render_info = self._model.render_info
-        render_info.set_sample_count(value)
+        render_info.sample_count = value
 
     def prepare_new_data(self):
         """
@@ -267,24 +268,24 @@ class Controller(QObject):
         # save current path_index
         self._model.current_path_index = index
 
-    def select_vertex(self, tpl):
+    def select_intersection(self, tpl):
         """
         Send vertex index update to all views
         :param tpl: (path_index, vertex_index)
         :return:
         """
         # select vertex in 3D scene
-        self._view.view_render_scene.select_vertex(tpl)
+        self._view.view_render_scene.select_intersection(tpl)
         # update 3d scene options
-        self._view.view_render_scene_options.select_vertex(tpl)
+        self._view.view_render_scene_options.select_intersection(tpl)
         vertex_option_settings = self._view.view_render_scene.scene_renderer.get_vertex_option_settings(tpl)
         self._view.view_render_scene_options.load_vertex_settings(vertex_option_settings)
         # select vertex in render data view
-        self._view.view_render_data.select_vertex(tpl)
+        self._view.view_render_data.select_intersection(tpl)
         # send vertex index, update plugins
-        self._model.plugins_handler.select_vertex(tpl)
+        self._model.plugins_handler.select_intersection(tpl)
         # save current tpl (path_index, vertex_index)
-        self._model.current_vertex_tpl = tpl
+        self._model.current_intersection_tpl = tpl
 
     def display_view(self):
         """
