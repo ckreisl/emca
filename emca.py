@@ -24,14 +24,15 @@
 
 from PySide2.QtWidgets import QApplication
 from PySide2.QtCore import QFile, QTextStream
-from Core.logger import InitLogSystem
+from core.logger import InitLogSystem
 import sys
+import os
 
-from Model.model import Model
-from View.MainView.main_view import MainView
-from Controller.controller import Controller
-from Renderer.scene_renderer import SceneRenderer
-import Resources.breeze_resources
+from model.model import Model
+from view.view_main.main_view import MainView
+from controller.controller import Controller
+from renderer.scene_renderer import SceneRenderer
+import resources.breeze_resources
 
 
 class EMCAClient(object):
@@ -42,14 +43,11 @@ class EMCAClient(object):
 
     def __init__(self):
         self.controller = Controller(Model(), MainView())
-        self.controller.scene.init_scene_renderer(SceneRenderer())
+        self.controller.init_scene_renderer(SceneRenderer())
 
     def load_theme(self, qt_app):
         theme = self.controller.options.get_theme()
-        if theme == 'light':
-            theme_files = "./Resources/light.qss"
-        else:
-            theme_files = "./Resources/dark.qss"
+        theme_files = os.path.abspath(os.path.join(os.path.dirname(__file__), 'resources', '{}.qss'.format(theme)))
         file = QFile(theme_files)
         file.open(QFile.ReadOnly | QFile.Text)
         text_stream = QTextStream(file)
