@@ -22,7 +22,6 @@
     SOFTWARE.
 """
 
-from custom_data.custom_data_handler import CustomDataHandler
 import logging
 
 
@@ -48,9 +47,6 @@ class UserData(object):
         self._dict_color3f = {}
         self._dict_string = {}
         self._data = []
-        # handle custom data
-        self._dict_custom_data = {}
-        self._custom_data_handler = CustomDataHandler()
 
     def deserialize(self, stream):
         """
@@ -69,7 +65,6 @@ class UserData(object):
         self._dict_point3f = self._deserialize_point3f(stream)
         self._dict_color3f = self._deserialize_color3f(stream)
         self._dict_string = self._deserialize_string(stream)
-        self._dict_custom_data = self._deserialize_custom_data(stream)
         self.init_data_list()
 
     def init_data_list(self):
@@ -186,14 +181,6 @@ class UserData(object):
         """
         return self._dict_string
 
-    @property
-    def dict_custom_data(self):
-        """
-        Returns the custom data dict
-        :return: dict{custom_data_index : CustomData, ...}
-        """
-        return self._dict_custom_data
-
     def clear(self):
         """
         Clears all data sets
@@ -209,7 +196,6 @@ class UserData(object):
         self._dict_point3f.clear()
         self._dict_color3f.clear()
         self._dict_string.clear()
-        self._dict_custom_data.clear()
         self._data.clear()
 
     @staticmethod
@@ -371,27 +357,3 @@ class UserData(object):
                 data.append(stream.read_string())
             dict_string[key] = data
         return dict_string
-
-    def _deserialize_custom_data(self, stream):
-        """
-        Deserialize CustomData from the socket stream.
-        If the header index does not match andy custom data the package is rejected,
-        otherwise the specific custom data class will deserialize the data from the socket stream.
-        :param stream:
-        :return: dict{custom_data_index : CustomData, ...}
-        """
-        dict_custom_data = {}
-        for i in range(0, stream.read_uint()):
-            key = stream.read_short()
-            name = stream.read_string()
-            msg_len = stream.read_uint()
-            custom_data = self._custom_data_handler.get_custom_data_by_id(key)
-            if custom_data:
-                # deserialize custom data
-                custom_data.name = name
-                custom_data.deserialize(msg_len, stream)
-                dict_custom_data[key] = custom_data
-            else:
-                # clean stream
-                stream.read(msg_len)
-        return dict_custom_data

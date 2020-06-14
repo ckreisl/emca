@@ -32,7 +32,6 @@ class RubberBandInteractor(vtk.vtkInteractorStyleRubberBandPick):
         RubberBandInteractor
         Allows a rubber band selector by clicking the 'r' key within the 3D renderer scene view.
         The selected vertex and its corresponding path will be automatically be visualized within all other views.
-        Therefore all, other rays will be removed from the scene view.
     """
 
     def __init__(self, parent=None):

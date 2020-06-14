@@ -4,16 +4,28 @@ import logging
 
 class ControllerDetector(object):
 
-    def __init__(self, parent, model, view):
+    """
+        ControllerDetector
+        Handles the core logic of the detector which is used to determine high variance sample contributions.
+        Two methods are currently used.
+        1.) based on standard deviation
+        2.) ESD by Rosner
+    """
 
+    def __init__(self, parent, model, view):
         self._controller_main = parent
         self._model = model
         self._view = view
-
         # init detector view with values from detector class
         self._view.view_detector.init_values(model.detector)
 
     def handle_state_msg(self, tpl):
+        """
+        Handle current state, messages mostly received from thread,
+        which listens on the socket pipeline for incoming messages
+        :param tpl: (StateMsg, None or Datatype)
+        :return:
+        """
         msg = tpl[0]
         if msg is StateMsg.DATA_RENDER:
             # check if detector is enabled and run outlier detection

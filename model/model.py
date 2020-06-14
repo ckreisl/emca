@@ -22,7 +22,7 @@
     SOFTWARE.
 """
 
-from plugins_handler.plugins_handler import PluginsHandler
+from plugins.plugins_handler import PluginsHandler
 from model.options_data import OptionsConfig
 from model.render_info import RenderInfo
 from model.camera_data import CameraData

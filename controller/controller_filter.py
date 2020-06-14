@@ -30,6 +30,12 @@ import logging
 
 class ControllerFilter(object):
 
+    """
+        ControllerFilter
+        Handles the core logic of the filter mechanism.
+        Filters RenderData by user input.
+    """
+
     def __init__(self, parent, model, view):
 
         self._controller_main = parent
@@ -37,9 +43,15 @@ class ControllerFilter(object):
         self._view = view
 
     def handle_state_msg(self, tpl):
+        """
+        Handle current state, messages mostly received from thread,
+        which listens on the socket pipeline for incoming messages
+        :param tpl: (StateMsg, None or Datatype)
+        :return:
+        """
         msg = tpl[0]
-        # run filter
         if msg is StateMsg.DATA_RENDER:
+            # if filter is enabled filter RenderData and send update to MainController.
             if self._view.view_filter.is_active():
                 render_data = self._model.render_data
                 xs = self._model.filter.apply_filters(render_data)

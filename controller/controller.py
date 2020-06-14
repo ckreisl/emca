@@ -36,8 +36,10 @@ import os
 
 
 class Controller(QObject):
+
     """
-        Handles most connection and logic between view and model (dataset)
+        Handles the core functionality of the Brushing and Linking concept.
+        Contains Sub-Controllers handling specific sub logic.
     """
 
     def __init__(self, model, view, parent=None):
@@ -64,22 +66,37 @@ class Controller(QObject):
 
     @property
     def detector(self):
+        """
+        Returns the sub-controller which handles the detector logic
+        """
         return self._controller_detector
 
     @property
     def filter(self):
+        """
+        Returns the sub-controller which handles the filter logic
+        """
         return self._controller_filter
 
     @property
     def stream(self):
+        """
+        Returns the sub-controller which handles the socket stream logic
+        """
         return self._controller_stream
 
     @property
     def scene(self):
+        """
+        Returns the sub-controller which handles the 3d scene logic
+        """
         return self._controller_scene
 
     @property
     def options(self):
+        """
+        Returns the sub-controller which handles the option logic
+        """
         return self._controller_options
 
     def init_plugins(self):
@@ -118,7 +135,6 @@ class Controller(QObject):
             if not tpl[1].valid_sample_count():
                 self._view.view_popup.error_no_sample_idx_set("")
                 return None
-
             self._view.view_render_scene.load_traced_paths(tpl[1])
             self._view.view_render_scene_options.enable_general_settings(True)
             self._view.view_filter.init_data(tpl[1])
@@ -252,8 +268,6 @@ class Controller(QObject):
         :param tpl: (path_index, vertex_index)
         :return:
         """
-        # parent idx must be an element of indices
-
         # select vertex in 3D scene
         self._view.view_render_scene.select_vertex(tpl)
         # update 3d scene options
@@ -278,7 +292,6 @@ class Controller(QObject):
     def close_app(self):
         """
         Closes all views and disconnected the client from the server (hard shut down)
-        Server will be shutdown too.
         :return:
         """
         # close all views and close connection

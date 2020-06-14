@@ -63,15 +63,15 @@ class Camera(vtk.vtkCamera):
         Resets the camera settings to its default values
         :return:
         """
-        if self._origin is None:
-            logging.error("No Camera set")
-        else:
+        if self._origin is not None:
             self.SetPosition(self._origin.x, self._origin.y, self._origin.z)
             self.SetFocalPoint(self._focal_point.x, self._focal_point.y, self._focal_point.z)
             self.SetViewUp(self._up.x, self._up.y, self._up.z)
             self.SetClippingRange(self._near_clip, self._far_clip)
             self.SetDistance(self._focus_dist)
             self.SetViewAngle(self._fov)
+        else:
+            raise Exception("Camera origin not set!")
 
     @property
     def auto_clipping(self):

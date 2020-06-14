@@ -5,6 +5,11 @@ import os
 
 class ControllerOptions(object):
 
+    """
+        ControllerOptions
+        Handles pre-loaded options, the theme and image dialogs.
+    """
+
     def __init__(self, parent, model, view):
         self._controller_main = parent
         self._view = view

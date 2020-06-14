@@ -23,7 +23,7 @@
 """
 
 from PySide2.QtCore import QThread
-from core.socket_stream import SocketStream
+from stream.socket_stream import SocketStream
 from core.messages import ServerMsg
 from core.messages import StateMsg
 from PySide2.QtCore import Signal

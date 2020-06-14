@@ -41,7 +41,7 @@ class ViewRenderData(QWidget):
     """
         ViewRenderData
         Handles the view of the Render data containing all information about the selected pixel and its traced paths.
-        Moreover, all user added and CustomData will be visualized here as tree structure.
+        Moreover, all user added data will be visualized here as tree structure.
     """
 
     def __init__(self, parent=None):
@@ -268,7 +268,7 @@ class ViewRenderData(QWidget):
 
     def add_user_data_to_node(self, node, user_data):
         """
-        Adds the user and custom data which was added by the user as nodes
+        Adds the user data which was added by the user as nodes
         :param node:
         :param user_data:
         :return:
@@ -276,9 +276,6 @@ class ViewRenderData(QWidget):
         # insert general data
         for data in user_data.data_list:
             self.add_user_data_dict_to_node(node, data)
-        # try to insert custom data
-        for key, custom_data in user_data.dict_custom_data.items():
-            node.addChild(custom_data.init_custom_data_node())
 
     def add_user_data_dict_to_node(self, node, dict_data):
         """

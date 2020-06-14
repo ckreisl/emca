@@ -29,6 +29,11 @@ import numpy as np
 
 class ControllerRenderScene(object):
 
+    """
+        ControllerRenderScene
+        Handles the interaction and logic with the RenderScene and RenderSceneOptions View.
+    """
+
     def __init__(self, parent, model, view):
         self._controller_main = parent
         self._model = model
@@ -40,6 +45,12 @@ class ControllerRenderScene(object):
         self._view.view_render_scene.init_scene_renderer(scene_renderer)
 
     def handle_state_msg(self, tpl):
+        """
+        Handle current state, messages mostly received from thread,
+        which listens on the socket pipeline for incoming messages
+        :param tpl: (StateMsg, None or Datatype)
+        :return:
+        """
         msg = tpl[0]
         if msg is StateMsg.DATA_INFO:
             # automatically request scene data once render info is available
@@ -64,6 +75,11 @@ class ControllerRenderScene(object):
                 self._view.view_render_scene_options.enable_scene_settings(True)
 
     def reset_camera_position(self, clicked):
+        """
+        Reset the camera position to its default origin position
+        :param clicked: boolean
+        :return:
+        """
         self._view.view_render_scene.scene_renderer.reset_camera_position()
 
     @Slot(int, name='update_camera_motion_speed')

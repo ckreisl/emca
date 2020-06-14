@@ -22,9 +22,8 @@
     SOFTWARE.
 """
 
-from plugins_handler.plugins_view_container import PluginsViewContainer
+from plugins.plugins_view_container import PluginsViewContainer
 import plugins
-import logging
 
 
 class PluginsHandler(object):

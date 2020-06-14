@@ -22,7 +22,7 @@
     SOFTWARE.
 """
 
-from core.stream import Stream
+from stream.stream import Stream
 import socket
 import logging
 

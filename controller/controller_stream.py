@@ -1,10 +1,15 @@
-from core.socket_stream_client import SocketStreamClient
+from stream.socket_stream_client import SocketStreamClient
 from core.messages import StateMsg
 from PySide2.QtCore import Slot
 import logging
 
 
 class ControllerSocketStream(object):
+
+    """
+        ControllerSocketStream
+        Handles the SocketStream with its request logic in combination with the view.
+    """
 
     def __init__(self, parent, model, view):
         self._controller_main = parent
@@ -20,6 +25,12 @@ class ControllerSocketStream(object):
         self._sstream_client.set_model(model)
 
     def handle_state_msg(self, tpl):
+        """
+        Handle current state, messages mostly received from thread,
+        which listens on the socket pipeline for incoming messages
+        :param tpl: (StateMsg, None or Datatype)
+        :return:
+        """
         msg = tpl[0]
         if msg is StateMsg.CONNECT:
             self._sstream_client.request_render_info()
@@ -40,7 +51,7 @@ class ControllerSocketStream(object):
     def disconnect_socket_stream(self, disconnected):
         """
         Disconnects the client from the server
-        :param disconnected:
+        :param disconnected: boolean
         :return:
         """
         if self._sstream_client.is_connected():
@@ -131,6 +142,10 @@ class ControllerSocketStream(object):
         self._view.view_render_info.close()
 
     def close(self):
+        """
+        Closes the connection to the server
+        :return:
+        """
         # handle disconnect from server if socket connection is still active
         if self._sstream_client.is_connected():
             self._sstream_client.close()
