@@ -267,11 +267,13 @@ class ControllerRenderScene(object):
         """
         scene_renderer = self._view.view_render_scene.scene_renderer
         scene_renderer.reset_all_paths_vertices()
-        tpl = self._model.current_vertex_tpl
-        path_option_settings = scene_renderer.get_path_option_settings(tpl[0])
+        path_index = self._model.current_path_index
+        path_option_settings = scene_renderer.get_path_option_settings(path_index)
         self._view.view_render_scene_options.load_path_settings(path_option_settings)
-        vertex_option_settings = scene_renderer.get_vertex_option_settings(tpl)
-        self._view.view_render_scene_options.load_vertex_settings(vertex_option_settings)
+        tpl = self._model.current_vertex_tpl
+        if tpl:
+            vertex_option_settings = scene_renderer.get_vertex_option_settings(tpl)
+            self._view.view_render_scene_options.load_vertex_settings(vertex_option_settings)
 
     @Slot(bool, name='reset_path')
     def reset_path(self, clicked):

@@ -33,7 +33,7 @@ from PySide2.QtCore import QPoint
 class PixelIcon(object):
 
     """
-        PixelInfo
+        PixelIcon
         Represents and holds information about a selected pixel
         Pixel color, the position. Is used to display the selected pixel as icon in the view
     """
@@ -92,7 +92,7 @@ class PixelIcon(object):
     def get_pixel_str(self):
         """
         Returns a string with class information
-        :return:
+        :return: str
         """
         return '({},{})'.format(self._pixel_pos.x(),
                                 self._pixel_pos.y())

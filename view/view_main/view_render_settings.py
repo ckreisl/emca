@@ -33,7 +33,7 @@ import os
 class ViewRenderSettings(QWidget):
 
     """
-        ViewRenderInfo
+        ViewRenderSettings
         Handles general information about the scene
     """
 
@@ -49,9 +49,8 @@ class ViewRenderSettings(QWidget):
         screen_rect = desktop_widget.availableGeometry(self)
         self.move(screen_rect.center() - self.rect().center())
 
-        self.sbSampleCount.valueChanged.connect(self.sb_update_sample_count)
         self.btnSubmit.clicked.connect(self.btn_submit)
-        self.btnClose.clicked.connect(self.btn_close)
+        self.btnClose.clicked.connect(self.close)
 
     def set_controller(self, controller):
         """
@@ -60,6 +59,7 @@ class ViewRenderSettings(QWidget):
         :return:
         """
         self._controller = controller
+        self.sbSampleCount.valueChanged.connect(controller.update_render_info_sample_count)
 
     def update_render_info(self, render_info):
         """
@@ -97,9 +97,4 @@ class ViewRenderSettings(QWidget):
         :param clicked:
         :return:
         """
-        self._controller.send_render_info()
-
-    @Slot(bool, name='btn_close')
-    def btn_close(self, clicked):
-        self.close()
-
+        self._controller.stream.send_render_info()

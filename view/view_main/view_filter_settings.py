@@ -99,7 +99,7 @@ class ViewFilterSettings(QWidget):
     def init_data(self, render_data):
         """
         Initialise the view
-        :param render_data:
+        :param render_data: RenderData
         :return:
         """
         # iterate through all paths and their vertices

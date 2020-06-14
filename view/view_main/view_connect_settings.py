@@ -55,6 +55,7 @@ class ViewConnectSettings(QWidget):
             self._port = int(self.lePort.text())
         except ValueError as e:
             logging.error(e)
+            raise ValueError(e)
 
         self.btnConnect.clicked.connect(self.btn_connect)
 
@@ -67,20 +68,41 @@ class ViewConnectSettings(QWidget):
         self._controller = controller
 
     def set_hostname(self, hostname):
+        """
+        Set the hostname
+        :param hostname: str
+        """
         self._hostname = hostname
         self.leHostname.setText(hostname)
 
     def get_hostname(self):
+        """
+        Returns the current set hostname
+        :return: str
+        """
         return self.leHostname.text()
 
     def set_port(self, port):
+        """
+        Set the port
+        :param port: str|int
+        """
         self._port = port
         self.lePort.setText(str(port))
 
     def get_port(self):
+        """
+        Returns the current set port
+        :return: str
+        """
         return self.lePort.text()
 
     def set_hostname_and_port(self, hostname, port):
+        """
+        Sets hostname and port
+        :param hostname: str
+        :param port: str|int
+        """
         self.set_hostname(hostname)
         self.set_port(port)
 

@@ -168,7 +168,7 @@ class ViewEMCA(QWidget):
         :param clicked: boolean
         :return:
         """
-        self._controller.request_render_image()
+        self._controller.stream.request_render_image()
 
     @Slot(bool, name='toggle_view_left')
     def toggle_view_left(self, clicked):
@@ -376,4 +376,4 @@ class ViewEMCA(QWidget):
         values = text.split(",")
         x, y = int(values[0]), int(values[1])
         logging.info('Request pixel=({},{})'.format(x, y))
-        self._controller.request_render_data(QPoint(x, y))
+        self._controller.stream.request_render_data(QPoint(x, y))
