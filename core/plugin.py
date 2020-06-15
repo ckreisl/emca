@@ -135,10 +135,10 @@ class Plugin(QWidget):
         """
 
     @abc.abstractmethod
-    def update_vertex_indices(self, tpl_list):
+    def update_intersection_indices(self, tpl_list):
         """
         Send update of multiple selected vertices as tuple list
-        :param tpl_list: [(path_index, vertex_index), ...]
+        :param tpl_list: [(path_index, intersection_index), ...]
         :return:
         """
 
@@ -153,8 +153,8 @@ class Plugin(QWidget):
     @abc.abstractmethod
     def select_intersection(self, tpl):
         """
-        Will be called if a vertex element is selected within the view
-        :param tpl: (path_idx, vertex_idx)
+        Will be called if a intersection element is selected within the view
+        :param tpl: (path_idx, intersection_idx)
         :return:
         """
 

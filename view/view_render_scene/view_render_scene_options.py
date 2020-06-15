@@ -24,7 +24,7 @@
 
 from core.pyside2_uic import loadUi
 from core.list_items import PathListItem
-from core.list_items import VertexListItem
+from core.list_items import IntersectionListItem
 from PySide2.QtCore import Slot
 from PySide2.QtWidgets import QListWidgetItem
 from PySide2.QtWidgets import QWidget
@@ -58,13 +58,13 @@ class ViewRenderSceneOptions(QWidget):
 
         # add connections to controller
         self.listPaths.itemClicked.connect(self.send_select_path)
-        self.listVertices.itemClicked.connect(self.send_select_intersection)
+        self.listIntersections.itemClicked.connect(self.send_select_intersection)
 
     def set_controller(self, controller):
         self._controller = controller
         # handle general settings
         self.cbShowAllNEEs.toggled.connect(controller.scene.show_all_traced_nees)
-        self.cbShowAllVerts.toggled.connect(controller.scene.show_all_traced_vertices)
+        self.cbShowAllIntersections.toggled.connect(controller.scene.show_all_traced_intersections)
         self.cbShowAllPaths.toggled.connect(controller.show_all_traced_paths)
 
         # handle camera settings
@@ -86,17 +86,17 @@ class ViewRenderSceneOptions(QWidget):
         self.cbShowNEERays.toggled.connect(controller.scene.show_traced_path_nee)
         self.cbShowAllOtherPaths.toggled.connect(controller.scene.show_all_other_traced_paths)
 
-        # handle vertex settings
-        self.sliderVertexOpacity.valueChanged.connect(controller.scene.update_vertex_opacity)
-        self.sliderVertexSize.valueChanged.connect(controller.scene.update_vertex_size)
-        self.pbResetVertex.clicked.connect(controller.scene.reset_vertex)
-        self.cbShowOmegaI.toggled.connect(controller.scene.show_vertex_omega_i)
-        self.cbShowOmegaO.toggled.connect(controller.scene.show_vertex_omega_o)
-        self.cbShowNEE.toggled.connect(controller.scene.show_vertex_nee)
-        self.cbShowAllOtherVertices.toggled.connect(controller.scene.show_all_other_traced_vertices)
+        # handle intersection settings
+        self.sliderIntersectionOpacity.valueChanged.connect(controller.scene.update_intersection_opacity)
+        self.sliderIntersectionSize.valueChanged.connect(controller.scene.update_intersection_size)
+        self.pbResetIntersection.clicked.connect(controller.scene.reset_intersection)
+        self.cbShowOmegaI.toggled.connect(controller.scene.show_intersection_omega_i)
+        self.cbShowOmegaO.toggled.connect(controller.scene.show_intersection_omega_o)
+        self.cbShowNEE.toggled.connect(controller.scene.show_intersection_nee)
+        self.cbShowAllOtherIntersections.toggled.connect(controller.scene.show_all_other_traced_intersections)
 
         self.pbInspectSelectedPath.clicked.connect(controller.scene.inspect_selected_path)
-        self.pbResetAll.clicked.connect(controller.scene.reset_all_paths_vertices)
+        self.pbResetAll.clicked.connect(controller.scene.reset_all_paths_intersections)
 
     @Slot(QListWidgetItem, name='send_select_path')
     def send_select_path(self, item):
@@ -105,7 +105,7 @@ class ViewRenderSceneOptions(QWidget):
 
     @Slot(QListWidgetItem, name='send_select_intersection')
     def send_select_intersection(self, item):
-        if isinstance(item, VertexListItem):
+        if isinstance(item, IntersectionListItem):
             self._controller.select_intersection(item.index_tpl)
 
     @Slot(bool, name='inspect_selected_path')
@@ -114,7 +114,7 @@ class ViewRenderSceneOptions(QWidget):
         
     def update_path_indices(self, indices):
         self.listPaths.clear()
-        self.listVertices.clear()
+        self.listIntersections.clear()
         for key in indices:
             self.listPaths.addItem(PathListItem(key))
         if not self.listPaths.isEnabled():
@@ -127,9 +127,9 @@ class ViewRenderSceneOptions(QWidget):
 
     def select_path(self, index):
         self.enable_path_settings(True)
-        self.labelVertexOptions.setEnabled(True)
-        self.listVertices.setEnabled(True)
-        self.cbShowAllOtherVertices.setEnabled(True)
+        self.labelIntersectionOptions.setEnabled(True)
+        self.listIntersections.setEnabled(True)
+        self.cbShowAllOtherIntersections.setEnabled(True)
         # highlight selected path item in list.
         for i in range(0, self.listPaths.count()):
             item = self.listPaths.item(i)
@@ -138,29 +138,29 @@ class ViewRenderSceneOptions(QWidget):
                 break
 
     def select_intersection(self, tpl):
-        self.enable_vertex_settings(True)
-        # highlight selected vertex item in list.
-        for i in range(0, self.listVertices.count()):
-            item = self.listVertices.item(i)
-            if item.vertex_index == tpl[1]:
+        self.enable_intersection_settings(True)
+        # highlight selected intersection item in list.
+        for i in range(0, self.listIntersections.count()):
+            item = self.listIntersections.item(i)
+            if item.intersection_index == tpl[1]:
                 item.setSelected(True)
                 break
 
-    def update_vertex_list(self, path_data):
-        self.listVertices.clear()
+    def update_intersection_list(self, path_data):
+        self.listIntersections.clear()
         for key, _ in path_data.intersections.items():
-            self.listVertices.addItem(VertexListItem((path_data.sample_idx, key)))
+            self.listIntersections.addItem(IntersectionListItem((path_data.sample_idx, key)))
 
     def prepare_new_data(self):
         """
         Prepare view for new incoming render data,
-        disables path and vertex settings
+        disables path and intersection settings
         :return:
         """
         self.listPaths.clear()
-        self.listVertices.clear()
+        self.listIntersections.clear()
         self.enable_path_settings(False)
-        self.enable_vertex_settings(False)
+        self.enable_intersection_settings(False)
 
     def enable_general_settings(self, enabled):
         """
@@ -171,7 +171,7 @@ class ViewRenderSceneOptions(QWidget):
         self.labelGeneral.setEnabled(enabled)
         self.cbShowAllPaths.setEnabled(enabled)
         self.cbShowAllNEEs.setEnabled(enabled)
-        self.cbShowAllVerts.setEnabled(enabled)
+        self.cbShowAllIntersections.setEnabled(enabled)
 
     def enable_camera_settings(self, enabled):
         """
@@ -222,26 +222,26 @@ class ViewRenderSceneOptions(QWidget):
         self.pbResetAll.setEnabled(enabled)
         self.pbInspectSelectedPath.setEnabled(enabled)
 
-    def enable_vertex_settings(self, enabled):
+    def enable_intersection_settings(self, enabled):
         """
-        Depending on enabled, enables the vertex settings
+        Depending on enabled, enables the intersection settings
         :param enabled:
         :return:
         """
-        self.labelVertexOptions.setEnabled(enabled)
-        self.listVertices.setEnabled(enabled)
+        self.labelIntersectionOptions.setEnabled(enabled)
+        self.listIntersections.setEnabled(enabled)
         self.labelShowOmegaI.setEnabled(enabled)
         self.cbShowOmegaI.setEnabled(enabled)
         self.labelShowOmegaO.setEnabled(enabled)
         self.cbShowOmegaO.setEnabled(enabled)
         self.labelShowNE.setEnabled(enabled)
         self.cbShowNEE.setEnabled(enabled)
-        self.labelVertexOpacity.setEnabled(enabled)
-        self.sliderVertexOpacity.setEnabled(enabled)
-        self.labelVertexSize.setEnabled(enabled)
-        self.sliderVertexSize.setEnabled(enabled)
-        self.cbShowAllOtherVertices.setEnabled(enabled)
-        self.pbResetVertex.setEnabled(enabled)
+        self.labelIntersectionOpacity.setEnabled(enabled)
+        self.sliderIntersectionOpacity.setEnabled(enabled)
+        self.labelIntersectionSize.setEnabled(enabled)
+        self.sliderIntersectionSize.setEnabled(enabled)
+        self.cbShowAllOtherIntersections.setEnabled(enabled)
+        self.pbResetIntersection.setEnabled(enabled)
 
     def load_camera_settings(self, camera_settings):
         """
@@ -299,34 +299,34 @@ class ViewRenderSceneOptions(QWidget):
         self.cbShowNEERays.setChecked(show_path_ne)
         self.cbShowNEERays.blockSignals(False)
 
-    def load_vertex_settings(self, vertex_option_settings):
+    def load_intersection_settings(self, intersection_option_settings):
         """
-        Loads the vertex settings loaded from the renderer
-        :param vertex_option_settings: dict
+        Loads the intersection settings loaded from the renderer
+        :param intersection_option_settings: dict
         :return:
         """
-        is_wi_visible = vertex_option_settings.get('is_wi_visible', True)
+        is_wi_visible = intersection_option_settings.get('is_wi_visible', True)
         self.cbShowOmegaI.blockSignals(True)
         self.cbShowOmegaI.setChecked(is_wi_visible)
         self.cbShowOmegaI.blockSignals(False)
 
-        is_wo_visible = vertex_option_settings.get('is_wo_visible', False)
+        is_wo_visible = intersection_option_settings.get('is_wo_visible', False)
         self.cbShowOmegaO.blockSignals(True)
         self.cbShowOmegaO.setChecked(is_wo_visible)
         self.cbShowOmegaO.blockSignals(False)
 
-        is_ne_visible = vertex_option_settings.get('is_ne_visible', False)
+        is_ne_visible = intersection_option_settings.get('is_ne_visible', False)
         self.cbShowNEE.blockSignals(True)
         self.cbShowNEE.setChecked(is_ne_visible)
         self.cbShowNEE.blockSignals(False)
 
-        opacity = vertex_option_settings.get('opacity', 1.0)
-        max_value = self.sliderVertexOpacity.maximum()
-        self.sliderVertexOpacity.blockSignals(True)
-        self.sliderVertexOpacity.setValue(int(opacity * max_value))
-        self.sliderVertexOpacity.blockSignals(False)
+        opacity = intersection_option_settings.get('opacity', 1.0)
+        max_value = self.sliderIntersectionOpacity.maximum()
+        self.sliderIntersectionOpacity.blockSignals(True)
+        self.sliderIntersectionOpacity.setValue(int(opacity * max_value))
+        self.sliderIntersectionOpacity.blockSignals(False)
 
-        size = vertex_option_settings.get('size', 1.0)
-        self.sliderVertexSize.blockSignals(True)
-        self.sliderVertexSize.setValue(size)
-        self.sliderVertexSize.blockSignals(False)
+        size = intersection_option_settings.get('size', 1.0)
+        self.sliderIntersectionSize.blockSignals(True)
+        self.sliderIntersectionSize.setValue(size)
+        self.sliderIntersectionSize.blockSignals(False)

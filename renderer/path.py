@@ -88,19 +88,19 @@ class Path(object):
             if its_key == start_key:
                 wi = Ray(origin, its.pos)
             else:
-                last_vertex = intersections.get(its_key-1, None)
-                if last_vertex:
-                    wi = Ray(last_vertex.pos, its.pos)
+                last_its = intersections.get(its_key-1, None)
+                if last_its:
+                    wi = Ray(last_its.pos, its.pos)
 
             vertex = IntersectionVertex(idx, its_key, its.pos)
 
             wo = None
-            next_vertex = intersections.get(its_key+1, None)
-            if next_vertex:
-                if next_vertex.is_pos_set:
-                    wo = Ray(its.pos, next_vertex.pos)
-                elif next_vertex.is_envmap_set:
-                    wo = Ray(its.pos, next_vertex.pos_envmap, is_envmap=True)
+            next_its = intersections.get(its_key+1, None)
+            if next_its:
+                if next_its.is_pos_set:
+                    wo = Ray(its.pos, next_its.pos)
+                elif next_its.is_envmap_set:
+                    wo = Ray(its.pos, next_its.pos_envmap, is_envmap=True)
 
             if its.is_envmap_set:
                 wo = Ray(its.pos, its.pos_envmap, is_envmap=True)
@@ -132,7 +132,7 @@ class Path(object):
     def its_dict(self):
         """
         Returns a dict containing all path intersection information
-        :return: dict{vertex_idx : Intersection, ...}
+        :return: dict{intersection_index : Intersection, ...}
         """
         return self._its_dict
 
@@ -204,23 +204,23 @@ class Path(object):
         for key, its in self._its_dict.items():
             its.is_ne_visible = visible
 
-    def draw_verts(self, renderer):
+    def draw_its(self, renderer):
         """
-        Draws all vertices of the path
+        Draws all intersections of the path
         :param renderer: vtkRenderer
         :return:
         """
         for _, its in self._its_dict.items():
-            its.draw_vert(renderer)
+            its.draw_its(renderer)
 
-    def clear_verts(self, renderer):
+    def clear_its(self, renderer):
         """
         Clears all vertices of the path
         :param renderer: vtkRenderer
         :return:
         """
         for _, its in self._its_dict.items():
-            its.clear_vert(renderer)
+            its.clear_its(renderer)
 
     def draw_all(self, renderer):
         """
@@ -339,22 +339,22 @@ class Path(object):
         for _, its in self._its_dict.items():
             its.reset_path_size()
 
-    def reset_vertex_opacity(self):
+    def reset_intersection_opacity(self):
         """
         Resets the opacity of all path vertices / intersections
         :return:
         """
         self._opacity = self.default_opacity
         for _, its in self._its_dict.items():
-            its.reset_vertex_opacity()
+            its.reset_intersection_opacity()
 
-    def reset_vertex_size(self):
+    def reset_intersection_size(self):
         """
         Resets the size of all path vertices / intersections
         """
         self._size = self.default_size
         for _, its in self._its_dict.items():
-            its.reset_vertex_size()
+            its.reset_intersection_size()
 
     def set_path_size(self, value):
         """

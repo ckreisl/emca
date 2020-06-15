@@ -90,7 +90,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="cbShowAllVerts">
+          <widget class="QCheckBox" name="cbShowAllIntersections">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -121,12 +121,12 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="labelVertexOptions">
+          <widget class="QLabel" name="labelIntersectionOptions">
            <property name="enabled">
             <bool>false</bool>
            </property>
            <property name="text">
-            <string>Single Vertex Options</string>
+            <string>Single Intersection Options</string>
            </property>
           </widget>
          </item>
@@ -246,7 +246,7 @@
           </layout>
          </item>
          <item>
-          <widget class="QListWidget" name="listVertices">
+          <widget class="QListWidget" name="listIntersections">
            <property name="enabled">
             <bool>false</bool>
            </property>
@@ -287,7 +287,7 @@
               </widget>
              </item>
              <item row="3" column="0">
-              <widget class="QLabel" name="labelVertexOpacity">
+              <widget class="QLabel" name="labelIntersectionOpacity">
                <property name="enabled">
                 <bool>false</bool>
                </property>
@@ -297,7 +297,7 @@
               </widget>
              </item>
              <item row="4" column="0">
-              <widget class="QLabel" name="labelVertexSize">
+              <widget class="QLabel" name="labelIntersectionSize">
                <property name="enabled">
                 <bool>false</bool>
                </property>
@@ -337,7 +337,7 @@
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="QSlider" name="sliderVertexOpacity">
+              <widget class="QSlider" name="sliderIntersectionOpacity">
                <property name="enabled">
                 <bool>false</bool>
                </property>
@@ -347,7 +347,7 @@
               </widget>
              </item>
              <item row="4" column="1">
-              <widget class="QSlider" name="sliderVertexSize">
+              <widget class="QSlider" name="sliderIntersectionSize">
                <property name="enabled">
                 <bool>false</bool>
                </property>
@@ -359,12 +359,12 @@
             </layout>
            </item>
            <item>
-            <widget class="QPushButton" name="pbResetVertex">
+            <widget class="QPushButton" name="pbResetIntersection">
              <property name="enabled">
               <bool>false</bool>
              </property>
              <property name="text">
-              <string>Reset Vertex</string>
+              <string>Reset Intersection</string>
              </property>
             </widget>
            </item>
@@ -398,12 +398,12 @@
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="cbShowAllOtherVertices">
+          <widget class="QCheckBox" name="cbShowAllOtherIntersections">
            <property name="enabled">
             <bool>false</bool>
            </property>
            <property name="text">
-            <string>Show all not selected vertices</string>
+            <string>Show all not selected intersections</string>
            </property>
           </widget>
          </item>
@@ -555,7 +555,7 @@
             <bool>false</bool>
            </property>
            <property name="text">
-            <string>Motion Speed</string>
+            <string>Camera Motion Speed</string>
            </property>
           </widget>
          </item>
@@ -575,7 +575,7 @@
             <bool>false</bool>
            </property>
            <property name="text">
-            <string>Clip To Selected Vertex</string>
+            <string>Clip To Selected Intersection</string>
            </property>
           </widget>
          </item>

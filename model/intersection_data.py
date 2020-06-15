@@ -31,8 +31,8 @@ class IntersectionData(UserData):
     """
         IntersectionData
         Represents one intersection point of a traced path through the scene.
-        Holds information about the intersection, more precisely the vertex position, the vertex index,
-        if a next event estimation was set, if a vertex position was set and current estimate information at this point.
+        Holds information about the intersection, more precisely the intersection position, the intersection index,
+        if a next event estimation was set, if a intersection position was set and current estimate information at this point.
     """
 
     def __init__(self):
@@ -83,7 +83,7 @@ class IntersectionData(UserData):
     @property
     def depth_idx(self):
         """
-        Returns the current depth index (vertex index)
+        Returns the current depth index (intersection index)
         :return: integer
         """
         return self._depth_idx
@@ -131,7 +131,7 @@ class IntersectionData(UserData):
     @property
     def pos(self):
         """
-        Returns the vertex / intersection position
+        Returns the intersection position
         :return: point3f
         """
         return self._pos

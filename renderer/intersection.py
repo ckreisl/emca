@@ -30,7 +30,7 @@ class Intersection(object):
     """
         Intersection
         Represents an intersection.
-        Holding render information for the 3D view for every vertex,
+        Holding render information for the 3D view for every intersection,
         such as incoming, outgoing, next event estimation vector, opacity and size
     """
 
@@ -117,7 +117,7 @@ class Intersection(object):
     @property
     def pos(self):
         """
-        Returns the 3D position of the vertex
+        Returns the 3D position of the intersection
         :return: point3f
         """
         return self._its.pos
@@ -157,7 +157,7 @@ class Intersection(object):
     @property
     def idx(self):
         """
-        Returns the vertex index
+        Returns the intersection index
         :return:
         """
         return self._idx
@@ -228,7 +228,7 @@ class Intersection(object):
 
     def draw_all(self, renderer):
         """
-        Draws all, including incoming, outgoing, nee and the vertex
+        Draws all, including incoming, outgoing, nee and the intersection vertex
         :param renderer:
         :return:
         """
@@ -274,22 +274,6 @@ class Intersection(object):
         """
         renderer.AddActor(self._its)
 
-    def draw_vert(self, renderer):
-        """
-        Draws the intersection / vertex (vtkVertex)
-        :param renderer:
-        :return:
-        """
-        renderer.AddActor(self._its)
-
-    def clear_vert(self, renderer):
-        """
-        Removes the intersection / vertex from the scene
-        :param renderer:
-        :return:
-        """
-        renderer.RemoveActor(self._its)
-
     def draw_envmap(self, renderer):
         """
         Draws a outgoing ray that end in the environment map
@@ -302,8 +286,8 @@ class Intersection(object):
 
     def set_selected(self, selected):
         """
-        Highlight incoming and vertex if items are selected
-        :param selected:
+        Highlight incoming ray and intersection vertex
+        :param selected: boolean
         :return:
         """
         if self._wi:
@@ -331,34 +315,34 @@ class Intersection(object):
 
     def set_color_its(self, color):
         """
-        Sets the intersection / vertex color
+        Sets the intersection color
         :param color:
         :return:
         """
         if self._its:
             self._its.set_color_list(color)
 
-    def set_vertex_opacity(self, value):
+    def set_intersection_opacity(self, value):
         """
-        Set the vertex opacity
+        Set the intersection opacity
         :param value:
         :return:
         """
         self._opacity = value
         self._its.opacity = value
 
-    def set_vertex_size(self, value):
+    def set_intersection_size(self, value):
         """
-        Set the vertex size
+        Set the intersection size
         :param value:
         :return:
         """
         self._size = value
         self._its.size = value
 
-    def reset_vertex(self):
+    def reset_intersection(self):
         """
-        Resets the vertex to its default values (opacity and size)
+        Resets the intersection to its default values (opacity and size)
         :return:
         """
         self._opacity = self.default_opacity
@@ -406,20 +390,20 @@ class Intersection(object):
         self._size = self.default_size
         self.set_path_size(self.default_size)
 
-    def reset_vertex_opacity(self):
+    def reset_intersection_opacity(self):
         """
-        Resets the vertex opacity
+        Resets the intersection vertex opacity
         :return:
         """
         self._opacity = self.default_opacity
-        self.set_vertex_opacity(self.default_opacity)
+        self.set_intersection_opacity(self.default_opacity)
         
-    def reset_vertex_size(self):
+    def reset_intersection_size(self):
         """
-        Resets the vertex size
+        Resets the intersection vertex size
         """
         self._size = self.default_size
-        self.set_vertex_size(self.default_size)
+        self.set_intersection_size(self.default_size)
 
     def clear_ne(self, renderer):
         """

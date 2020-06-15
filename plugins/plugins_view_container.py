@@ -104,8 +104,8 @@ class PluginsViewContainer(QWidget):
     def send_select_intersection(self, tpl):
         """
         Calls the controller select_intersection function.
-        Updates the current selected vertex
-        :param tpl: (path_index, vertex_index)
+        Updates the current selected intersection
+        :param tpl: (path_index, intersection_index)
         :return:
         """
         self._controller.select_intersection(tpl=tpl)
@@ -122,12 +122,12 @@ class PluginsViewContainer(QWidget):
     def select_intersection(self, tpl):
         """
         Calls the Plugin select_intersection function.
-        Informs the Plugin about the current selected vertex
-        :param tpl: (path_index, vertex_index)
+        Informs the Plugin about the current selected intersection
+        :param tpl: (path_index, intersection_index)
         :return:
         """
         self._plugin.select_intersection(tpl)
-        # automatically request new data for the selected vertex if the tool is visible
+        # automatically request new data for the selected intersection if the tool is visible
         if self.isVisible():
             self._controller.stream.request_plugin(self._plugin.flag)
 
@@ -200,14 +200,14 @@ class PluginsViewContainer(QWidget):
         """
         self._plugin.update_path_indices(indices)
 
-    def update_vertex_indices(self, tpl_list):
+    def update_intersection_indices(self, tpl_list):
         """
-        Calls the Plugin update_vertex_indices function.
+        Calls the Plugin update_intersection_indices function.
         Informs the Plugin about all selected vertices
-        :param tpl_list: [(path_index, vertex_index),...]
+        :param tpl_list: [(path_index, intersection_index),...]
         :return:
         """
-        self._plugin.update_vertex_indices(tpl_list)
+        self._plugin.update_intersection_indices(tpl_list)
 
     def update_view(self):
         """

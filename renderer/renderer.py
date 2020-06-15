@@ -105,9 +105,8 @@ class Renderer(vtk.vtkRenderer):
         for i in range(0, picked):
             prop = props.GetNextProp3D()
             if isinstance(prop, IntersectionVertex):
-                tpl = prop.get_index_tpl()
                 # TODO check case if callback function is none
-                self._rubber_band_callback(tpl)
+                self._rubber_band_callback(prop.index_tpl)
                 break
 
     # plugin functions

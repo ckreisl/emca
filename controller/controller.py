@@ -183,8 +183,8 @@ class Controller(QObject):
         self._view.view_render_scene_options.cbShowAllPaths.setChecked(enabled)
         self._view.view_render_scene_options.cbShowAllPaths.blockSignals(False)
         self.update_path(indices, False)
-        verts = self._view.view_render_scene_options.cbShowAllVerts.isChecked()
-        self._view.view_render_scene.scene_renderer.show_all_traced_vertices(verts)
+        its = self._view.view_render_scene_options.cbShowAllIntersections.isChecked()
+        self._view.view_render_scene.scene_renderer.show_all_traced_intersections(its)
         self._view.view_render_scene_options.cbShowPathRays.blockSignals(True)
         self._view.view_render_scene_options.cbShowPathRays.setChecked(enabled)
         self._view.view_render_scene_options.cbShowPathRays.blockSignals(False)
@@ -260,7 +260,7 @@ class Controller(QObject):
         self._view.view_render_scene_options.load_path_settings(path_option_settings)
         path_data = self._model.render_data.dict_paths[index]
         self._view.view_render_scene_options.select_path(index)
-        self._view.view_render_scene_options.update_vertex_list(path_data)
+        self._view.view_render_scene_options.update_intersection_list(path_data)
         # select path in render data view
         self._view.view_render_data.select_path(index)
         # send path index, update plugins
@@ -270,21 +270,21 @@ class Controller(QObject):
 
     def select_intersection(self, tpl):
         """
-        Send vertex index update to all views
-        :param tpl: (path_index, vertex_index)
+        Send intersection index update to all views
+        :param tpl: (path_index, intersection_index)
         :return:
         """
-        # select vertex in 3D scene
+        # select intersection in 3D scene
         self._view.view_render_scene.select_intersection(tpl)
         # update 3d scene options
         self._view.view_render_scene_options.select_intersection(tpl)
-        vertex_option_settings = self._view.view_render_scene.scene_renderer.get_vertex_option_settings(tpl)
-        self._view.view_render_scene_options.load_vertex_settings(vertex_option_settings)
-        # select vertex in render data view
+        intersection_option_settings = self._view.view_render_scene.scene_renderer.get_intersection_option_settings(tpl)
+        self._view.view_render_scene_options.load_intersection_settings(intersection_option_settings)
+        # select intersection in render data view
         self._view.view_render_data.select_intersection(tpl)
-        # send vertex index, update plugins
+        # send intersection index, update plugins
         self._model.plugins_handler.select_intersection(tpl)
-        # save current tpl (path_index, vertex_index)
+        # save current tpl (path_index, intersection_index)
         self._model.current_intersection_tpl = tpl
 
     def display_view(self):

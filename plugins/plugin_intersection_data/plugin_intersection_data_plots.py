@@ -60,27 +60,27 @@ class IntersectionData(Plugin):
         ui_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), 'ui', 'plugin_plots.ui'))
         loadUi(ui_filepath, self)
 
-        self._vertex_data_plot_2d = IntersectionDataPlot2D(self)
-        self._vertex_data_plot_3d = IntersectionDataPlot3D(self)
-        self._vertex_data_plot_rgb = IntersectionDataPlotRGB(self)
-        self._plots = [self._vertex_data_plot_2d,
-                       self._vertex_data_plot_3d,
-                       self._vertex_data_plot_rgb]
+        self._its_data_plot_2d = IntersectionDataPlot2D(self)
+        self._its_data_plot_3d = IntersectionDataPlot3D(self)
+        self._its_data_plot_rgb = IntersectionDataPlotRGB(self)
+        self._plots = [self._its_data_plot_2d,
+                       self._its_data_plot_3d,
+                       self._its_data_plot_rgb]
         self._render_data = None
         self._cur_path_tpl = None
         self._last_hist_item = ""
 
         layout_2d = QVBoxLayout(self.hist2D)
-        layout_2d.addWidget(self._vertex_data_plot_2d)
-        layout_2d.addWidget(self._vertex_data_plot_2d.create_navigation_toolbar(self.hist2D))
+        layout_2d.addWidget(self._its_data_plot_2d)
+        layout_2d.addWidget(self._its_data_plot_2d.create_navigation_toolbar(self.hist2D))
 
         layout_3d = QVBoxLayout(self.hist3D)
-        layout_3d.addWidget(self._vertex_data_plot_3d)
-        layout_3d.addWidget(NavigationToolBar(self._vertex_data_plot_3d, self.hist3D))
+        layout_3d.addWidget(self._its_data_plot_3d)
+        layout_3d.addWidget(NavigationToolBar(self._its_data_plot_3d, self.hist3D))
 
         layout_color = QVBoxLayout(self.histColor)
-        layout_color.addWidget(self._vertex_data_plot_rgb)
-        layout_color.addWidget(self._vertex_data_plot_rgb.create_navigation_toolbar(self.histColor))
+        layout_color.addWidget(self._its_data_plot_rgb)
+        layout_color.addWidget(self._its_data_plot_rgb.create_navigation_toolbar(self.histColor))
 
         self.listPaths.itemClicked.connect(self.apply_path_index_update)
         self.listPaths.currentItemChanged.connect(self.update_hist_path)
@@ -116,7 +116,7 @@ class IntersectionData(Plugin):
         for i in indices:
             PathListItem(i, 'Path ({})'.format(i), self.listPaths)
 
-    def update_vertex_indices(self, tpl_list):
+    def update_intersection_indices(self, tpl_list):
         pass
 
     def select_path(self, index):
@@ -129,11 +129,11 @@ class IntersectionData(Plugin):
             self._cur_path_tpl = tpl
             stacked_idx = self.stackedHists.currentIndex()
             if stacked_idx == 0:
-                self._vertex_data_plot_2d.select_intersection(tpl)
+                self._its_data_plot_2d.select_intersection(tpl)
             elif stacked_idx == 1:
-                self._vertex_data_plot_3d.select_intersection(tpl)
+                self._its_data_plot_3d.select_intersection(tpl)
             elif stacked_idx == 2:
-                self._vertex_data_plot_rgb.select_intersection(tpl)
+                self._its_data_plot_rgb.select_intersection(tpl)
 
     @Slot(QListWidgetItem, name='apply_path_index_update')
     def apply_path_index_update(self, item):
@@ -162,13 +162,13 @@ class IntersectionData(Plugin):
                 self.insert_plot_data(its.dict_color3f, plot_color_dict, its_idx)
 
             for name in plot_2d_dict:
-                HistListItem(name, self.listHistNames, plot_2d_dict, 0.75, path_data.path_depth+0.25, self._vertex_data_plot_2d, 0)
+                HistListItem(name, self.listHistNames, plot_2d_dict, 0.75, path_data.path_depth+0.25, self._its_data_plot_2d, 0)
 
             for name in plot_3d_dict:
-                HistListItem(name, self.listHistNames, plot_3d_dict, 0.75, path_data.path_depth+0.25, self._vertex_data_plot_3d, 1)
+                HistListItem(name, self.listHistNames, plot_3d_dict, 0.75, path_data.path_depth+0.25, self._its_data_plot_3d, 1)
 
             for name in plot_color_dict:
-                HistListItem(name, self.listHistNames, plot_color_dict, 0.75, path_data.path_depth+0.25, self._vertex_data_plot_rgb, 2)
+                HistListItem(name, self.listHistNames, plot_color_dict, 0.75, path_data.path_depth+0.25, self._its_data_plot_rgb, 2)
 
             if self._last_hist_item == "":
                 self.listHistNames.setCurrentRow(0)
@@ -207,12 +207,12 @@ class IntersectionData(Plugin):
             plot.clear()
 
     @staticmethod
-    def insert_plot_data(source_dict, target_dict, vertex_idx):
+    def insert_plot_data(source_dict, target_dict, intersection_idx):
         for name, value in source_dict.items():
             if target_dict.get(name, None):
-                target_dict[name].append((vertex_idx, value))
+                target_dict[name].append((intersection_idx, value))
             else:
-                target_dict[name] = [(vertex_idx, value)]
+                target_dict[name] = [(intersection_idx, value)]
 
     def serialize(self, stream):
         # nothing to-do here since we work directly on render data

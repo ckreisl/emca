@@ -64,10 +64,10 @@ class SceneInterface(object):
         """
 
     @abc.abstractmethod
-    def get_vertex_option_settings(self, tpl):
+    def get_intersection_option_settings(self, tpl):
         """
-        Returns the vertex option settings defined by its tpl (path_index, vertex_index)
-        :param: tuple (path_index, vertex_index)
+        Returns the intersection option settings defined by its tpl (path_index, intersection_index)
+        :param: tuple (path_index, intersection_index)
         :return: dict
         """
 
@@ -104,8 +104,8 @@ class SceneInterface(object):
     @abc.abstractmethod
     def select_intersection(self, tpl):
         """
-        Informs the renderer to select / highlight the vertex - Tuple (path_index, vertex_index)
-        :param tpl: tuple(path_index, vertex_index)
+        Informs the renderer to select / highlight the intersection - Tuple (path_index, intersection_index)
+        :param tpl: tuple(path_index, intersection_index)
         :return:
         """
 
@@ -220,9 +220,9 @@ class SceneInterface(object):
         """
 
     @abc.abstractmethod
-    def show_all_other_traced_vertices(self, enable):
+    def show_all_other_traced_intersections(self, enable):
         """
-        Depending on input show all traced vertices within the 3d scene
+        Depending on input show all traced intersections within the 3d scene
         :param enable: boolean
         :return:
         """
@@ -263,7 +263,7 @@ class SceneInterface(object):
         """
 
     @abc.abstractmethod
-    def show_all_traced_vertices(self, state):
+    def show_all_traced_intersections(self, state):
         """
         Depending on input shows all intersections within the 3d scene
         :param state: boolean
@@ -271,28 +271,28 @@ class SceneInterface(object):
         """
 
     @abc.abstractmethod
-    def update_vertex_opacity(self, vertex_tpl, opacity):
+    def update_intersection_opacity(self, intersection_tpl, opacity):
         """
-        Updates the vertex opacity
-        :param vertex_tpl: (path_index, vertex_index)
+        Updates the intersection vertex opacity
+        :param intersection_tpl: (path_index, intersection_index)
         :param opacity: float
         :return:
         """
 
     @abc.abstractmethod
-    def update_vertex_size(self, vertex_tpl, size):
+    def update_intersection_size(self, intersection_tpl, size):
         """
-        Updates the vertex size
-        :param vertex_tpl: (path_index, vertex_index)
+        Updates the intersection vertex size
+        :param intersection_tpl: (path_index, intersection_index)
         :param size: float
         :return:
         """
 
     @abc.abstractmethod
-    def reset_vertex(self, vertex_tpl):
+    def reset_intersection(self, intersection_tpl):
         """
-        Resets opacity and size of the selected vertex
-        :param vertex_tpl: (path_index, vertex_index)
+        Resets opacity and size of the selected intersection vertex
+        :param intersection_tpl: (path_index, intersection_index)
         :return:
         """
 
@@ -314,28 +314,28 @@ class SceneInterface(object):
         """
 
     @abc.abstractmethod
-    def show_vertex_omega_o(self, vertex_tpl, enabled):
+    def show_intersection_omega_o(self, intersection_tpl, enabled):
         """
-        Displays the outgoing ray of the current selected vertex / intersection
-        :param vertex_tpl: (path_index, vertex_index)
+        Displays the outgoing ray of the current selected intersection
+        :param intersection_tpl: (path_index, intersection_index)
         :param enabled: boolean
         :return:
         """
 
     @abc.abstractmethod
-    def show_vertex_omega_i(self, vertex_tpl, enabled):
+    def show_intersection_omega_i(self, intersection_tpl, enabled):
         """
-        Displays the incoming ray of the current selected vertex / intersection
-        :param vertex_tpl: (path_index, vertex_index)
+        Displays the incoming ray of the current selected intersection
+        :param intersection_tpl: (path_index, intersection_index)
         :param enabled: boolean
         :return:
         """
 
     @abc.abstractmethod
-    def show_vertex_nee(self, vertex_tpl, enabled):
+    def show_intersection_nee(self, intersection_tpl, enabled):
         """
-        Displays the next event estimation ray of the current selected vertex / intersection
-        :param vertex_tpl: (path_index, vertex_index)
+        Displays the next event estimation ray of the current selected intersection
+        :param intersection_tpl: (path_index, intersection_index)
         :param enabled: boolean
         :return:
         """

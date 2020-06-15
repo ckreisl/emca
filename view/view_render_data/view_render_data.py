@@ -104,11 +104,11 @@ class ViewRenderData(QWidget):
     @Slot(QTreeWidgetItem, QTreeWidgetItem, name='select_tree_item')
     def select_tree_item(self, item, previous):
         """
-        Handles if a path or vertex node is selected. Informs the controller about the selected index
+        Handles if a path or intersection node is selected. Informs the controller about the selected index
         :param item: QTreeWidgetItem
         :return:
         """
-        # select path or vertex of parent nodes
+        # select path or intersection of parent nodes
         while isinstance(item, QTreeWidgetItem):
             if isinstance(item, PathNodeItem) or isinstance(item, IntersectionNodeItem):
                 break
@@ -124,7 +124,7 @@ class ViewRenderData(QWidget):
             else:
                 self._selected_indices = np.array([item.index], dtype=np.int32)
                 self._controller.select_path(item.index)
-                # select first vertex of the path on path selection
+                # select first intersection of the path on path selection
                 self._controller.select_intersection((item.index, 1))
         elif isinstance(item, IntersectionNodeItem):
             self._controller.select_intersection(item.index_tpl())
@@ -196,8 +196,8 @@ class ViewRenderData(QWidget):
 
     def select_intersection(self, tpl):
         """
-        Select/Highlight a vertex node depending on the input tuple tpl
-        :param tpl: tuple(path_index, vertex_index)
+        Select/Highlight a intersection node depending on the input tuple tpl
+        :param tpl: tuple(path_index, intersection_index)
         :return:
         """
         self.tree.blockSignals(True)
@@ -244,31 +244,31 @@ class ViewRenderData(QWidget):
 
     def add_intersection_nodes(self, parent, intersections):
         """
-        Adds vertex nodes to a path node
+        Adds intersection nodes to a path node
         :param parent:
         :param intersections:
         :return:
         """
         for _, its in intersections.items():
-            self.add_vertex_node(parent, its)
+            self.add_intersection_node(parent, its)
 
-    def add_vertex_node(self, parent, vert):
+    def add_intersection_node(self, parent, its):
         """
-        Adds a vertex node and all of its information within a node
+        Adds a intersection node and all of its information within a node
         :param parent:
-        :param vert:
+        :param its: Intersection
         :return:
         """
-        path_vertex = IntersectionNodeItem(parent.index, vert.depth_idx)
-        path_vertex.setText(0, "Vertex ({})".format(vert.depth_idx))
-        self.add_child_item_node(path_vertex, "Position", str(vert.pos))
-        if vert.pos_ne is not None:
-            self.add_child_item_node(path_vertex, "Pos. NEE", str(vert.pos_ne))
-        if vert.pos_envmap is not None:
-            self.add_child_item_node(path_vertex, "Pos. Envmap", str(vert.pos_envmap))
-        self.add_child_item_node(path_vertex, "Estimate", str(vert.li))
-        self.add_user_data_to_node(path_vertex, vert)
-        parent.addChild(path_vertex)
+        its_node = IntersectionNodeItem(parent.index, its.depth_idx)
+        its_node.setText(0, "Intersection ({})".format(its.depth_idx))
+        self.add_child_item_node(its_node, "Position", str(its.pos))
+        if its.pos_ne is not None:
+            self.add_child_item_node(its_node, "Pos. NEE", str(its.pos_ne))
+        if its.pos_envmap is not None:
+            self.add_child_item_node(its_node, "Pos. Envmap", str(its.pos_envmap))
+        self.add_child_item_node(its_node, "Estimate", str(its.li))
+        self.add_user_data_to_node(its_node, its)
+        parent.addChild(its_node)
 
     def add_user_data_to_node(self, node, user_data):
         """

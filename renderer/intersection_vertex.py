@@ -29,16 +29,16 @@ from core.color3 import Color3f
 class IntersectionVertex(Vertex):
 
     """
-        Vertex
-        Represents and visualizes one vertex within the 3D scene viewer
+        IntersectionVertex
+        Represents and visualizes one intersection vertex within the 3D scene viewer
     """
 
-    def __init__(self, path_idx, vertex_idx, pos):
+    def __init__(self, path_index, intersection_index, pos):
         super().__init__(pos)
         self.set_selected_color = Color3f(1, 0.6, 0)
 
-        self._path_idx = path_idx
-        self._vertex_idx = vertex_idx
+        self._path_index = path_index
+        self._intersection_index = intersection_index
 
     @property
     def path_index(self):
@@ -46,7 +46,7 @@ class IntersectionVertex(Vertex):
         Returns the corresponding path index
         :return: integer
         """
-        return self._path_idx
+        return self._path_index
 
     @path_index.setter
     def path_index(self, index):
@@ -55,28 +55,29 @@ class IntersectionVertex(Vertex):
         :param: integer
         :return: None
         """
-        self._path_idx = index
+        self._path_index = index
 
     @property
-    def vertex_index(self):
+    def intersection_index(self):
         """
-        Returns the index of the vertex
+        Returns the index of the intersection
         :return: integer
         """
-        return self._vertex_idx
+        return self._intersection_index
 
-    @vertex_index.setter
-    def vertex_index(self, index):
+    @intersection_index.setter
+    def intersection_index(self, index):
         """
-        Sets the vertex index
+        Sets the intersection index
         :param: integer
         :return: None
         """
-        self._vertex_idx = index
+        self._intersection_index = index
 
-    def get_index_tpl(self):
+    @property
+    def index_tpl(self):
         """
-        Returns the index tuple based on the path and vertex index
-        :return: tuple(path_index, vertex_index)
+        Returns the index tuple based on the path and intersection index
+        :return: tuple(path_index, intersection_index)
         """
-        return self._path_idx, self._vertex_idx
+        return self._path_index, self._intersection_index

@@ -108,7 +108,7 @@ class PathData(UserData):
     def intersections(self):
         """
         Returns the a dict containing all path vertices
-        :return: dict{vertex_idx, vertex object}
+        :return: dict{intersection_idx, intersection object}
         """
         return self._dict_intersections
 

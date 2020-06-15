@@ -38,12 +38,12 @@ class PathListItem(QListWidgetItem):
         return self._path_index
 
 
-class VertexListItem(QListWidgetItem):
+class IntersectionListItem(QListWidgetItem):
 
     def __init__(self, tpl):
         super().__init__()
         self._tpl = tpl
-        self.setText("Vertex ({})".format(tpl[1]))
+        self.setText("Intersection ({})".format(tpl[1]))
 
     @property
     def path_index(self):
@@ -54,9 +54,9 @@ class VertexListItem(QListWidgetItem):
         return self._tpl[0]
 
     @property
-    def vertex_index(self):
+    def intersection_index(self):
         """
-        Returns the vertex index
+        Returns the intersection index
         :return: integer
         """
         return self._tpl[1]
@@ -64,7 +64,7 @@ class VertexListItem(QListWidgetItem):
     @property
     def index_tpl(self):
         """
-        Returns a tuple containing path and vertex index
-        :return: tuple(path_index, vertex_index)
+        Returns a tuple containing path and intersection index
+        :return: tuple(path_index, intersection_index)
         """
         return self._tpl

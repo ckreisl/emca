@@ -60,7 +60,7 @@ class SphericalView(Plugin):
     def update_path_indices(self, indices):
         pass
 
-    def update_vertex_indices(self, tpl_list):
+    def update_intersection_indices(self, tpl_list):
         pass
 
     def select_path(self, index):
