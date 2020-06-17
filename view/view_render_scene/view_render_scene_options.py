@@ -23,8 +23,8 @@
 """
 
 from core.pyside2_uic import loadUi
-from core.list_items import PathListItem
-from core.list_items import IntersectionListItem
+from core.items_list import PathListItem
+from core.items_list import IntersectionListItem
 from PySide2.QtCore import Slot
 from PySide2.QtWidgets import QListWidgetItem
 from PySide2.QtWidgets import QWidget

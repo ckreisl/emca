@@ -22,7 +22,7 @@
     SOFTWARE.
 """
 
-from core.scene_interface import SceneInterface
+from core.interface_scene import SceneInterface
 from renderer.scene_geometry import SceneGeometry
 from renderer.scene_traced_paths import SceneTracedPaths
 from renderer.renderer import Renderer

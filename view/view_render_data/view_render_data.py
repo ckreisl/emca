@@ -22,8 +22,8 @@
     SOFTWARE.
 """
 
-from view.view_render_data.tree_node_items import PathNodeItem
-from view.view_render_data.tree_node_items import IntersectionNodeItem
+from core.items_tree_node import PathNodeItem
+from core.items_tree_node import IntersectionNodeItem
 
 from core.pyside2_uic import loadUi
 from PySide2.QtWidgets import QWidget
@@ -33,7 +33,6 @@ from PySide2.QtCore import Qt
 from PySide2.QtWidgets import QAbstractItemView
 import numpy as np
 import os
-import logging
 
 
 class ViewRenderData(QWidget):
