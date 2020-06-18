@@ -27,6 +27,7 @@ from PySide2.QtWidgets import QMainWindow
 from PySide2.QtWidgets import QAction
 from PySide2.QtCore import Slot
 from view.view_main.view_emca import ViewEMCA
+from view.view_main.view_about import ViewAbout
 from view.view_main.popup_messages import PopupMessages
 from view.view_main.pixel_icon import PixelIcon
 
@@ -49,7 +50,9 @@ class MainView(QMainWindow):
         # Main view of EMCA, holding all subviews
         self._view_emca = ViewEMCA(parent=self)
         # Popup view handling error messages
-        self._view_popup = PopupMessages(parent=self)
+        self._view_popup = PopupMessages()
+        # About information
+        self._view_about = ViewAbout()
         # Pixel Icon of selected Pixel in MainView
         self._pixel_icon = PixelIcon()
         self.setCentralWidget(self._view_emca)
@@ -80,12 +83,17 @@ class MainView(QMainWindow):
         exit_action.setToolTip("Closes the Application")
         exit_action.triggered.connect(self.close)
 
+        about_action = QAction("About", self)
+        about_action.triggered.connect(self._view_about.show)
+
         main_menu = self.menuBar()
         main_menu.setNativeMenuBar(False)
         menu = main_menu.addMenu("&Menu")
         menu.addAction(load_image)
         menu.addAction(options)
         menu.addAction(exit_action)
+        about = main_menu.addMenu("&About")
+        about.addAction(about_action)
 
     def set_controller(self, controller):
         """
