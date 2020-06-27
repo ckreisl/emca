@@ -16,9 +16,9 @@ Currently this framework only runs on **Linux** systems. It was tested and devel
 
 If you are using this framework for a publication I would appreciate a citation (though not required). In any case you can use the following BibTex template:
 ```
-@misc{EMCA@2020,
+@misc{EMCA@2019,
    Author = {Christoph Kreisl},
-   Year = {2020},
+   Year = {2019},
    Note = {https://github.com/ckreisl/emca},
    Title = {EMCA - Explorer of Monte-Carlo based Algorithms}
 }
@@ -38,6 +38,7 @@ If you are using this framework for a publication I would appreciate a citation 
   * [Features](#features)
   * [Socket Package Flow](#socket_package_flow)
   * [Demo Video](#demo_video)
+  * [License](#license)
 
 <a name="server_interface"></a>
 
@@ -86,7 +87,7 @@ These indices are set using the `setPathIndex` and `setDepthIndex` functions. To
 <a name="emca_client"></a>
 
 ## EMCA Client
-EMCA is based on **Python 3.6**. To install and load all necessary dependencies use the requirements.txt file.
+EMCA is based on **Python 3.7**. To install and load all necessary dependencies use the requirements.txt file.
 ```
 pip3 install -r requirements.txt
 ```
@@ -209,8 +210,21 @@ Therefore, we provide a filter algorithm which allows for applying multiple filt
 
 <a name="demo_video"></a>
 ### Video Demo
-[Demo](https://vimeo.com/397632936)
+[Click Me - Vimeo](https://vimeo.com/397632936)
 
-(The look and name might be differ due to renaming)
+<a name="license"></a>
+### License
+The software comes with the MIT license a LICENSE file can be found within the code and every sourcefile.
+Be aware of 3rd party software:
 
-         
+* PySide2 (LGPL)
+* vtk (BSD3)
+* matplotlib (BSD)
+* numpy (BSD)
+* six (MIT)
+* scipy (BSD)
+* OpenEXR (BSD)
+* Pillow (HPND)
+* Imath (MIT)
+
+(c) Christoph Kreisl
