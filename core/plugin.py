@@ -94,16 +94,14 @@ class Plugin(QWidget):
         :param index:
         :return:
         """
-        pass
 
-    def send_select_vertex(self, tpl):
+    def send_select_intersection(self, tpl):
         """
         This function gets overwritten by the plugin view container,
         which will connect this function with the controller
         :param tpl:
         :return:
         """
-        pass
 
     @abc.abstractmethod
     def apply_theme(self, theme):
@@ -112,7 +110,6 @@ class Plugin(QWidget):
         :param: theme (dark|light)
         :return:
         """
-        pass
 
     @abc.abstractmethod
     def init_render_data(self, render_data):
@@ -121,7 +118,6 @@ class Plugin(QWidget):
         :param render_data:
         :return:
         """
-        pass
 
     @abc.abstractmethod
     def prepare_new_data(self):
@@ -129,7 +125,6 @@ class Plugin(QWidget):
         Resets all views and prepares class for new incoming pixel data package
         :return:
         """
-        pass
 
     @abc.abstractmethod
     def update_path_indices(self, indices):
@@ -138,16 +133,14 @@ class Plugin(QWidget):
         :param indices: Numpy array [(path_index),...]
         :return:
         """
-        pass
 
     @abc.abstractmethod
-    def update_vertex_indices(self, tpl_list):
+    def update_intersection_indices(self, tpl_list):
         """
         Send update of multiple selected vertices as tuple list
-        :param tpl_list: [(path_index, vertex_index), ...]
+        :param tpl_list: [(path_index, intersection_index), ...]
         :return:
         """
-        pass
 
     @abc.abstractmethod
     def select_path(self, index):
@@ -156,16 +149,14 @@ class Plugin(QWidget):
         :param index: path_idx
         :return:
         """
-        pass
 
     @abc.abstractmethod
-    def select_vertex(self, tpl):
+    def select_intersection(self, tpl):
         """
-        Will be called if a vertex element is selected within the view
-        :param tpl: (path_idx, vertex_idx)
+        Will be called if a intersection element is selected within the view
+        :param tpl: (path_idx, intersection_idx)
         :return:
         """
-        pass
 
     @abc.abstractmethod
     def serialize(self, stream):
@@ -174,7 +165,6 @@ class Plugin(QWidget):
         :param stream:
         :return:
         """
-        pass
 
     @abc.abstractmethod
     def deserialize(self, stream):
@@ -185,7 +175,6 @@ class Plugin(QWidget):
         :param stream:
         :return:
         """
-        pass
 
     @abc.abstractmethod
     def update_view(self):

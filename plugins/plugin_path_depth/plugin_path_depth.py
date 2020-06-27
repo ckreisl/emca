@@ -65,11 +65,11 @@ class PathDepth(Plugin):
     def select_path(self, index):
         self.plot_path_depth.select_path(index)
 
-    def update_vertex_indices(self, tpl_list):
+    def update_intersection_indices(self, tpl_list):
         # nothing to-do here
         pass
 
-    def select_vertex(self, tpl):
+    def select_intersection(self, tpl):
         # nothing to-do here
         pass
 

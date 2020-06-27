@@ -22,7 +22,7 @@
     SOFTWARE.
 """
 
-from core.scene_interface import SceneInterface
+from core.interface_scene import SceneInterface
 from renderer.scene_geometry import SceneGeometry
 from renderer.scene_traced_paths import SceneTracedPaths
 from renderer.renderer import Renderer
@@ -77,15 +77,15 @@ class SceneRenderer(SceneInterface):
 
     def rubber_band_selection(self, tpl):
         if tpl[0] in self._scene_traced_paths.paths:
-            # same path select vertex
-            if tpl[0] != self._scene_traced_paths.selected_path_index:
+            # same path select intersection
+            if self._scene_traced_paths.prev_path.path_idx != tpl[0]:
                 self.send_select_path(tpl[0])
-            self.send_select_vertex(tpl)
+            self.send_select_intersection(tpl)
         else:
             # some other path is selected update whole view
             self.send_update_path(np.array([tpl[0]]), False)
             self.send_select_path(tpl[0])
-            self.send_select_vertex(tpl)
+            self.send_select_intersection(tpl)
 
     def widget_update_from_timer(self):
         self.widget.update()
@@ -113,8 +113,8 @@ class SceneRenderer(SceneInterface):
         self._scene_traced_paths.select_path(index)
         self.widget.update()
 
-    def select_vertex(self, tpl):
-        self._scene_traced_paths.select_vertex(tpl)
+    def select_intersection(self, tpl):
+        self._scene_traced_paths.select_intersection(tpl)
         path, intersection = self._scene_traced_paths.get_path_and_intersection(tpl)
         if intersection.is_ne_visible:
             intersection.draw_ne(self._renderer)
@@ -164,7 +164,7 @@ class SceneRenderer(SceneInterface):
         self._scene_traced_paths.path_indices = indices
         for key in self._scene_traced_paths.path_indices:
             self._scene_traced_paths.paths[key].draw_path(self._renderer)
-            self._scene_traced_paths.paths[key].draw_verts(self._renderer)
+            self._scene_traced_paths.paths[key].draw_its(self._renderer)
         self.widget.update()
 
     def clear_scene_objects(self):
@@ -196,7 +196,7 @@ class SceneRenderer(SceneInterface):
                 'is_visible': path.is_visible,
                 'is_ne_visible': path.is_ne_visible}
 
-    def get_vertex_option_settings(self, tpl):
+    def get_intersection_option_settings(self, tpl):
         _, intersection = self._scene_traced_paths.get_path_and_intersection(tpl)
         return {'all_vertices_visible': self._scene_traced_paths.all_vertices_visible,
                 'opacity': intersection.opacity,
@@ -253,21 +253,21 @@ class SceneRenderer(SceneInterface):
                 self._scene_traced_paths.paths[key].clear_path(self._renderer)
         self.widget.update()
 
-    def show_all_other_traced_vertices(self, enable):
+    def show_all_other_traced_intersections(self, enable):
         is_all_verts_visible = self._scene_traced_paths.all_vertices_visible
         if enable:
             if not is_all_verts_visible:
                 for path_idx, path in self._scene_traced_paths.paths.items():
                     if path_idx not in self._scene_traced_paths.path_indices:
-                        for vert_idx, vert in path.its_dict.items():
-                            vert.draw_vert(self._renderer)
+                        for _, its in path.its_dict.items():
+                            its.draw_its(self._renderer)
                 self._scene_traced_paths.all_vertices_visible = not is_all_verts_visible
         else:
             if is_all_verts_visible:
                 for path_idx, path in self._scene_traced_paths.paths.items():
                     if path_idx not in self._scene_traced_paths.path_indices:
-                        for vert_idx, vert in path.its_dict.items():
-                            vert.clear_vert(self._renderer)
+                        for _, its in path.its_dict.items():
+                            its.clear_its(self._renderer)
                 self._scene_traced_paths.all_vertices_visible = not is_all_verts_visible
         self.widget.update()
 
@@ -299,30 +299,30 @@ class SceneRenderer(SceneInterface):
         path.reset_path_size()
         self.widget.update()
 
-    def show_all_traced_vertices(self, state):
+    def show_all_traced_intersections(self, state):
         if state:
             for _, path in self._scene_traced_paths.paths.items():
-                path.draw_verts(self._renderer)
+                path.draw_its(self._renderer)
         else:
             for key, path in self._scene_traced_paths.paths.items():
                 if key not in self._scene_traced_paths.path_indices:
-                    path.clear_verts(self._renderer)
+                    path.clear_its(self._renderer)
         self.widget.update()
 
-    def update_vertex_opacity(self, vertex_tpl, opacity):
-        intersection = self._scene_traced_paths.get_intersection(vertex_tpl)
-        intersection.set_vertex_opacity(opacity)
+    def update_intersection_opacity(self, intersection_tpl, opacity):
+        intersection = self._scene_traced_paths.get_intersection(intersection_tpl)
+        intersection.set_intersection_opacity(opacity)
         self.widget.update()
 
-    def update_vertex_size(self, vertex_tpl, size):
-        intersection = self._scene_traced_paths.get_intersection(vertex_tpl)
-        intersection.set_vertex_size(size)
+    def update_intersection_size(self, intersection_tpl, size):
+        intersection = self._scene_traced_paths.get_intersection(intersection_tpl)
+        intersection.set_intersection_size(size)
         self.widget.update()
 
-    def reset_vertex(self, vertex_tpl):
-        intersection = self._scene_traced_paths.get_intersection(vertex_tpl)
-        intersection.reset_vertex_opacity()
-        intersection.reset_vertex_size()
+    def reset_intersection(self, intersection_tpl):
+        intersection = self._scene_traced_paths.get_intersection(intersection_tpl)
+        intersection.reset_intersection_opacity()
+        intersection.reset_intersection_size()
         self.widget.update()
 
     def show_all_traced_nees(self, enabled):
@@ -346,24 +346,24 @@ class SceneRenderer(SceneInterface):
                         path.clear_ne(self._renderer)
         self.widget.update()
 
-    def show_vertex_omega_o(self, vertex_tpl, enabled):
-        intersection = self._scene_traced_paths.get_intersection(vertex_tpl)
+    def show_intersection_omega_o(self, intersection_tpl, enabled):
+        intersection = self._scene_traced_paths.get_intersection(intersection_tpl)
         if enabled:
             intersection.draw_wo(self._renderer)
         else:
             intersection.clear_wo(self._renderer)
         self.widget.update()
 
-    def show_vertex_omega_i(self, vertex_tpl, enabled):
-        intersection = self._scene_traced_paths.get_intersection(vertex_tpl)
+    def show_intersection_omega_i(self, intersection_tpl, enabled):
+        intersection = self._scene_traced_paths.get_intersection(intersection_tpl)
         if enabled:
             intersection.draw_wi(self._renderer)
         else:
             intersection.clear_wi(self._renderer)
         self.widget.update()
 
-    def show_vertex_nee(self, vertex_tpl, enabled):
-        intersection = self._scene_traced_paths.get_intersection(vertex_tpl)
+    def show_intersection_nee(self, intersection_tpl, enabled):
+        intersection = self._scene_traced_paths.get_intersection(intersection_tpl)
         if enabled:
             intersection.draw_ne(self._renderer)
         else:
@@ -374,8 +374,8 @@ class SceneRenderer(SceneInterface):
         for _, path in self._scene_traced_paths.paths.items():
             path.reset_path_size()
             path.reset_path_opacity()
-            path.reset_vertex_opacity()
-            path.reset_vertex_size()
+            path.reset_intersection_opacity()
+            path.reset_intersection_size()
         self.widget.update()
 
     def draw_triangle(self, p1, p2, p3):

@@ -47,20 +47,20 @@ class PathNodeItem(QTreeWidgetItem):
         return self._index
 
 
-class VertexNodeItem(QTreeWidgetItem):
+class IntersectionNodeItem(QTreeWidgetItem):
 
     """
-        VertexNodeItem
-        Represents a VertexNode within the tree view of the View Render Data
-        Holds information about the parent index and the vertex index.
-        Necessary to know which vertex and path item is selected by the user.
+        IntersectionNodeItem
+        Represents a IntersectionNode within the tree view of the View Render Data
+        Holds information about the parent index and the intersection index.
+        Necessary to know which intersection and path item is selected by the user.
     """
 
-    def __init__(self, parent_index, vertex_index):
+    def __init__(self, parent_index, intersection_index):
         QTreeWidgetItem.__init__(self)
 
         self._parent_index = parent_index
-        self._vertex_index = vertex_index
+        self._intersection_index = intersection_index
 
     @property
     def parent_index(self):
@@ -73,14 +73,14 @@ class VertexNodeItem(QTreeWidgetItem):
     @property
     def index(self):
         """
-        Returns the vertex index
+        Returns the intersection index
         :return: integer
         """
-        return self._vertex_index
+        return self._intersection_index
 
     def index_tpl(self):
         """
-        Returns a tuple containing path and vertex index
-        :return: tuple(path_index, vertex_index)
+        Returns a tuple containing path and intersection index
+        :return: tuple(path_index, intersection_index)
         """
-        return self._parent_index, self._vertex_index
+        return self._parent_index, self._intersection_index

@@ -42,7 +42,7 @@ class SampleContributionPlot(RGBScatterPlotBase):
 
     def plot_estimates(self, final_estimate):
         """
-        VertexDataPlots the final estimate data
+        IntersectionDataPlots the final estimate data
         :param final_estimate: FinalEstimate data
         :return: 
         """

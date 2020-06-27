@@ -22,49 +22,62 @@
     SOFTWARE.
 """
 
-from PySide2.QtWidgets import QListWidgetItem
-import logging
+from renderer.vertex import Vertex
+from core.color3 import Color3f
 
 
-class PathListItem(QListWidgetItem):
+class IntersectionVertex(Vertex):
 
-    def __init__(self, path_index):
-        super().__init__()
+    """
+        IntersectionVertex
+        Represents and visualizes one intersection vertex within the 3D scene viewer
+    """
+
+    def __init__(self, path_index, intersection_index, pos):
+        super().__init__(pos)
+        self.set_selected_color = Color3f(1, 0.6, 0)
+
         self._path_index = path_index
-        self.setText("Path ({})".format(path_index))
+        self._intersection_index = intersection_index
 
     @property
     def path_index(self):
+        """
+        Returns the corresponding path index
+        :return: integer
+        """
         return self._path_index
 
-
-class VertexListItem(QListWidgetItem):
-
-    def __init__(self, tpl):
-        super().__init__()
-        self._tpl = tpl
-        self.setText("Vertex ({})".format(tpl[1]))
-
-    @property
-    def path_index(self):
+    @path_index.setter
+    def path_index(self, index):
         """
-        Returns the index of the parent, representing the path index
-        :return: integer
+        Sets the path index
+        :param: integer
+        :return: None
         """
-        return self._tpl[0]
+        self._path_index = index
 
     @property
-    def vertex_index(self):
+    def intersection_index(self):
         """
-        Returns the vertex index
+        Returns the index of the intersection
         :return: integer
         """
-        return self._tpl[1]
+        return self._intersection_index
+
+    @intersection_index.setter
+    def intersection_index(self, index):
+        """
+        Sets the intersection index
+        :param: integer
+        :return: None
+        """
+        self._intersection_index = index
 
     @property
     def index_tpl(self):
         """
-        Returns a tuple containing path and vertex index
-        :return: tuple(path_index, vertex_index)
+        Returns the index tuple based on the path and intersection index
+        :return: tuple(path_index, intersection_index)
         """
-        return self._tpl
+        return self._path_index, self._intersection_index

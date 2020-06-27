@@ -43,7 +43,7 @@ class RenderInfo(object):
     def deserialize(self, stream):
         """
         Deserialize a Render Info object from the socket stream
-        :param stream:
+        :param stream: SocketStream
         :return:
         """
         self._scene_name = self.is_valid_str(stream.read_string())
@@ -55,7 +55,7 @@ class RenderInfo(object):
         """
         Only send new sample count to server,
         since we can currently only change this value in our view
-        :param stream:
+        :param stream: SocketStream
         :return:
         """
         stream.write_short(ServerMsg.EMCA_SEND_RENDER_INFO.value)
@@ -77,36 +77,70 @@ class RenderInfo(object):
     def scene_name(self):
         """
         Returns the scene name
-        :return:
+        :return: str
         """
         return self._scene_name
+
+    @scene_name.setter
+    def scene_name(self, scene_name):
+        """
+        Sets the scene name
+        :param scene_name: str
+        """
+        self._scene_name = scene_name
 
     @property
     def output_filepath(self):
         """
         Returns the filepath to the rendered output file
-        :return:
+        :return: str
         """
         return self._output_filepath
 
-    @property
-    def file_extension(self):
+    @output_filepath.setter
+    def output_filepath(self, output_filepath):
         """
-        Returns the information about the file extension (.exr, ...)
+        Setter function, sets the rendered output filepath
+        :param output_filepath: string
         :return:
         """
-        return self._extension
+        self._output_filepath = output_filepath
 
     @property
     def sample_count(self):
         """
         Returns the amount of used samples to render the scene
-        :return:
+        :return: integer
         """
         if self._sample_count:
             return self._sample_count
         else:
             return 0
+
+    @sample_count.setter
+    def sample_count(self, sample_count):
+        """
+        Setter function, sets the sample count
+        :param sample_count: integer
+        :return:
+        """
+        self._sample_count = sample_count
+
+    @property
+    def extension(self):
+        """
+        Returns the information about the file extension (.exr, ...)
+        :return: str
+        """
+        return self._extension
+
+    @extension.setter
+    def extension(self, extension):
+        """
+        Sets the file extension
+        :param extension: str
+        """
+        self._extension = extension
 
     def filepath(self):
         """
@@ -118,30 +152,6 @@ class RenderInfo(object):
             return self._output_filepath
         else:
             return self._output_filepath + ".exr"
-
-    def set_scene_name(self, name):
-        """
-        Setter function, sets the scene name
-        :param name: string
-        :return:
-        """
-        self._scene_name = name
-
-    def set_output_filepath(self, path):
-        """
-        Setter function, sets the rendered output filepath
-        :param path: string
-        :return:
-        """
-        self._output_filepath = path
-
-    def set_sample_count(self, count):
-        """
-        Setter function, sets the sample count
-        :param count: integer
-        :return:
-        """
-        self._sample_count = count
 
     def to_string(self):
         """

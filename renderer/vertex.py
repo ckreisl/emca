@@ -45,7 +45,7 @@ class Vertex(Shape):
     @property
     def pos(self):
         """
-        Returns the position of the vertex
+        Returns the position of the intersection vertex
         :return: Point3f
         """
         return self._pos

@@ -103,7 +103,7 @@ class ViewFilterSettings(QWidget):
         :return:
         """
         # iterate through all paths and their vertices
-        for key, path in render_data.dict_paths.items():
+        for _, path in render_data.dict_paths.items():
 
             # pathinfo stuff sample_idx, final_estimate, path_depth
             if path.sample_idx:
@@ -130,9 +130,8 @@ class ViewFilterSettings(QWidget):
                             self._filter_items[key_user] = value_user
 
             # iterate over intersection points
-            verts = path.dict_vertices
-            for key_verts, vertex in verts.items():
-                user_data_vert = vertex.data_list
+            for _, its in path.intersections.items():
+                user_data_vert = its.data_list
                 for item in user_data_vert:
                     for key_user, value_user in item.items():
                         # add item if not in list
@@ -143,7 +142,7 @@ class ViewFilterSettings(QWidget):
                                 self._filter_items[key_user] = value_user
 
         # add all values to combBox
-        for key, value in self._filter_items.items():
+        for key, _ in self._filter_items.items():
             self.combItems.addItem(key)
 
         # update expression view on current item

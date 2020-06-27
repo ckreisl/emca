@@ -60,16 +60,16 @@ class SphericalView(Plugin):
     def update_path_indices(self, indices):
         pass
 
-    def update_vertex_indices(self, tpl_list):
+    def update_intersection_indices(self, tpl_list):
         pass
 
     def select_path(self, index):
         pass
 
-    def select_vertex(self, tpl):
+    def select_intersection(self, tpl):
         if self._render_data:
             dict_paths = self._render_data.dict_paths
-            self._spherical_view.select_vertex(dict_paths, tpl)
+            self._spherical_view.select_intersection(dict_paths, tpl)
 
     def serialize(self, stream):
         logging.info("Serialize in: {}".format(self.name))

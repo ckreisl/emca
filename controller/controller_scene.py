@@ -159,31 +159,31 @@ class ControllerRenderScene(object):
         :param enabled: boolean
         :return:
         """
-        # toggle also vertex omega_i checkbox
+        # toggle also intersection omega_i checkbox
         self._view.view_render_scene_options.cbShowOmegaI.blockSignals(True)
         self._view.view_render_scene_options.cbShowOmegaI.setChecked(enabled)
         self._view.view_render_scene_options.cbShowOmegaI.blockSignals(False)
         path_index = self._model.current_path_index
         self._view.view_render_scene.scene_renderer.show_traced_path(path_index, enabled)
 
-    @Slot(bool, name='show_all_traced_vertices')
-    def show_all_traced_vertices(self, enabled):
+    @Slot(bool, name='show_all_traced_intersections')
+    def show_all_traced_intersections(self, enabled):
         """
         Informs the renderer to show all vertices
         :param enabled:
         :return:
         """
-        self._view.view_render_scene.scene_renderer.show_all_traced_vertices(enabled)
+        self._view.view_render_scene.scene_renderer.show_all_traced_intersections(enabled)
 
-    @Slot(bool, name='show_all_other_traced_vertices')
-    def show_all_other_traced_vertices(self, enabled):
+    @Slot(bool, name='show_all_other_traced_intersections')
+    def show_all_other_traced_intersections(self, enabled):
         """
         Informs the renderer to visualize all other vertices besides the current visible ones,
         depending on state
         :param enabled: boolean
         :return:
         """
-        self._view.view_render_scene.scene_renderer.show_all_other_traced_vertices(enabled)
+        self._view.view_render_scene.scene_renderer.show_all_other_traced_intersections(enabled)
 
     @Slot(bool, name='show_all_traced_nees')
     def show_all_traced_nees(self, enabled):
@@ -196,7 +196,7 @@ class ControllerRenderScene(object):
         self._view.view_render_scene_options.cbShowNEERays.blockSignals(True)
         self._view.view_render_scene_options.cbShowNEERays.setChecked(enabled)
         self._view.view_render_scene_options.cbShowNEERays.blockSignals(False)
-        # NE checkbox vertex / intersection
+        # NE checkbox intersection
         self._view.view_render_scene_options.cbShowNEE.blockSignals(True)
         self._view.view_render_scene_options.cbShowNEE.setChecked(enabled)
         self._view.view_render_scene_options.cbShowNEE.blockSignals(False)
@@ -218,50 +218,50 @@ class ControllerRenderScene(object):
         :param enabled: boolean
         :return:
         """
-        # toggle also vertex nee checkbox
+        # toggle also intersection nee checkbox
         self._view.view_render_scene_options.cbShowNEE.blockSignals(True)
         self._view.view_render_scene_options.cbShowNEE.setChecked(enabled)
         self._view.view_render_scene_options.cbShowNEE.blockSignals(False)
         path_index = self._model.current_path_index
         self._view.view_render_scene.scene_renderer.show_traced_path_nee(path_index, enabled)
 
-    @Slot(bool, name='show_vertex_omega_o')
-    def show_vertex_omega_o(self, enabled):
+    @Slot(bool, name='show_intersection_omega_o')
+    def show_intersection_omega_o(self, enabled):
         """
-        Informs the renderer to visualize the outgoing ray of the current selected vertex,
+        Informs the renderer to visualize the outgoing ray of the current selected intersection,
         depending on state
         :param enabled: boolean
         :return:
         """
-        vertex_tpl = self._model.current_vertex_tpl
-        self._view.view_render_scene.scene_renderer.show_vertex_omega_o(vertex_tpl, enabled)
+        its_tpl = self._model.current_intersection_tpl
+        self._view.view_render_scene.scene_renderer.show_intersection_omega_o(its_tpl, enabled)
 
-    @Slot(bool, name='show_vertex_omega_i')
-    def show_vertex_omega_i(self, enabled):
+    @Slot(bool, name='show_intersection_omega_i')
+    def show_intersection_omega_i(self, enabled):
         """
-        Informs the renderer to visualize the incoming ray of the current selected vertex,
+        Informs the renderer to visualize the incoming ray of the current selected intersection,
         depending on state
         :param enabled: boolean
         :return:
         """
-        vertex_tpl = self._model.current_vertex_tpl
-        self._view.view_render_scene.scene_renderer.show_vertex_omega_i(vertex_tpl, enabled)
+        its_tpl = self._model.current_intersection_tpl
+        self._view.view_render_scene.scene_renderer.show_intersection_omega_i(its_tpl, enabled)
 
-    @Slot(bool, name='show_vertex_nee')
-    def show_vertex_nee(self, enabled):
+    @Slot(bool, name='show_intersection_nee')
+    def show_intersection_nee(self, enabled):
         """
-        Informs the renderer to visualize the next event estimation of the current selected vertex,
+        Informs the renderer to visualize the next event estimation of the current selected intersection,
         depending on state
         :param enabled: boolean
         :return:
         """
-        vertex_tpl = self._model.current_vertex_tpl
-        self._view.view_render_scene.scene_renderer.show_vertex_nee(vertex_tpl, enabled)
+        its_tpl = self._model.current_intersection_tpl
+        self._view.view_render_scene.scene_renderer.show_intersection_nee(its_tpl, enabled)
 
-    @Slot(bool, name='reset_all_paths_vertices')
-    def reset_all_paths_vertices(self, clicked):
+    @Slot(bool, name='reset_all_paths_intersections')
+    def reset_all_paths_intersections(self, clicked):
         """
-        Informs the renderer to reset all path vertices
+        Informs the renderer to reset all path intersections
         :param clicked: boolean
         :return:
         """
@@ -270,10 +270,10 @@ class ControllerRenderScene(object):
         path_index = self._model.current_path_index
         path_option_settings = scene_renderer.get_path_option_settings(path_index)
         self._view.view_render_scene_options.load_path_settings(path_option_settings)
-        tpl = self._model.current_vertex_tpl
+        tpl = self._model.current_intersection_tpl
         if tpl:
-            vertex_option_settings = scene_renderer.get_vertex_option_settings(tpl)
-            self._view.view_render_scene_options.load_vertex_settings(vertex_option_settings)
+            intersection_option_settings = scene_renderer.get_intersection_option_settings(tpl)
+            self._view.view_render_scene_options.load_intersection_settings(intersection_option_settings)
 
     @Slot(bool, name='reset_path')
     def reset_path(self, clicked):
@@ -308,35 +308,35 @@ class ControllerRenderScene(object):
         path_index = self._model.current_path_index
         self._view.view_render_scene.scene_renderer.update_path_size(path_index, size)
 
-    @Slot(int, name='update_vertex_opacity')
-    def update_vertex_opacity(self, opacity):
+    @Slot(int, name='update_intersection_opacity')
+    def update_intersection_opacity(self, opacity):
         """
-        Informs the renderer to update the vertex opacity of the current selected vertex
+        Informs the renderer to update the vertex opacity of the current selected intersection
         :param opacity: float[0,1]
         :return:
         """
-        max_value = self._view.view_render_scene_options.sliderVertexOpacity.maximum()
-        vertex_tpl = self._model.current_vertex_tpl
-        self._view.view_render_scene.scene_renderer.update_vertex_opacity(vertex_tpl, float(opacity / max_value))
+        max_value = self._view.view_render_scene_options.sliderIntersectionOpacity.maximum()
+        its_tpl = self._model.current_intersection_tpl
+        self._view.view_render_scene.scene_renderer.update_intersection_opacity(its_tpl, float(opacity / max_value))
 
-    @Slot(int, name='update_vertex_size')
-    def update_vertex_size(self, size):
+    @Slot(int, name='update_intersection_size')
+    def update_intersection_size(self, size):
         """
         Informs the renderer to update the vertex size of the current selected vertex
         :param size: float[0,1]
         :return:
         """
-        vertex_tpl = self._model.current_vertex_tpl
-        self._view.view_render_scene.scene_renderer.update_vertex_size(vertex_tpl, size)
+        its_tpl = self._model.current_intersection_tpl
+        self._view.view_render_scene.scene_renderer.update_intersection_size(its_tpl, size)
 
-    @Slot(bool, name='reset_vertex')
-    def reset_vertex(self, clicked):
+    @Slot(bool, name='reset_intersection')
+    def reset_intersection(self, clicked):
         """
-        Informs the renderer to reset the vertex opacity and size
+        Informs the renderer to reset the intersection vertex opacity and size
         :param clicked: boolean
         :return:
         """
-        vertex_tpl = self._model.current_vertex_tpl
-        self._view.view_render_scene.scene_renderer.reset_vertex(vertex_tpl)
-        vertex_option_settings = self._view.view_render_scene.scene_renderer.get_vertex_option_settings(vertex_tpl)
-        self._view.view_render_scene_options.load_vertex_settings(vertex_option_settings)
+        its_tpl = self._model.current_intersection_tpl
+        self._view.view_render_scene.scene_renderer.reset_intersection(its_tpl)
+        intersection_option_settings = self._view.view_render_scene.scene_renderer.get_intersection_option_settings(its_tpl)
+        self._view.view_render_scene_options.load_intersection_settings(intersection_option_settings)

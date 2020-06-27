@@ -177,17 +177,17 @@ class ViewSphericalViewImage(QWidget):
         self.btnSave.setEnabled(enable)
         self.btnReset.setEnabled(enable)
 
-    def select_vertex(self, dict_paths, tpl):
+    def select_intersection(self, dict_paths, tpl):
         path = dict_paths.get(tpl[0], None)
         if path:
-            dict_verts = path.dict_vertices
-            vert = dict_verts.get(tpl[1], None)
+            intersections = path.intersections
+            vert = intersections.get(tpl[1], None)
             if vert and vert.pos:
                 self.pos = vert.pos
 
                 self.set_highlight('NEE', vert.pos.dir_to(vert.pos_ne), [255, 0, 0] if vert.is_ne_occluded else [0, 0, 255])
 
-                prev_vert = next_vert = dict_verts.get(tpl[1]-1, None)
+                prev_vert = next_vert = intersections.get(tpl[1]-1, None)
                 if prev_vert and prev_vert.pos:
                     self.dirW_i = vert.pos.dir_to(prev_vert.pos)
                 elif tpl[1] == 1 and path and path.path_origin:
@@ -195,7 +195,7 @@ class ViewSphericalViewImage(QWidget):
                 else:
                     self.dirW_i = None
 
-                next_vert = dict_verts.get(tpl[1]+1, None)
+                next_vert = intersections.get(tpl[1]+1, None)
                 if next_vert and next_vert.pos:
                     self.dirW_o_is_envmap = False
                     self.dirW_o = vert.pos.dir_to(next_vert.pos)

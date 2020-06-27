@@ -113,15 +113,15 @@ class PluginsHandler(object):
         for _, value in self._plugins_view_container.items():
             value.update_path_indices(indices)
 
-    def update_vertex_indices(self, tpl_list):
+    def update_intersection_indices(self, tpl_list):
         """
-        Calls the Tool Container update_vertex_indices function.
-        Informs all plugins about selected vertices
-        :param tpl_list: [(path_index, vertex_index),...]
+        Calls the Plugins Container update_intersection_indices function.
+        Informs all plugins about selected intersections
+        :param tpl_list: [(path_index, intersections_index),...]
         :return:
         """
         for _, value in self._plugins_view_container.items():
-            value.update_vertex_indices(tpl_list)
+            value.update_intersection_indices(tpl_list)
 
     def select_path(self, index):
         """
@@ -133,15 +133,15 @@ class PluginsHandler(object):
         for _, value in self._plugins_view_container.items():
             value.select_path(index)
 
-    def select_vertex(self, tpl):
+    def select_intersection(self, tpl):
         """
-        Calls the Tool Container select_vertex function.
-        Updates all tool views with the current selected vertex
-        :param tpl: (path_index, vertex_index)
+        Calls the Plugin Container select_intersection function.
+        Updates all tool views with the current selected intersection
+        :param tpl: (path_index, intersection_index)
         :return:
         """
         for _, value in self._plugins_view_container.items():
-            value.select_vertex(tpl)
+            value.select_intersection(tpl)
 
     def get_plugin_by_flag(self, flag):
         """

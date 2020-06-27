@@ -48,7 +48,7 @@ class PluginsViewContainer(QWidget):
         self._controller = None
         self._plugin = plugin
         self._plugin.send_select_path = self.send_select_path
-        self._plugin.send_select_vertex = self.send_select_vertex
+        self._plugin.send_select_intersection = self.send_select_intersection
         self._plugin.send_update_path_indices = self.send_update_path_indices
         self._btn = QPushButton(plugin.name)
         self._btn.setEnabled(False)
@@ -101,14 +101,14 @@ class PluginsViewContainer(QWidget):
         """
         self._controller.select_path(index=index)
 
-    def send_select_vertex(self, tpl):
+    def send_select_intersection(self, tpl):
         """
-        Calls the controller select_vertex function.
-        Updates the current selected vertex
-        :param tpl: (path_index, vertex_index)
+        Calls the controller select_intersection function.
+        Updates the current selected intersection
+        :param tpl: (path_index, intersection_index)
         :return:
         """
-        self._controller.select_vertex(tpl=tpl)
+        self._controller.select_intersection(tpl=tpl)
 
     def select_path(self, index):
         """
@@ -119,15 +119,15 @@ class PluginsViewContainer(QWidget):
         """
         self._plugin.select_path(index)
 
-    def select_vertex(self, tpl):
+    def select_intersection(self, tpl):
         """
-        Calls the Plugin select_vertex function.
-        Informs the Plugin about the current selected vertex
-        :param tpl: (path_index, vertex_index)
+        Calls the Plugin select_intersection function.
+        Informs the Plugin about the current selected intersection
+        :param tpl: (path_index, intersection_index)
         :return:
         """
-        self._plugin.select_vertex(tpl)
-        # automatically request new data for the selected vertex if the tool is visible
+        self._plugin.select_intersection(tpl)
+        # automatically request new data for the selected intersection if the tool is visible
         if self.isVisible():
             self._controller.stream.request_plugin(self._plugin.flag)
 
@@ -200,14 +200,14 @@ class PluginsViewContainer(QWidget):
         """
         self._plugin.update_path_indices(indices)
 
-    def update_vertex_indices(self, tpl_list):
+    def update_intersection_indices(self, tpl_list):
         """
-        Calls the Plugin update_vertex_indices function.
+        Calls the Plugin update_intersection_indices function.
         Informs the Plugin about all selected vertices
-        :param tpl_list: [(path_index, vertex_index),...]
+        :param tpl_list: [(path_index, intersection_index),...]
         :return:
         """
-        self._plugin.update_vertex_indices(tpl_list)
+        self._plugin.update_intersection_indices(tpl_list)
 
     def update_view(self):
         """

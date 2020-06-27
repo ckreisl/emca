@@ -33,23 +33,19 @@ class SceneInterface(object):
     """
 
     def __init__(self):
-        self.view_render_scene = None
-        self.view_render_scene_options = None
+        # callback function set by controller
+        self.send_update_path = None            # Input: np.array, boolean - indices, add_item
+        self.send_select_path = None            # Input: integer - path_index
+        self.send_select_intersection = None          # Input: tuple - (path_index, intersection_index)
 
-    def set_view_render_scene(self, view_render_scene):
-        self.view_render_scene = view_render_scene
+    def set_update_path_callback(self, update_path_callback):
+        self.send_update_path = update_path_callback
 
-    def set_view_render_scene_options(self, view_render_scene_options):
-        self.view_render_scene_options = view_render_scene_options
+    def set_select_path_callback(self, select_path_callback):
+        self.send_select_path = select_path_callback
 
-    def send_update_path(self, indices, add_item):
-        self.view_render_scene.send_update_path(indices, add_item)
-
-    def send_select_path(self, index):
-        self.view_render_scene.send_select_path(index)
-
-    def send_select_vertex(self, tpl):
-        self.view_render_scene.send_select_vertex(tpl)
+    def set_select_intersection_callback(self, select_intersection_callback):
+        self.send_select_intersection = select_intersection_callback
 
     @property
     @abc.abstractmethod
@@ -68,10 +64,10 @@ class SceneInterface(object):
         """
 
     @abc.abstractmethod
-    def get_vertex_option_settings(self, tpl):
+    def get_intersection_option_settings(self, tpl):
         """
-        Returns the vertex option settings defined by its tpl (path_index, vertex_index)
-        :param: tuple (path_index, vertex_index)
+        Returns the intersection option settings defined by its tpl (path_index, intersection_index)
+        :param: tuple (path_index, intersection_index)
         :return: dict
         """
 
@@ -106,10 +102,10 @@ class SceneInterface(object):
         """
 
     @abc.abstractmethod
-    def select_vertex(self, tpl):
+    def select_intersection(self, tpl):
         """
-        Informs the renderer to select / highlight the vertex - Tuple (path_index, vertex_index)
-        :param tpl: tuple(path_index, vertex_index)
+        Informs the renderer to select / highlight the intersection - Tuple (path_index, intersection_index)
+        :param tpl: tuple(path_index, intersection_index)
         :return:
         """
 
@@ -224,9 +220,9 @@ class SceneInterface(object):
         """
 
     @abc.abstractmethod
-    def show_all_other_traced_vertices(self, enable):
+    def show_all_other_traced_intersections(self, enable):
         """
-        Depending on input show all traced vertices within the 3d scene
+        Depending on input show all traced intersections within the 3d scene
         :param enable: boolean
         :return:
         """
@@ -267,7 +263,7 @@ class SceneInterface(object):
         """
 
     @abc.abstractmethod
-    def show_all_traced_vertices(self, state):
+    def show_all_traced_intersections(self, state):
         """
         Depending on input shows all intersections within the 3d scene
         :param state: boolean
@@ -275,28 +271,28 @@ class SceneInterface(object):
         """
 
     @abc.abstractmethod
-    def update_vertex_opacity(self, vertex_tpl, opacity):
+    def update_intersection_opacity(self, intersection_tpl, opacity):
         """
-        Updates the vertex opacity
-        :param vertex_tpl: (path_index, vertex_index)
+        Updates the intersection vertex opacity
+        :param intersection_tpl: (path_index, intersection_index)
         :param opacity: float
         :return:
         """
 
     @abc.abstractmethod
-    def update_vertex_size(self, vertex_tpl, size):
+    def update_intersection_size(self, intersection_tpl, size):
         """
-        Updates the vertex size
-        :param vertex_tpl: (path_index, vertex_index)
+        Updates the intersection vertex size
+        :param intersection_tpl: (path_index, intersection_index)
         :param size: float
         :return:
         """
 
     @abc.abstractmethod
-    def reset_vertex(self, vertex_tpl):
+    def reset_intersection(self, intersection_tpl):
         """
-        Resets opacity and size of the selected vertex
-        :param vertex_tpl: (path_index, vertex_index)
+        Resets opacity and size of the selected intersection vertex
+        :param intersection_tpl: (path_index, intersection_index)
         :return:
         """
 
@@ -318,28 +314,28 @@ class SceneInterface(object):
         """
 
     @abc.abstractmethod
-    def show_vertex_omega_o(self, vertex_tpl, enabled):
+    def show_intersection_omega_o(self, intersection_tpl, enabled):
         """
-        Displays the outgoing ray of the current selected vertex / intersection
-        :param vertex_tpl: (path_index, vertex_index)
+        Displays the outgoing ray of the current selected intersection
+        :param intersection_tpl: (path_index, intersection_index)
         :param enabled: boolean
         :return:
         """
 
     @abc.abstractmethod
-    def show_vertex_omega_i(self, vertex_tpl, enabled):
+    def show_intersection_omega_i(self, intersection_tpl, enabled):
         """
-        Displays the incoming ray of the current selected vertex / intersection
-        :param vertex_tpl: (path_index, vertex_index)
+        Displays the incoming ray of the current selected intersection
+        :param intersection_tpl: (path_index, intersection_index)
         :param enabled: boolean
         :return:
         """
 
     @abc.abstractmethod
-    def show_vertex_nee(self, vertex_tpl, enabled):
+    def show_intersection_nee(self, intersection_tpl, enabled):
         """
-        Displays the next event estimation ray of the current selected vertex / intersection
-        :param vertex_tpl: (path_index, vertex_index)
+        Displays the next event estimation ray of the current selected intersection
+        :param intersection_tpl: (path_index, intersection_index)
         :param enabled: boolean
         :return:
         """

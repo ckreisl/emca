@@ -22,7 +22,7 @@
     SOFTWARE.
 """
 
-from model.vertex_data import VertexData
+from model.intersection_data import IntersectionData
 from model.user_data import UserData
 import logging
 
@@ -35,16 +35,16 @@ class PathData(UserData):
     """
 
     def __init__(self):
-        UserData.__init__(self)
+        super().__init__()
 
-        self._sample_idx = None
-        self._path_depth = None
+        self._sample_idx = -1
+        self._path_depth = -1
         self._path_origin = None
         self._final_estimate = None
-        self._show_path = None
-        self._show_ne = None
-        self._dict_vertices = {}
-        self._vertex_count = None
+        self._show_path = False
+        self._show_ne = False
+        self._dict_intersections = {}
+        self._intersection_count = 0
 
     def deserialize(self, stream):
         """
@@ -64,13 +64,13 @@ class PathData(UserData):
         self._show_path = stream.read_bool()
         self._show_ne = stream.read_bool()
 
-        self._dict_vertices.clear()
-        self._vertex_count = stream.read_uint()
-        for i in range(0, self._vertex_count):
-            vertex_idx = stream.read_int()
-            vertex = VertexData()
-            vertex.deserialize(stream)
-            self._dict_vertices[vertex_idx] = vertex
+        self._dict_intersections.clear()
+        self._intersection_count = stream.read_uint()
+        for i in range(0, self._intersection_count):
+            intersection_index = stream.read_int()
+            intersection = IntersectionData()
+            intersection.deserialize(stream)
+            self._dict_intersections[intersection_index] = intersection
 
     @property
     def final_estimate(self):
@@ -105,12 +105,12 @@ class PathData(UserData):
         return self._path_depth
 
     @property
-    def dict_vertices(self):
+    def intersections(self):
         """
         Returns the a dict containing all path vertices
-        :return: dict{vertex_idx, vertex object}
+        :return: dict{intersection_idx, intersection object}
         """
-        return self._dict_vertices
+        return self._dict_intersections
 
     @property
     def is_show_path(self):
@@ -129,12 +129,12 @@ class PathData(UserData):
         return self._show_ne
 
     @property
-    def vertex_count(self):
+    def intersection_count(self):
         """
         Returns the amount of vertices (intersections)
         :return: integer
         """
-        return self._vertex_count
+        return self._intersection_count
 
     def valid_depth(self):
         """
