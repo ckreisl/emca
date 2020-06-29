@@ -24,6 +24,7 @@
 
 import configparser
 import os
+import sys
 import logging
 
 
@@ -34,7 +35,33 @@ class OptionsConfig(object):
         self._path_resources = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'resources'))
         self._filename = 'options.ini'
         self._filepath = os.path.join(self._path_resources, self._filename)
-        self._config.read(self._filepath)
+        self.load_options_config(self._filepath)
+
+    def load_options_config(self, filepath):
+        logging.info("Loading optionis.ini file")
+        if os.path.exists(filepath):
+            logging.info('... file exists loading configurations')
+            # load options.ini from resource folder
+            try:
+                self._config.read(self._filepath)
+            except Exception as e:
+                logging.error('Loading options.ini file failed: {}'.format(e))
+                sys.exit(1)
+        else:
+            logging.info('... file does not exist creating new file with default configurations')
+            # create options.ini with default settings
+            self._config['Theme'] = {'theme': 'dark'}
+            self._config['Options'] = {
+                'auto_connect': 'False',
+                'auto_scene_load': 'False',
+                'auto_rendered_image_load': 'False'}
+            self._config['Last'] = {
+                'hostname': 'localhost',
+                'port': '50013',
+                'rendered_image_filepath': ""}
+            with open(self._filepath, 'w') as configfile:
+                self._config.write(configfile)
+            logging.info("... done. Default auto generated file: {}".format(self._filepath))
 
     def get_theme(self):
         return self._config['Theme']['theme']

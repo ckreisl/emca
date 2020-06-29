@@ -23,7 +23,8 @@
 """
 
 from PySide2.QtWidgets import QApplication
-from PySide2.QtCore import QFile, QTextStream
+from PySide2.QtCore import QFile, QTextStream, QCoreApplication
+from PySide2.QtCore import Qt
 from core.logger import InitLogSystem
 import sys
 import os
@@ -63,6 +64,7 @@ class EMCAClient(object):
 
 
 if __name__ == '__main__':
+    QCoreApplication.setAttribute(Qt.AA_ShareOpenGLContexts)
     InitLogSystem()
     app = QApplication(sys.argv)
     emca_client = EMCAClient()
