@@ -115,7 +115,7 @@ class SocketStream(Stream):
         logging.info('Disconnecting from {} with port: {}'.format(self._hostname, self._port))
         try:
             self._socket.close()
-            self._socket = None
+            self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         except socket.error as e:
             logging.error("Socket error {}".format(e))
             return False, str(e)
