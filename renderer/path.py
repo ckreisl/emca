@@ -72,6 +72,9 @@ class Path(object):
         """
 
         intersections = path_data.intersections
+        if not len(intersections):
+            logging.error("Paths can not be created since Intersection list is empty: {}".format(intersections))
+            return None
 
         # start index mitsuba 1 (0 in nori2 framework)
         start_key = next(iter(intersections))

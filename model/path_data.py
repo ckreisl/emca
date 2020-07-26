@@ -142,3 +142,15 @@ class PathData(UserData):
         :return: bool
         """
         return self._path_depth != -1
+
+    def to_string(self):
+        return "SampleIdx = {}\n" \
+               "PathDepth = {}\n" \
+               "PathOrigin = {}\n" \
+               "FinalEstimate = {}\n" \
+               "ShowPath = {}\n" \
+               "ShowNe = {}\n" \
+               "Intersections = {}\n" \
+               "IntersectionCount = {}".format(self._sample_idx, self._path_depth, self._path_origin,
+                                               self._final_estimate, self._show_path, self._show_ne,
+                                               self._dict_intersections, self._intersection_count)

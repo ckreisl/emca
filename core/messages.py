@@ -46,7 +46,6 @@ class StateMsg(Enum):
 
 
 class ServerMsg(Enum):
-
     EMCA_HELLO                   = 0x0001
     EMCA_HEADER_RENDER_INFO      = 0x000A
     EMCA_SEND_RENDER_INFO        = 0x000B
@@ -72,3 +71,8 @@ class ServerMsg(Enum):
             0x1bcc: ServerMsg.EMCA_DISCONNECT,
             0x1bcd: ServerMsg.EMCA_QUIT
         }.get(flag, None)
+
+
+class MeshType(Enum):
+    TriangleMesh = 0
+    SphereMesh = 1
