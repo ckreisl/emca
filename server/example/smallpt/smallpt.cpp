@@ -285,6 +285,9 @@ public:
     camera.setOrigin(emca::Point3f(cam.o.x, cam.o.y, cam.o.z));
     camera.setDirectionVector(emca::Vec3f(cam.d.x, cam.d.y, cam.d.z));
     camera.setUpVector(emca::Vec3f(up.x, up.y, up.z));
+    camera.setFov(10);
+    camera.setNearClip(0);
+    camera.setFarClip(0);
     camera.serialize(stream);
   }
 

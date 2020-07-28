@@ -265,7 +265,8 @@ class ViewRenderData(QWidget):
             self.add_child_item_node(its_node, "Pos. NEE", str(its.pos_ne))
         if its.pos_envmap is not None:
             self.add_child_item_node(its_node, "Pos. Envmap", str(its.pos_envmap))
-        self.add_child_item_node(its_node, "Estimate", str(its.li))
+        if its.li is not None:
+            self.add_child_item_node(its_node, "Estimate", str(its.li))
         self.add_user_data_to_node(its_node, its)
         parent.addChild(its_node)
 

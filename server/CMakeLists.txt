@@ -6,7 +6,10 @@ project(emca
 
 include(GNUInstallDirs)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+set(DEBUG_FLAG      "-g")
+SET(COMPILE_FLAG    "-O0")
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMPILE_FLAG} ${DEBUG_FLAG}")
 
 set(SOURCE_FILES src/camera.cpp src/pathdata.cpp src/userdata.cpp src/sphere.cpp
     src/mesh.cpp src/meshes.cpp src/renderinfo.cpp src/stream.cpp src/sstream.cpp 

@@ -12,6 +12,8 @@ EMCAServer::EMCAServer() {
 	m_server->setEMCAServer(this);
 	// default set DataApiSingleton
 	m_dataApi = DataApiSingleton::getInstance();
+	// default render system is mitsuba
+	m_renderSystem = RenderSystem::mitsuba;
 	m_renderer = nullptr;
 }
 
@@ -20,6 +22,14 @@ EMCAServer::~EMCAServer() {
 	delete m_dataApi;
 	if(m_renderer)
 		delete m_renderer;
+}
+
+void EMCAServer::setRenderSystem(RenderSystem renderSystem) {
+	m_renderSystem = renderSystem;	
+}
+
+RenderSystem EMCAServer::getRenderSystem() {
+	return m_renderSystem;
 }
 
 void EMCAServer::setRenderer(RenderInterface *renderer) {
@@ -102,8 +112,11 @@ bool EMCAServer::respondRenderData(Stream *stream) {
 }
 
 bool EMCAServer::respondPluginRequest(short id, Stream *stream) {
+	std::cout << "Plugin ID: " << id << std::endl;
 	Plugin *plugin = m_dataApi->getPluginById(id);
 	if(!plugin) return false;
+	std::cout << "Running Plugin: " << plugin->getName() << std::endl;
+	std::cout << "PluginRef: " << plugin << std::endl;
 	plugin->deserialize(stream);
 	bool finished = false;
 	try {
@@ -119,6 +132,10 @@ bool EMCAServer::respondPluginRequest(short id, Stream *stream) {
 	}
 
 	return false;
+}
+
+std::vector<short> EMCAServer::getPluginIds() {
+	return m_dataApi->getPluginHandler()->getPluginIds();
 }
 
 void EMCAServer::setPort(int port) {

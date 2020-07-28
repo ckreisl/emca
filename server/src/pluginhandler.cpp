@@ -36,6 +36,16 @@ Plugin* PluginHandler::getPluginById(short id) {
 	return m_plugins.find(id) == m_plugins.end() ? NULL : m_plugins.find(id)->second;
 }
 
+std::vector<short> PluginHandler::getPluginIds()
+{
+	std::vector<short> ret;
+	std::map<short, Plugin *>::iterator it;
+	for(it = m_plugins.begin(); it != m_plugins.end(); ++it) {
+		ret.push_back(it->first);
+	}
+	return ret;
+}
+
 void PluginHandler::serialize(Stream *stream) {
 	std::map<short, Plugin*>::iterator it;
 	for(it = m_plugins.begin(); it != m_plugins.end(); it++)

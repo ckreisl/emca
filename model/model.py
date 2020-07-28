@@ -70,6 +70,8 @@ class Model(QObject):
         self._current_path_index = -1
         self._current_intersection_tpl = ()
 
+        self._server_side_supported_plugins = []
+        self._server_render_system = None
         self._controller = None
 
     def set_callback(self, callback):
@@ -118,6 +120,18 @@ class Model(QObject):
     @current_intersection_tpl.setter
     def current_intersection_tpl(self, tpl):
         self._current_intersection_tpl = tpl
+
+    @property
+    def server_render_system(self):
+        return self._server_render_system
+
+    @server_render_system.setter
+    def server_render_system(self, server_render_system_type):
+        self._server_render_system = server_render_system_type
+
+    @property
+    def server_side_supported_plugins(self):
+        return self._server_side_supported_plugins
 
     @property
     def plugins_handler(self):
@@ -222,6 +236,21 @@ class Model(QObject):
         self._current_path_indices = np.array([], dtype=np.int32)
         self._current_path_index = -1
         self._current_intersection_tpl = ()
+
+    def deserialize_supported_plugins(self, stream):
+        """
+        Deserialize list of supported plugin keys
+        :param stream:
+        :return:
+        """
+        start = time.time()
+        self._server_side_supported_plugins.clear()
+        msg_len = stream.read_uint()
+        for i in range(0, msg_len):
+            self._server_side_supported_plugins.append(stream.read_short())
+        logging.info('Supported Plugins = {}'.format(self._server_side_supported_plugins))
+        logging.info('serialize supported plugin keys in: {:.3}s'.format(time.time() - start))
+        self.sendStateMsgSig.emit((StateMsg.SUPPORTED_PLUGINS, self._server_side_supported_plugins))
 
     def serialize_render_info(self, stream):
         """

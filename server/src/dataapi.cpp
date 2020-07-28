@@ -6,17 +6,23 @@ EMCA_NAMESPACE_BEGIN
 
 DataApi::DataApi() {
 	m_isCollecting = false;
-	m_pluginHandler = PluginHandler();
+	m_pluginHandler = new PluginHandler();
 }
 
-DataApi::~DataApi() { }
+DataApi::~DataApi() {
+	delete m_pluginHandler;
+}
 
 void DataApi::enable() {
+	m_mutex.lock();
 	m_isCollecting = true;
+	m_mutex.unlock();
 }
 
 void DataApi::disable() {
+	m_mutex.lock();
 	m_isCollecting = false;
+	m_mutex.unlock();
 }
 
 void DataApi::clear() {

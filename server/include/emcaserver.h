@@ -2,11 +2,19 @@
 #define INCLUDE_EMCA_EMCASERVER_H_
 
 #include "platform.h"
-#include "dataapi.h"
+#include "stream.h"
 #include "renderinterface.h"
+#include "dataapi.h"
 #include "server.h"
+#include "plugin.h"
 
 EMCA_NAMESPACE_BEGIN
+
+enum RenderSystem { 
+	mitsuba		= 0x01,
+	smallpt 	= 0x02,
+	other 		= 0xff
+};
 
 class Server;
 class EMCAServer {
@@ -19,7 +27,12 @@ public:
 	void setDataApi(DataApi *dataApi);
 	void addPlugin(Plugin *plugin);
 
+	void setRenderSystem(RenderSystem renderSystem);
+	RenderSystem getRenderSystem();
 	void setPort(int port);
+
+	std::vector<short> getPluginIds();
+
 	void start();
 	void stop();
 
@@ -34,6 +47,7 @@ private:
 	Server *m_server;
 	RenderInterface *m_renderer;
 	DataApi *m_dataApi;
+	RenderSystem m_renderSystem;
 };
 
 EMCA_NAMESPACE_END

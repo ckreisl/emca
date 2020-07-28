@@ -42,6 +42,8 @@ class ControllerSocketStream(object):
             self._view.view_render_image.enable_view(False)
             self._view.view_render_scene.enable_view(False)
             self._model.plugins_handler.enable_plugins(False)
+            for plugin_id in self._model.server_side_supported_plugins:
+                self._model.plugins_handler.enable_plugin_by_id(plugin_id, False)
             self._sstream_client.disconnect_socket_stream()
         elif msg is StateMsg.QUIT:
             self._sstream_client.wait()

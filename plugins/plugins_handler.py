@@ -22,6 +22,7 @@
     SOFTWARE.
 """
 
+from core.plugin import PluginType
 from plugins.plugins_view_container import PluginsViewContainer
 import plugins
 
@@ -71,7 +72,19 @@ class PluginsHandler(object):
         :return:
         """
         for _, value in self._plugins_view_container.items():
-            value.enable_plugin_btn(enable)
+            if value.plugin.plugin_type is PluginType.CORE_PLUGIN:
+                value.enable_plugin_btn(enable)
+
+    def enable_plugin_by_id(self, plugin_id, enable):
+        """
+        Enables the plugin btn based on the plugin id
+        :param plugin_id: integer
+        :param enable: boolean
+        :return:
+        """
+        plugin_container_item = self._plugins_view_container.get(plugin_id, None)
+        if plugin_container_item:
+            plugin_container_item.enable_plugin_btn(enable)
 
     def request_plugin(self, flag, stream):
         """

@@ -2,6 +2,7 @@
 #define INCLUDE_EMCA_PATHDATA_H_
 
 #include "platform.h"
+#include "datatypes.h"
 #include "userdata.h"
 #include "stream.h"
 #include "intersectiondata.h"

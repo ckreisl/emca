@@ -2,6 +2,7 @@
 #define INCLUDE_EMCA_PLUGINHANDLER_H_
 
 #include "platform.h"
+#include "stream.h"
 #include "plugin.h"
 
 EMCA_NAMESPACE_BEGIN
@@ -16,6 +17,8 @@ public:
 
 	Plugin* getPluginByName(std::string name);
 	Plugin* getPluginById(short id);
+
+	std::vector<short> getPluginIds();
 
 	void serialize(Stream *stream);
 	void printPlugins();

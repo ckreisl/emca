@@ -42,7 +42,8 @@ class StateMsg(Enum):
     DATA_3D_PATHS       = 9
     DATA_DETECTOR       = 10
     UPDATE_PLUGIN       = 11
-    QUIT                = 12
+    SUPPORTED_PLUGINS   = 12
+    QUIT                = 13
 
 
 class ServerMsg(Enum):
@@ -53,6 +54,7 @@ class ServerMsg(Enum):
     EMCA_HEADER_PIXEL_DATA       = 0x000E
     EMCA_HEADER_SCENE_DATA       = 0x000F
     EMCA_HEADER_CAMERA           = 0x0010
+    EMCA_SUPPORTED_PLUGINS       = 0x0011
     EMCA_NO_VALID_DATA           = 0x01A4
     EMCA_DISCONNECT              = 0x1bcc
     EMCA_QUIT                    = 0x1bcd
@@ -66,13 +68,28 @@ class ServerMsg(Enum):
             0x000D: ServerMsg.EMCA_HEADER_IMAGE_DATA,
             0x000E: ServerMsg.EMCA_HEADER_PIXEL_DATA,
             0x000F: ServerMsg.EMCA_HEADER_SCENE_DATA,
-            0x01A4: ServerMsg.EMCA_NO_VALID_DATA,
             0x0010: ServerMsg.EMCA_HEADER_CAMERA,
+            0x0011: ServerMsg.EMCA_SUPPORTED_PLUGINS,
+            0x01A4: ServerMsg.EMCA_NO_VALID_DATA,
             0x1bcc: ServerMsg.EMCA_DISCONNECT,
             0x1bcd: ServerMsg.EMCA_QUIT
         }.get(flag, None)
 
 
 class MeshType(Enum):
-    TriangleMesh = 0
-    SphereMesh = 1
+    TriangleMesh    = 0
+    SphereMesh      = 1
+
+
+class RenderSystem(Enum):
+    MITSUBA         = 0x01
+    SMALLPT         = 0x02
+    OTHER           = 0xff
+
+    @staticmethod
+    def get_render_system(flag):
+        return {
+            0x01: RenderSystem.MITSUBA,
+            0x02: RenderSystem.SMALLPT,
+            0xff: RenderSystem.OTHER
+        }.get(flag, None)

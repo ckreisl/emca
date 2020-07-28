@@ -87,6 +87,17 @@ void Server::start() {
 			m_running = false;
 			break;
 		}
+		std::cout << "RenderSystem: " << m_emcaServer->getRenderSystem() << std::endl;
+		m_stream->writeShort(m_emcaServer->getRenderSystem());
+
+		std::cout << "Inform Client about supported Plugins" << std::endl;
+		std::vector<short> supportedPlugins = m_emcaServer->getPluginIds();
+		unsigned int msgLen = supportedPlugins.size();
+		m_stream->writeShort(Message::EMCA_SUPPORTED_PLUGINS);
+		m_stream->writeUInt(msgLen);
+		for (short &id : supportedPlugins) {
+			m_stream->writeShort(id);
+		}
 
 		std::cout << "Handshake complete! Starting data transfer ..." << std::endl;
 

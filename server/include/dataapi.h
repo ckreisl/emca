@@ -1,9 +1,12 @@
 #ifndef INCLUDE_EMCA_DATAAPI_H_
 #define INCLUDE_EMCA_DATAAPI_H_
 
+#include <mutex>
+
 #include "platform.h"
-#include "pathdata.h"
+#include "stream.h"
 #include "pluginhandler.h"
+#include "pathdata.h"
 
 EMCA_NAMESPACE_BEGIN
 
@@ -51,10 +54,10 @@ public:
 	void enable();
 	void disable();
 
-	void addPlugin(Plugin *plugin) { m_pluginHandler.addPlugin(plugin); }
-	Plugin* getPluginByName(std::string name) { return m_pluginHandler.getPluginByName(name); }
-	Plugin* getPluginById(short id) { return m_pluginHandler.getPluginById(id); }
-	PluginHandler getPluginHandler() { return m_pluginHandler; }
+	void addPlugin(Plugin *plugin) { m_pluginHandler->addPlugin(plugin); }
+	Plugin* getPluginByName(std::string name) { return m_pluginHandler->getPluginByName(name); }
+	Plugin* getPluginById(short id) { return m_pluginHandler->getPluginById(id); }
+	PluginHandler* getPluginHandler() { return m_pluginHandler; }
 
 	inline bool isCollecting() { return m_isCollecting; }
 
@@ -63,7 +66,8 @@ private:
 	int m_currentSampleIdx = -1;
 	int m_currentDepthIdx = -1;
 	std::map<int, PathData> m_paths;
-	PluginHandler m_pluginHandler;
+	PluginHandler *m_pluginHandler;
+	std::mutex m_mutex;
 };
 
 EMCA_NAMESPACE_END
