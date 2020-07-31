@@ -7,14 +7,21 @@
 EMCA_NAMESPACE_BEGIN
 
 EMCAServer::EMCAServer() {
-	// init server and set msg callback
-	m_server = new Server(50013);
-	m_server->setEMCAServer(this);
 	// default set DataApiSingleton
 	m_dataApi = DataApiSingleton::getInstance();
 	// default render system is mitsuba
 	m_renderSystem = RenderSystem::mitsuba;
 	m_renderer = nullptr;
+	// init server and set msg callback
+	m_server = new Server(50013);
+	m_server->setRespondRenderSystemCallback([this](Stream *stream) { return respondRenderSystem(stream); });
+	m_server->setRespondPluginRequest([this](short id, Stream *stream) { return respondPluginRequest(id, stream); });
+	m_server->setRespondRenderInfoCallback([this](Stream *stream) { return respondRenderInfo(stream);} );
+	m_server->setReadInfoCallback([this](Stream *stream) { return readRenderInfo(stream); });
+	m_server->setRespondRenderImageCallback([this](Stream *stream) { return respondRenderImage(stream); });
+	m_server->setRespondSceneDataCallback([this](Stream *stream) { return respondSceneData(stream); });
+	m_server->setRespondRenderDataCallback([this](Stream *stream) { return respondRenderData(stream); });
+	m_server->setRespondSupportedPluginsCallback([this](Stream *stream) { return respondSupportedPlugins(stream); });
 }
 
 EMCAServer::~EMCAServer() {
@@ -50,6 +57,38 @@ void EMCAServer::setDataApi(DataApi *dataApi) {
 
 void EMCAServer::addPlugin(Plugin *plugin) {
 	m_dataApi->addPlugin(plugin);
+}
+
+bool EMCAServer::respondRenderSystem(Stream *stream) {
+	try
+	{
+		std::cout << "Inform Client about Render System" << std::endl;
+		stream->writeShort(getRenderSystem());
+	}
+	catch (...)
+	{
+		return false;
+	}
+	return true;
+}
+
+bool EMCAServer::respondSupportedPlugins(Stream *stream) {
+	try
+	{
+		std::cout << "Inform Client about supported Plugins" << std::endl;
+		std::vector<short> supportedPlugins = m_dataApi->getPluginHandler()->getPluginIds();
+		unsigned int msgLen = supportedPlugins.size();
+		stream->writeShort(Message::EMCA_SUPPORTED_PLUGINS);
+		stream->writeUInt(msgLen);
+		for (short &id : supportedPlugins) {
+			stream->writeShort(id);
+		}
+	}
+	catch (...)
+	{
+		return false;
+	}
+	return true;
 }
 
 bool EMCAServer::readRenderInfo(Stream *stream) {
@@ -100,6 +139,7 @@ bool EMCAServer::respondRenderData(Stream *stream) {
 		int x = stream->readInt();
 		int y = stream->readInt();
 		int sampleCount = stream->readInt();
+		std::cout << "Respond Pathdata of pixel: (" << x << ", " << y << ")" << std::endl;
 		m_renderer->renderPixel(x, y, sampleCount);
 		m_dataApi->serialize(stream);
 		m_dataApi->disable();
@@ -112,11 +152,8 @@ bool EMCAServer::respondRenderData(Stream *stream) {
 }
 
 bool EMCAServer::respondPluginRequest(short id, Stream *stream) {
-	std::cout << "Plugin ID: " << id << std::endl;
 	Plugin *plugin = m_dataApi->getPluginById(id);
 	if(!plugin) return false;
-	std::cout << "Running Plugin: " << plugin->getName() << std::endl;
-	std::cout << "PluginRef: " << plugin << std::endl;
 	plugin->deserialize(stream);
 	bool finished = false;
 	try {
@@ -132,10 +169,6 @@ bool EMCAServer::respondPluginRequest(short id, Stream *stream) {
 	}
 
 	return false;
-}
-
-std::vector<short> EMCAServer::getPluginIds() {
-	return m_dataApi->getPluginHandler()->getPluginIds();
 }
 
 void EMCAServer::setPort(int port) {

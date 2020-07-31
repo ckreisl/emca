@@ -25,7 +25,6 @@ Server::Server(int port) {
 	m_clientSocket = -1;
 	m_running = false;
 	m_stream = nullptr;
-	m_emcaServer = nullptr;
 
 	if(m_serverSocket == INVALID_SOCKET) {
 		// TODO throw exception invalid socket!
@@ -36,6 +35,46 @@ Server::Server(int port) {
 
 Server::~Server() {
 	delete m_stream;
+}
+
+void Server::setRespondPluginRequest(const std::function<bool(short, Stream *)> &callback) 
+{
+	m_callbackRespondPluginRequest = callback;
+}
+
+void Server::setRespondRenderInfoCallback(const std::function<bool(Stream *)> &callback)
+{
+	m_callbackRespondRenderInfo = callback;
+}
+
+void Server::setReadInfoCallback(const std::function<bool(Stream *)> &callback)
+{
+	m_callbackReadRenderInfo = callback;
+}
+
+void Server::setRespondRenderImageCallback(const std::function<bool(Stream *)> &callback)
+{
+	m_callbackRespondRenderImage = callback;
+}
+
+void Server::setRespondRenderDataCallback(const std::function<bool(Stream *)> &callback)
+{
+	m_callbackRespondRenderData = callback;
+}
+
+void Server::setRespondRenderSystemCallback(const std::function<bool(Stream *)> &callback)
+{
+	m_callbackRespondRenderSystem = callback;
+}
+
+void Server::setRespondSupportedPluginsCallback(const std::function<bool(Stream *)> &callback)
+{
+	m_callbackRespondSupportedPlugins = callback;
+}
+
+void Server::setRespondSceneDataCallback(const std::function<bool(Stream *)> &callback)
+{
+	m_callbackRespondSceneData = callback;
 }
 
 void Server::start() {
@@ -87,17 +126,9 @@ void Server::start() {
 			m_running = false;
 			break;
 		}
-		std::cout << "RenderSystem: " << m_emcaServer->getRenderSystem() << std::endl;
-		m_stream->writeShort(m_emcaServer->getRenderSystem());
 
-		std::cout << "Inform Client about supported Plugins" << std::endl;
-		std::vector<short> supportedPlugins = m_emcaServer->getPluginIds();
-		unsigned int msgLen = supportedPlugins.size();
-		m_stream->writeShort(Message::EMCA_SUPPORTED_PLUGINS);
-		m_stream->writeUInt(msgLen);
-		for (short &id : supportedPlugins) {
-			m_stream->writeShort(id);
-		}
+		m_callbackRespondRenderSystem(m_stream);
+		m_callbackRespondSupportedPlugins(m_stream);
 
 		std::cout << "Handshake complete! Starting data transfer ..." << std::endl;
 
@@ -107,30 +138,30 @@ void Server::start() {
 				m_lastReceivedMsg = m_stream->readShort();
 				std::cout << "Received header msg = " << m_lastReceivedMsg << std::endl;
 
-				if(m_emcaServer->respondPluginRequest(m_lastReceivedMsg, m_stream)) {
+				if(m_callbackRespondPluginRequest(m_lastReceivedMsg, m_stream)) {
 					continue;
 				}
 
 				switch(m_lastReceivedMsg) {
 				case Message::EMCA_HEADER_RENDER_INFO:
 					std::cout << "Respond render info msg" << std::endl;
-					m_emcaServer->respondRenderInfo(m_stream);
+					m_callbackRespondRenderInfo(m_stream);
 					break;
 				case Message::EMCA_SET_RENDER_INFO:
 					std::cout << "Set render info msg" << std::endl;
-					m_emcaServer->readRenderInfo(m_stream);
+					m_callbackReadRenderInfo(m_stream);
 					break;
 				case Message::EMCA_HEADER_SCENE_DATA:
 					std::cout << "Respond scene data msg" << std::endl;
-					m_emcaServer->respondSceneData(m_stream);
+					m_callbackRespondSceneData(m_stream);
 					break;
 				case Message::EMCA_RENDER_IMAGE:
 					std::cout << "Render image msg" << std::endl;
-					m_emcaServer->respondRenderImage(m_stream);
+					m_callbackRespondRenderImage(m_stream);
 					break;
 				case Message::EMCA_RENDER_PIXEL:
 					std::cout << "Render pixel msg" << std::endl;
-					m_emcaServer->respondRenderData(m_stream);
+					m_callbackRespondRenderData(m_stream);
 					break;
 				case Message::EMCA_DISCONNECT:
 					std::cout << "Disconnect msg" << std::endl;

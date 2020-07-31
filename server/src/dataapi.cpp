@@ -14,15 +14,11 @@ DataApi::~DataApi() {
 }
 
 void DataApi::enable() {
-	m_mutex.lock();
 	m_isCollecting = true;
-	m_mutex.unlock();
 }
 
 void DataApi::disable() {
-	m_mutex.lock();
 	m_isCollecting = false;
-	m_mutex.unlock();
 }
 
 void DataApi::clear() {

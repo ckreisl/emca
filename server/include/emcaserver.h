@@ -5,8 +5,8 @@
 #include "stream.h"
 #include "renderinterface.h"
 #include "dataapi.h"
-#include "server.h"
 #include "plugin.h"
+#include "server.h"
 
 EMCA_NAMESPACE_BEGIN
 
@@ -16,7 +16,6 @@ enum RenderSystem {
 	other 		= 0xff
 };
 
-class Server;
 class EMCAServer {
 public:
 
@@ -31,11 +30,12 @@ public:
 	RenderSystem getRenderSystem();
 	void setPort(int port);
 
-	std::vector<short> getPluginIds();
-
 	void start();
 	void stop();
 
+private:
+	bool respondRenderSystem(Stream *stream);
+	bool respondSupportedPlugins(Stream *stream);
 	bool readRenderInfo(Stream *stream);
 	bool respondRenderInfo(Stream *stream);
 	bool respondRenderImage(Stream *stream);
@@ -43,7 +43,6 @@ public:
 	bool respondRenderData(Stream *stream);
 	bool respondPluginRequest(short id, Stream *stream);
 
-private:
 	Server *m_server;
 	RenderInterface *m_renderer;
 	DataApi *m_dataApi;

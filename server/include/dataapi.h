@@ -1,8 +1,6 @@
 #ifndef INCLUDE_EMCA_DATAAPI_H_
 #define INCLUDE_EMCA_DATAAPI_H_
 
-#include <mutex>
-
 #include "platform.h"
 #include "stream.h"
 #include "pluginhandler.h"
@@ -67,7 +65,6 @@ private:
 	int m_currentDepthIdx = -1;
 	std::map<int, PathData> m_paths;
 	PluginHandler *m_pluginHandler;
-	std::mutex m_mutex;
 };
 
 EMCA_NAMESPACE_END
