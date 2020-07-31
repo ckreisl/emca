@@ -16,7 +16,7 @@ set(SOURCE_FILES src/camera.cpp src/pathdata.cpp src/userdata.cpp src/sphere.cpp
 	src/server.cpp src/intersectiondata.cpp src/pluginhandler.cpp src/dataapi.cpp 
 	src/dataapisingleton.cpp src/emcaserver.cpp)
 
-add_library(${PROJECT_NAME} ${SOURCE_FILES})
+add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 set_target_properties(emca PROPERTIES VERSION ${PROJECT_VERSION})
