@@ -11,10 +11,15 @@ SET(COMPILE_FLAG    "-O0")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMPILE_FLAG} ${DEBUG_FLAG}")
 
-set(SOURCE_FILES src/camera.cpp src/pathdata.cpp src/userdata.cpp src/sphere.cpp
-    src/mesh.cpp src/meshes.cpp src/renderinfo.cpp src/stream.cpp src/sstream.cpp 
-	src/server.cpp src/intersectiondata.cpp src/pluginhandler.cpp src/dataapi.cpp 
-	src/dataapisingleton.cpp src/emcaserver.cpp)
+set(SOURCE_FILES 
+    src/stream.cpp 
+    src/sstream.cpp 
+    src/server.cpp 
+    src/pluginhandler.cpp 
+    src/pathdata.cpp
+    src/dataapi.cpp 
+    src/dataapisingleton.cpp 
+    src/emcaserver.cpp)
 
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
@@ -40,4 +45,4 @@ install(EXPORT EMCAConfig DESTINATION share/EMCALib/cmake)
 
 export(TARGETS ${PROJECT_NAME} FILE EMCAConfig.cmake)
 
-add_subdirectory("example/smallpt")
+#add_subdirectory("example/smallpt")

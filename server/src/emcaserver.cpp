@@ -1,6 +1,6 @@
 
 #include "emcaserver.h"
-#include "renderinfo.h"
+#include "scenedata.h"
 #include "messages.h"
 #include "dataapisingleton.h"
 
@@ -95,7 +95,7 @@ bool EMCAServer::readRenderInfo(Stream *stream) {
 	try {
 		RenderInfo renderInfo;
 		renderInfo.deserialize(stream);
-		m_renderer->updateSampleCount(renderInfo.getSampleCount());
+		m_renderer->updateSampleCount(renderInfo.sampleCount);
 	} catch(...) {
 		return false;
 	}

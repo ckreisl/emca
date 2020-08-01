@@ -15,7 +15,6 @@ public:
 	virtual void sendCameraData(Stream *stream) = 0;
 	virtual void sendMeshData(Stream *stream) = 0;
 	virtual void updateSampleCount(int sampleCount) = 0;
-
 };
 
 EMCA_NAMESPACE_END
