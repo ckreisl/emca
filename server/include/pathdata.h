@@ -112,4 +112,4 @@ private:
 
 EMCA_NAMESPACE_END
 
-#endif /* INCLUDE_EMCA_VSDPATHDATA_H_ */
+#endif /* INCLUDE_EMCA_PATHDATA_H_ */
