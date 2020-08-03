@@ -127,7 +127,10 @@ void Server::start() {
 			break;
 		}
 
+		// send render system type
 		m_callbackRespondRenderSystem(m_stream);
+
+		// send list of plugins
 		m_callbackRespondSupportedPlugins(m_stream);
 
 		std::cout << "Handshake complete! Starting data transfer ..." << std::endl;
@@ -165,18 +168,11 @@ void Server::start() {
 					break;
 				case Message::EMCA_DISCONNECT:
 					std::cout << "Disconnect msg" << std::endl;
-					m_stream->writeShort(Message::EMCA_DISCONNECT);
-					m_lastSendMsg = Message::EMCA_DISCONNECT;
-					close(m_clientSocket);
-					m_running = false;
+					disconnect();
 					break;
 				case Message::EMCA_QUIT:
 					std::cout << "Quit message!" << std::endl;
-					m_stream->writeShort(Message::EMCA_QUIT);
-					m_lastSendMsg = Message::EMCA_QUIT;
-					close(m_clientSocket);
-					close(m_serverSocket);
-					m_running = false;
+					stop();
 					break;
 				default:
 					std::cout << "Unknown message received!" << std::endl;
@@ -186,15 +182,10 @@ void Server::start() {
 		} catch (std::exception &e) {
 			// TODO handle exception
             std::cerr << "caught exception: " << e.what() << std::endl;
-            m_stream->writeShort(Message::EMCA_DISCONNECT);
-            close(m_clientSocket);
-            m_running = false;
+			disconnect();
 		} catch (...) {
 			// TODO handle exception
-            std::cerr << "caught exception." << std::endl;
-            m_stream->writeShort(Message::EMCA_DISCONNECT);
-            close(m_clientSocket);
-            m_running = false;
+			disconnect();
 		}
 
 		// TODO remove goto command and go for a clean implementation if client disconnects.
@@ -207,8 +198,10 @@ void Server::disconnect() {
 	try {
 		m_lastSendMsg = Message::EMCA_DISCONNECT;
 		m_stream->writeShort(Message::EMCA_DISCONNECT);
+		m_mutex.lock();
 		close(m_clientSocket);
 		m_running = false;
+		m_mutex.unlock();
 	} catch(std::exception &e) {
 		std::cout << "Exception: " << e.what() << std::endl;
 	}
@@ -218,8 +211,11 @@ void Server::stop() {
 	try {
 		m_lastSendMsg = Message::EMCA_QUIT;
 		m_stream->writeShort(Message::EMCA_QUIT);
+		m_mutex.lock();
 		close(m_clientSocket);
 		close(m_serverSocket);
+		m_running = false;
+		m_mutex.unlock();
 	} catch(std::exception &e) {
 		std::cout << "Exception: " << e.what() << std::endl;
 	}

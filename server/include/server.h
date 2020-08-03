@@ -1,6 +1,7 @@
 #ifndef INCLUDE_EMCA_SERVER_H_
 #define INCLUDE_EMCA_SERVER_H_
 
+#include <mutex>
 #include <functional>
 #include "platform.h"
 #include "stream.h"
@@ -43,6 +44,7 @@ private:
 	socket_t m_clientSocket;
 	socket_t m_serverSocket;
 	Stream *m_stream;
+	std::mutex m_mutex;
 
 	std::function<bool(short, Stream*)> m_callbackRespondPluginRequest;
 	std::function<bool(Stream *)> m_callbackRespondRenderInfo;

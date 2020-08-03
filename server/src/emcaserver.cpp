@@ -12,7 +12,7 @@ EMCAServer::EMCAServer() {
 	// default render system is mitsuba
 	m_renderSystem = RenderSystem::mitsuba;
 	m_renderer = nullptr;
-	// init server and set msg callback
+	// init server and set callback functions
 	m_server = new Server(50013);
 	m_server->setRespondRenderSystemCallback([this](Stream *stream) { return respondRenderSystem(stream); });
 	m_server->setRespondPluginRequest([this](short id, Stream *stream) { return respondPluginRequest(id, stream); });
@@ -76,6 +76,7 @@ bool EMCAServer::respondSupportedPlugins(Stream *stream) {
 	try
 	{
 		std::cout << "Inform Client about supported Plugins" << std::endl;
+		m_dataApi->getPluginHandler()->printPlugins();
 		std::vector<short> supportedPlugins = m_dataApi->getPluginHandler()->getPluginIds();
 		unsigned int msgLen = supportedPlugins.size();
 		stream->writeShort(Message::EMCA_SUPPORTED_PLUGINS);
@@ -123,10 +124,13 @@ bool EMCAServer::respondRenderImage(Stream *stream) {
 
 bool EMCAServer::respondSceneData(Stream *stream) {
 	try {
+		std::cout << "Send Camera Information ... !" << std::endl;
 		m_renderer->sendCameraData(stream);
-		std::cout << "Send Camera Information DONE!" << std::endl;
+		std::cout << "done!" << std::endl;
+
+		std::cout << "Send Mesh Information ... !" << std::endl;
 		m_renderer->sendMeshData(stream);
-		std::cout << "Send Mesh Information DONE!" << std::endl;
+		std::cout << "done!" << std::endl;
 	} catch(...) {
 		return false;
 	}
