@@ -260,7 +260,8 @@ class ViewRenderData(QWidget):
         """
         its_node = IntersectionNodeItem(parent.index, its.depth_idx)
         its_node.setText(0, "Intersection ({})".format(its.depth_idx))
-        self.add_child_item_node(its_node, "Position", str(its.pos))
+        if its.pos:
+            self.add_child_item_node(its_node, "Position", str(its.pos))
         if its.pos_ne is not None:
             self.add_child_item_node(its_node, "Pos. NEE", str(its.pos_ne))
         if its.pos_envmap is not None:

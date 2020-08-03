@@ -28,6 +28,17 @@ import abc
 
 
 class PluginType(Enum):
+    """
+    PluginType
+
+    CORE_PLUGIN:
+        works on local client render data received by server (default data)
+
+    SERVER_PLUGIN:
+        This plugin type needs server support which means a server plugin must be enabled.
+        The plugin is enabled if a server plugin is added and available.
+        Server plugins can request from the server for additional data types.
+    """
     CORE_PLUGIN     = 0
     SERVER_PLUGIN   = 1
 

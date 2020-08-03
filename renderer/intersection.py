@@ -120,7 +120,9 @@ class Intersection(object):
         Returns the 3D position of the intersection
         :return: point3f
         """
-        return self._its.pos
+        if self._its:
+            return self._its.pos
+        return None
 
     @property
     def wi(self):
