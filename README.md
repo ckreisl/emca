@@ -100,6 +100,8 @@ The required data for visualization primarily includes the path's vertices from 
 To keep track of the current path and intersection, each gets assigned an unique identifier where each path is identified by its per-pixel sample count and each intersection is identified by its depth within the path.
 These indices are set using the `setPathIndex` and `setDepthIndex` functions. To allow for the selection of paths by their incident radiance estimate, the `setFinalEstimate` function can be used to set the necessary data for the sample contribution view. Additionally, arbitrary data can be added to annotate each path and intersection using potentially fully custom data using the `addPathData` and `addIntersectionData` functions.
 
+If you want to use your own DataApi with your own functions and file types you can check the `DataApiMitsuba` singleton class in include/libcore/dataapimitsuba.h (from emca-lib branch - mitsuba) as an example.
+
 <a name="emca_client"></a>
 
 ## EMCA Client
