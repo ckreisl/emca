@@ -4,12 +4,9 @@ project(emca
     DESCRIPTION "Explorer of Monte-Carlo based Algorithms (Server)" 
     LANGUAGES CXX)
 
-include(GNUInstallDirs)
+include(GNUInstallDirs
 
-set(DEBUG_FLAG      "-g")
-SET(COMPILE_FLAG    "-O0")
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMPILE_FLAG} ${DEBUG_FLAG}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 set(SOURCE_FILES 
     src/stream.cpp 
@@ -44,5 +41,3 @@ install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAM
 install(EXPORT EMCAConfig DESTINATION share/EMCALib/cmake)
 
 export(TARGETS ${PROJECT_NAME} FILE EMCAConfig.cmake)
-
-#add_subdirectory("example/smallpt")
