@@ -4,7 +4,7 @@ project(emca
     DESCRIPTION "Explorer of Monte-Carlo based Algorithms (Server)" 
     LANGUAGES CXX)
 
-include(GNUInstallDirs
+include(GNUInstallDirs)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
