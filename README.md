@@ -186,14 +186,14 @@ Computing an estimate of the incident radiance can take a considerable amount of
 All individial created plugins should be placed within the **Plugins** folder. To load your plugin add it in the `__init__.py` file as shown below:
 
 ```
-from Plugins.IntersectionDataPlots.plugin_intersection_data_plots import IntersectionDataPlots
-from Plugins.PathDepth.plugin_path_depth import PathDepth
-from Plugins.SphericalView.plugin_spherical_view import SphericalView
+from plugins.plugin_intersection_data.plugin_intersection_data_plots import IntersectionData
+from plugins.plugin_path_depth.plugin_path_depth import PathDepth
+from plugins.plugin_spherical_view.plugin_spherical_view import SphericalView
 
 # In order to initialize your plugin, import your plugin here and add it to __all__ list.
 
 __all__ = [
-    'IntersectionDataPlots',
+    'IntersectionData',
     'PathDepth',
     'SphericalView',
 ]
