@@ -70,9 +70,15 @@ Make sure that the path to the emca shared library is defined in **LD_LIBRARY_PA
 If you never worked with [mitsuba](https://github.com/mitsuba-renderer/mitsuba) before please download and read the [documentation](https://www.mitsuba-renderer.org/releases/current/documentation.pdf) first. With the following steps I assume that the setup of mitsuba is already done.
 
 1. Clone or pull the changes from the mitsuba emca-lib branch.
-1. In your *config.py* add `-DDETERMINISTIC` as compile flag for CXX. This will allow for determinisitic renderings in order to analyze and debug path tracing algorithms with emca.
-1. Compile mitsuba
-1. Modify your scene.xml file. Set the sampler type to `deterministic`. For further information on how to add data check the `pathemca.cpp` file.
+2. In your *config.py* add `-DDETERMINISTIC` as compile flag for CXX. This will allow for determinisitic renderings in order to analyze and debug path tracing algorithms with emca.
+3. Add paths to emca libraries in *config.py*.
+```
+EMCAINCLUDE	   = ['/usr/local/include/emca']
+EMCALIBDIR	   = ['/usr/local/lib']
+EMCALIB        = ['emca']
+```
+4. Compile mitsuba
+5. Modify your scene.xml file. Set the sampler type to `deterministic`. For further information on how to add data check the `pathemca.cpp` file.
 ``` 
 <!-- Modified Multiple Importance Sampling Path Tracing Algorithm -->
 <integrator type="pathemca"/>
