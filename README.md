@@ -73,9 +73,9 @@ If you never worked with [mitsuba](https://github.com/mitsuba-renderer/mitsuba) 
 2. In your *config.py* add `-DDETERMINISTIC` as compile flag for CXX. This will allow for determinisitic renderings in order to analyze and debug path tracing algorithms with emca.
 3. Add paths to emca libraries in *config.py*.
 ```
-EMCAINCLUDE	   = ['/usr/local/include/emca']
-EMCALIBDIR	   = ['/usr/local/lib']
-EMCALIB        = ['emca']
+EMCAINCLUDE   = ['/usr/local/include/emca']
+EMCALIBDIR    = ['/usr/local/lib']
+EMCALIB       = ['emca']
 ```
 4. Compile mitsuba
 5. Modify your scene.xml file. Set the sampler type to `deterministic`. For further information on how to add data check the `pathemca.cpp` file.
