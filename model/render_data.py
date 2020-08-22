@@ -79,7 +79,7 @@ class RenderData(object):
         Checks if the sample count is valid != 0
         :return:
         """
-        return self._sample_count != -1
+        return self._sample_count != 0
 
     def get_indices(self):
         """

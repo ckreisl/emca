@@ -27,7 +27,8 @@ If you are using this framework for a publication I would appreciate a citation 
 ## Table of contents
 * [About](#about)
 * [Server Interface](#server_interface)
-  * [Setup](#server_setup)
+  * [Compile Server Library](#server_library)
+  * [Server Setup Mitsuba](#server_setup_mitsuba)
 * [EMCA Client](#emca_client)
   * [Brushing and Linking](#brushing_linking)
   * [Render View](#render_view)
@@ -43,20 +44,41 @@ If you are using this framework for a publication I would appreciate a citation 
 <a name="server_interface"></a>
 
 ## Server Interface
-During the development of emca [mitsuba](https://github.com/mitsuba-renderer/mitsuba) was used as render system. For this purpose an interface was implemented to allow data transfer between mitsuba and the emca framework. The server interface code and modifications which have been applied to mitsuba can be found here: 
-* https://github.com/ckreisl/mitsuba/tree/emca (branch emca)
+During the development of emca [mitsuba](https://github.com/mitsuba-renderer/mitsuba) was used as render system. For this purpose an interface was implemented to allow data transfer between mitsuba and the emca framework. You can find the server code in the `server` folder. For more flexibility the server code is provided as shared library. This should make it easier to integrate it into other rendering systems. The necessary mitsuba modifications which have been applied can be found here: 
+* https://github.com/ckreisl/mitsuba/tree/emca-lib (branch emca-lib)
 
-In general 'any' render system can be used. For this purpose the EMCA server interface must be adapted to the respective render system. In addition, the renderer must be modified so that it can render deterministic images. At the moment there is no offical documentation available to adapt the EMCA server interface to other render systems than mitsuba.
+In general 'any' render system can be used. For this purpose the emca server interface must be adapted to the respective render system. In addition, the renderer must be modified so that it can render deterministic images. At the moment there is no **offical** documentation available to adapt the EMCA server interface to other render systems than mitsuba.
 
-<a name="server_setup"></a>
+<a name="server_library"></a>
 
-### Setup
+### Compile Server Library
+Within the `server` folder we provide a cmake file for compiling the server library.
+
+```
+mkdir build
+cd build
+cmake ..
+make -j4
+sudo make install
+```
+
+Make sure that the path to the emca shared library is defined in **LD_LIBRARY_PATH**.
+
+<a name="server_setup_mitsuba"></a>
+
+### Server Setup Mitsuba
 If you never worked with [mitsuba](https://github.com/mitsuba-renderer/mitsuba) before please download and read the [documentation](https://www.mitsuba-renderer.org/releases/current/documentation.pdf) first. With the following steps I assume that the setup of mitsuba is already done.
 
-1. Clone or pull the changes from the mitsuba emca branch.
-1. In your *config.py* add `-DDETERMINISTIC` as compile flag for CXX. This will allow for determinisitic renderings in order to analyze and debug path tracing algorithms with emca.
-1. Compile mitsuba
-1. Modify your scene.xml file. Set the sampler type to `deterministic`. For further information on how to add data check the `pathemca.cpp` file.
+1. Clone or pull the changes from the mitsuba emca-lib branch.
+2. In your *config.py* add `-DDETERMINISTIC` as compile flag for CXX. This will allow for determinisitic renderings in order to analyze and debug path tracing algorithms with emca.
+3. Add paths to emca libraries in *config.py*.
+```
+EMCAINCLUDE   = ['/usr/local/include/emca']
+EMCALIBDIR    = ['/usr/local/lib']
+EMCALIB       = ['emca']
+```
+4. Compile mitsuba
+5. Modify your scene.xml file. Set the sampler type to `deterministic`. For further information on how to add data check the `pathemca.cpp` file.
 ``` 
 <!-- Modified Multiple Importance Sampling Path Tracing Algorithm -->
 <integrator type="pathemca"/>
@@ -81,8 +103,10 @@ In order to allow for loading the rendered (.exr) image the filepath has to be s
 
 ### DataApi
 The required data for visualization primarily includes the path's vertices from its origin at the camera until its last intersection, which might be the scene's bounding sphere in case the path terminates in an environment map. This data is collected using the `setPathOrigin`, `setIntersectionPos` and `setIntersectionPosEnvmap` functions.
-To keep track of the current path and vertex, each gets assigned an unique identifier where each path is identified by its per-pixel sample count and each vertex is identified by its depth within the path.
-These indices are set using the `setPathIndex` and `setDepthIndex` functions. To allow for the selection of paths by their incident radiance estimate, the `setFinalEstimate` function can be used to set the necessary data for the sample contribution view. Additionally, arbitrary data can be added to annotate each path and vertex using potentially fully custom data using the `addPathInfo` and `addVertexInfo` functions.
+To keep track of the current path and intersection, each gets assigned an unique identifier where each path is identified by its per-pixel sample count and each intersection is identified by its depth within the path.
+These indices are set using the `setPathIndex` and `setDepthIndex` functions. To allow for the selection of paths by their incident radiance estimate, the `setFinalEstimate` function can be used to set the necessary data for the sample contribution view. Additionally, arbitrary data can be added to annotate each path and intersection using potentially fully custom data using the `addPathData` and `addIntersectionData` functions.
+
+If you want to use your own DataApi with your own functions and file types you can check the `DataApiMitsuba` singleton class in include/libcore/dataapimitsuba.h (from emca-lib branch - mitsuba) as an example.
 
 <a name="emca_client"></a>
 
@@ -91,12 +115,20 @@ EMCA is based on **Python 3.7**. To install and load all necessary dependencies 
 ```
 pip3 install -r requirements.txt
 ```
+The Python packages OpenEXR can lead to problems during installation in case the base libraries are not installed (tested on Ubuntu 18.04). If an error pops up install the required libraries via the package manager.
+
+```
+sudo apt-get install libopenexr-dev
+sudo apt-get install openexr
+```
+
+Same applies to the vtk vers. 9.x package. In case it can't be installed via the pip package manager download the latest wheel file for Python 3.7 from: https://vtk.org/download/
 
 <a name="brushing_linking"></a>
 
 ### Brushing and Linking
 The concept of brushing and linking is to connect multiple views within a GUI representing different parts of the same data.
-Selecting a path or vertex in any view will automatically select the same path or vertex in all other views including the (custom) tools presented shortly. This approach allows to provide insight into multiple aspects of the data without cluttering a single view with all the available data. Especially the connection to the scene view provides valuable insight into the otherwise difficult to parse intersection points.
+Selecting a path or intersection in any view will automatically select the same path or intersection in all other views including the (custom) tools presented shortly. This approach allows to provide insight into multiple aspects of the data without cluttering a single view with all the available data. Especially the connection to the scene view provides valuable insight into the otherwise difficult to parse intersection points.
 
 ![View One](https://github.com/ckreisl/emca/blob/readme/images/emca_render_sample_view.png)
 
@@ -129,8 +161,8 @@ For efficient selection of a subset of paths, a rectangular selection tool is pr
 The scene view allows the user to explore the selected traced paths within a semitransparent representation of the scene's geometry.
 The camera is initialized to its location in the rendered image and can be moved around freely.
 To allow for quick selection of paths, a rectangular selection tool can be used to select individual intersections directly in the scene view.
-When selecting path vertices from other views, the camera is automatically moved to the selected vertex.
-To additionally highlight the selected vertex, its preceding path segment is highlighted in green while the vertex point is colored in orange.
+When selecting path intersections from other views, the camera is automatically moved to the selected intersection.
+To additionally highlight the selected intersection, its preceding path segment is highlighted in green while the intersection point is colored in orange.
 Regular path segments are shown in white unless they terminate in the environment map in which case they are colored in yellow.
 If the rendering algorithm uses next event estimation, shadow rays can be shown in blue for successful connections to the emitter and in red in case the sampled emitter is occluded.
 
@@ -147,15 +179,15 @@ In combination with the scene view, light transport paths can be quickly analyze
 
 ### Custom Plugin Interface
 New path tracing approaches might make use of arbitrary auxiliary data such as spherical radiance caches which might be too complex
-to be suitably displayed in the existing 2D and 3D vertex data plots or the textual render data view.
+to be suitably displayed in the existing 2D and 3D intersection data plots or the textual render data view.
 To address the individual needs of novel path tracing algorithms,
-a custom tool interface allows for simple construction of additional views with access to all the available path and vertex data for the current pixel.
-Following the brushing and linking concept the tool will be notified of the currently selected path and vertex such that it can update its contents accordingly.
+a custom tool interface allows for simple construction of additional views with access to all the available path and intersection data for the current pixel.
+Following the brushing and linking concept the tool will be notified of the currently selected path and intersection such that it can update its contents accordingly.
 Should the data collected during path tracing not suffice to satisfy the custom tool's needs,
 a matching custom server module can be created from which the custom tool can easily request arbitrary additional data at any moment.
 
-#### Vertex Data Plots Plugin (Core Plugin)
-The vertex data plots provide an aggregated view of all user-supplied data for a single traced path. The view allows for exploring fundamental quantities and their changes during ray traversal like the Russian roulette probability or PDF. Supporting multiple data types with 2D and 3D plots for one or two dimensional data at various path depths as well as spectral plots for radiance data enables visualizing the most commonly gathered data. All plots are automatically created on-the-fly after receiving the render data from the server side.
+#### Intersection Data Plots Plugin (Core Plugin)
+The intersection data plots provide an aggregated view of all user-supplied data for a single traced path. The view allows for exploring fundamental quantities and their changes during ray traversal like the Russian roulette probability or PDF. Supporting multiple data types with 2D and 3D plots for one or two dimensional data at various path depths as well as spectral plots for radiance data enables visualizing the most commonly gathered data. All plots are automatically created on-the-fly after receiving the render data from the server side.
 
 #### Path Depth Plugin (Core Plugin)
 The path depth view allows for analyzing traced paths according to their reached depth. Detecting paths that end too early can be essential in order to determine convergence problems of a rendered image.
@@ -163,21 +195,21 @@ Terminating paths based only on their throughput may undersample important contr
 Therefore, in combination with the per-path estimate view, one can analyze various Russian roulette criteria like ADRR and their relations between path contribution and the reached depth.
 
 #### Spherical View Plugin (Custom Plugin - mitsuba)
-The spherical view tool is an example of a custom tool requiring more data than initially collected during path tracing. It displays the incident radiance from all directions at the active vertex position.
-Computing an estimate of the incident radiance can take a considerable amount of time, depending on the selected resolution, sample count and the used integrator. Therefore, it does not make sense to precompute it during the path tracing step. Instead, the incident radiance is requested and rendered on-the-fly as each vertex is selected while the tool is active. 
+The spherical view tool is an example of a custom tool requiring more data than initially collected during path tracing. It displays the incident radiance from all directions at the active intersection position.
+Computing an estimate of the incident radiance can take a considerable amount of time, depending on the selected resolution, sample count and the used integrator. Therefore, it does not make sense to precompute it during the path tracing step. Instead, the incident radiance is requested and rendered on-the-fly as each intersection is selected while the tool is active. 
 
 #### How-To: Add a new Plugin
 All individial created plugins should be placed within the **Plugins** folder. To load your plugin add it in the `__init__.py` file as shown below:
 
 ```
-from Plugins.VertexDataPlots.plugin_vertex_data_plots import VertexDataPlots
-from Plugins.PathDepth.plugin_path_depth import PathDepth
-from Plugins.SphericalView.plugin_spherical_view import SphericalView
+from plugins.plugin_intersection_data.plugin_intersection_data_plots import IntersectionData
+from plugins.plugin_path_depth.plugin_path_depth import PathDepth
+from plugins.plugin_spherical_view.plugin_spherical_view import SphericalView
 
 # In order to initialize your plugin, import your plugin here and add it to __all__ list.
 
 __all__ = [
-    'VertexDataPlots',
+    'IntersectionData',
     'PathDepth',
     'SphericalView',
 ]

@@ -123,7 +123,9 @@ class SceneRenderer(SceneInterface):
         if intersection.is_wo_visible:
             intersection.draw_wo(self._renderer)
         if self._scene_geometry.camera.auto_clipping:
-            self._scene_geometry.camera.set_focal_point(intersection.pos)
+            if intersection:
+                if intersection.pos:
+                    self._scene_geometry.camera.set_focal_point(intersection.pos)
         self.widget.update()
 
     def remove_traced_paths_by_indices(self, indices):

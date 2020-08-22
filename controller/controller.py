@@ -152,6 +152,13 @@ class Controller(QObject):
         elif msg is StateMsg.DATA_NOT_VALID:
             logging.error("Data is not valid!")
             # todo handle
+        elif msg is StateMsg.SUPPORTED_PLUGINS:
+            plugin_keys = tpl[1]
+            for plugin_id in plugin_keys:
+                if not self._model.plugins_handler.get_plugin_by_flag(plugin_id):
+                    logging.error('Plugin = {} is not supported by client'.format(plugin_id))
+                else:
+                    self._model.plugins_handler.enable_plugin_by_id(plugin_id, True)
         elif msg is StateMsg.UPDATE_PLUGIN:
             plugin = self._model.plugins_handler.get_plugin_by_flag(tpl[1])
             if plugin:

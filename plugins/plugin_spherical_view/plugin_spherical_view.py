@@ -22,7 +22,7 @@
     SOFTWARE.
 """
 
-from core.plugin import Plugin
+from core.plugin import Plugin, PluginType
 from plugins.plugin_spherical_view.view_spherical_view_image import ViewSphericalViewImage
 from core.point2 import Point2i
 from core.pyside2_uic import loadUi
@@ -33,11 +33,13 @@ import logging
 
 class SphericalView(Plugin):
 
+    """
+        SphericalView Plugins (mitsuba)
+        PluginType is ServerPlugin since data is generated on server side
+    """
+
     def __init__(self):
-        Plugin.__init__(
-            self,
-            "SphericalView",
-            66)
+        Plugin.__init__(self, "SphericalView", 66, PluginType.SERVER_PLUGIN)
         ui_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), 'ui', 'spherical_view.ui'))
         loadUi(ui_filepath, self)
 

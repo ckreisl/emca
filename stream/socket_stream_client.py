@@ -26,6 +26,7 @@ from PySide2.QtCore import QThread
 from stream.socket_stream import SocketStream
 from core.messages import ServerMsg
 from core.messages import StateMsg
+from core.messages import RenderSystem
 from PySide2.QtCore import Signal
 import logging
 
@@ -164,6 +165,17 @@ class SocketStreamClient(QThread):
             return None
 
         self._stream.write_short(ServerMsg.EMCA_HELLO.value)
+
+        # Check Server Render System
+        server_render_system = self._stream.read_short()
+        server_render_system = RenderSystem.get_render_system(server_render_system)
+        if not server_render_system:
+            logging.error('Server Render System was not detected!')
+            self._stream.write_short(ServerMsg.EMCA_QUIT.value)
+            return None
+        self._model.server_render_system = server_render_system
+        logging.info("ServerRenderSystem: {}".format(server_render_system))
+
         # Handshake complete, set StateMsg to controller to enable views
         self._sendStateMsgSig.emit((StateMsg.CONNECT, None))
 
@@ -188,6 +200,8 @@ class SocketStreamClient(QThread):
             if plugin:
                 plugin.deserialize(stream=self._stream)
                 self._sendStateMsgSig.emit((StateMsg.UPDATE_PLUGIN, plugin.flag))
+            elif state is ServerMsg.EMCA_SUPPORTED_PLUGINS:
+                self._model.deserialize_supported_plugins(stream=self._stream)
             elif state is ServerMsg.EMCA_HEADER_RENDER_INFO:
                 self._model.deserialize_render_info(stream=self._stream)
             elif state is ServerMsg.EMCA_HEADER_CAMERA:

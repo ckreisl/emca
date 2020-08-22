@@ -34,12 +34,17 @@ class Sphere(Shape):
         Represents a vtk Sphere object within the 3D scene
     """
 
-    def __init__(self, center, radius):
+    def __init__(self, center, radius, theta_resolution=20, phi_resolution=20):
+
+        self._center = center
+        self._radius = radius
 
         sphere = vtk.vtkSphereSource()
         # center (x,y,z)
         sphere.SetCenter(list(center))
         sphere.SetRadius(radius)
+        sphere.SetThetaResolution(theta_resolution)
+        sphere.SetPhiResolution(phi_resolution)
 
         # get poly data
         if vtk.VTK_MAJOR_VERSION <= 5:
@@ -49,15 +54,19 @@ class Sphere(Shape):
 
         super().__init__(mesh_poly_data)
 
-    def get_radius(self):
-        pass
+    @property
+    def radius(self):
+        return self._radius
 
-    def set_radius(self, radius):
-        pass
+    @radius.setter
+    def radius(self, radius):
+        self._radius = radius
 
-    def get_center(self):
-        pass
+    @property
+    def center(self):
+        return self._center
 
-    def set_center(self, center):
-        pass
+    @center.setter
+    def center(self, center):
+        self._center = center
 

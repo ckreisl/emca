@@ -23,7 +23,9 @@
 """
 
 from renderer.mesh import Mesh
+from renderer.sphere import Sphere
 from renderer.camera import Camera
+from core.messages import MeshType
 import logging
 
 
@@ -76,6 +78,19 @@ class SceneGeometry(object):
         mesh.default_opacity = self._default_scene_opacity
         return mesh
 
+    def create_sphere(self, mesh_data):
+        sphere = Sphere(mesh_data.center, mesh_data.radius)
+        sphere.color = mesh_data.diffuse_color
+        sphere.default_color = mesh_data.diffuse_color
+        sphere.color_diffuse = mesh_data.diffuse_color
+        sphere.default_color_diffuse = mesh_data.diffuse_color
+        # sphere.color_specular = mesh_data.specular_color
+        sphere.opacity = self._scene_opacity
+        sphere.default_opacity = self._default_scene_opacity
+        logging.info("SphereMeshColor: {}".format(mesh_data.diffuse_color))
+        logging.info("SphereActorColor: {}".format(sphere.GetProperty().GetColor()))
+        return sphere
+
     def set_scene_opacity(self, opacity):
         """
         Sets the opacity of all meshes in the scene
@@ -101,8 +116,12 @@ class SceneGeometry(object):
         :param mesh_data: Mesh object
         :return:
         """
-        mesh = self.create_mesh(mesh_data)
-        self._meshes.append(mesh)
+        if mesh_data.mesh_type is MeshType.TriangleMesh:
+            mesh = self.create_mesh(mesh_data)
+            self._meshes.append(mesh)
+        elif mesh_data.mesh_type is MeshType.SphereMesh:
+            sphere = self.create_sphere(mesh_data)
+            self._meshes.append(sphere)
 
     def load_camera_data(self, camera_data):
         """

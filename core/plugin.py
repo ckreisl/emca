@@ -23,7 +23,24 @@
 """
 
 from PySide2.QtWidgets import QWidget
+from enum import Enum
 import abc
+
+
+class PluginType(Enum):
+    """
+    PluginType
+
+    CORE_PLUGIN:
+        works on local client render data received by server (default data)
+
+    SERVER_PLUGIN:
+        This plugin type needs server support which means a server plugin must be enabled.
+        The plugin is enabled if a server plugin is added and available.
+        Server plugins can request from the server for additional data types.
+    """
+    CORE_PLUGIN     = 0
+    SERVER_PLUGIN   = 1
 
 
 class Plugin(QWidget):
@@ -38,10 +55,11 @@ class Plugin(QWidget):
     therefore import new plugins there and add the class name to __all__ list.
     """
 
-    def __init__(self, name, flag):
+    def __init__(self, name, flag, plugin_type=PluginType.CORE_PLUGIN):
         QWidget.__init__(self, parent=None)
         self._name = name
         self._flag = flag
+        self._plugin_type = plugin_type
         self._scene_renderer = None
 
     @property
@@ -59,6 +77,14 @@ class Plugin(QWidget):
         :return: plugin name
         """
         return self._name
+
+    @property
+    def plugin_type(self):
+        """
+        Returns the PluginType
+        :return: PluginType.CORE_PLUGIN | PluginType.SERVER_PLUGIN
+        """
+        return self._plugin_type
 
     @property
     def scene_renderer(self):
