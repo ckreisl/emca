@@ -30,30 +30,7 @@ Make sure that the path to the emca shared library is defined in **LD_LIBRARY_PA
 <a name="license"></a>
 
 ## License
-The shared library comes with the Apache License 2.0. Be aware of other used libraries listed below:
-
-```
-#include <iostream>
-#include <stdlib.h>
-#include <string>
-#include <vector>
-#include <utility>
-#include <map>
-#include <mutex>
-#include <stdio.h>
-#include <signal.h>
-#include <string.h>
-#include <unistd.h>
-#include <sstream>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
-#include <netinet/in.h>
-#include <cstddef>
-#include <errno.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-```
+The shared library comes with the Apache License 2.0.
 
 (c) Christoph Kreisl
 
