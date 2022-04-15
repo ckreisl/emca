@@ -5,6 +5,9 @@
 <a name="about"></a>
 
 ## About
+
+> :warning: The code base of this repository contains the state of my master thesis from 2019 with minor additional code changes. Please refer to the repository from [**cgtuebingen/emca**](https://github.com/cgtuebingen/emca) as official repository for **emca**. The code base of this repository is based on the published paper at [VMV 2021](https://diglib.eg.org/handle/10.2312/vmv20211377).
+
 EMCA is a framework for the visualization of Monte Carlo-based algorithms. More precisely it is designed to visualize and analyze unidirectional path tracing algorithms. The framework consists of two parts, a server part which serves as an interface for the respective rendering system and a client which takes over the pure visualization. The client is written in Python and can be easily extended. EMCA works on a pixel basis which means that instead of pre-computing and saving all the necessary data of the whole rendered image during the render process everything is calculated directly at run-time. The data is collected and generated according to the selected pixel by the user.
 
 This framework was developed as Master thesis 03/2019 at the University of Tuebingen (Germany). Special thanks goes to Prof. Hendrik Lensch, Sebastian Herholz (supervisor), Tobias Rittig and Lukas Ruppert who made this work possible.
